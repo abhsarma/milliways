@@ -1,11 +1,19 @@
 import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
-import { cell, groupPadding, margin, outVisWidth, h1, text } from './dimensions.js'
+import { cell, groupPadding, margin, outVisWidth, h1, text, namingDim } from './dimensions.js'
 import Tooltip from './tooltip-parameter-menu.svelte'
+import Dropdown from './dropdown-menu.svelte'
+import { state } from './stores.js';
 
 const header_size = h1;
 const text_size = text;
-let selected_options = []
+let selected_options = [];
+
+let state_value;
+
+const unsubscribe = state.subscribe(value => {
+	state_value = value;
+});
 
 
 function handleMouseenter(event, d) {
@@ -35,8 +43,6 @@ function handleSelection(event, d) {
 			d3.select(this).attr("class", option_names)
 		}
 	}
-				
-	console.log(event, d, selected_options);
 }
 
 export const parameters = css`
@@ -68,17 +74,6 @@ export const selected = css`
 	font-weight: 700;
 `;
 
-// export const parameters = css`
-// 	display: inline-block;
-// 	font-size: 12px;
-// 	font-family: 'Avenir Next';
-// 	margin: 0px ${cell.padding + "px"};
-// 	overflow: hidden;
-// 	text-overflow: ellipsis;
-// 	text-align: center;
-// 	width: ${cell.width + "px"};
-// `;
-
 export const options_container = css`
 	fill: #ABB7C4;
 `;
@@ -109,17 +104,31 @@ class multiverseMatrix {
 		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
+	outcome_vars() {
+		// get the variables from the results in first row as this is a rectangular dataset
+		// is there a better way to do this?
+		return this.data[0]["results"].map(i => i["term"]);
+	}
+
 	// creates the data structure for the grid matrix
 	// we will draw this plot as a bar chart
 	// input: JSON multiverse object (this.data), parameters (this.parameters)
 	// output: rectangular data structure with columns corresponding to each parameter, 
 	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
-	prepareGridData(filter_term) {
+	prepareGridData(term = null) {
 		// creating a shallow copy which is fine for here
-		let select_vars = [...Object.keys(this.parameters()), "estimate", "conf.low", "conf.high"];
+		let select_vars = [...Object.keys(this.parameters())];
 
-		let gridData = this.data.filter(i => i.term == filter_term).map(function(d) { 
-			return Object.assign({}, ...select_vars.map((i) => ({[i]: d[i]})));
+		if (term == null) {
+			term = this.outcome_vars()[0];
+		}
+
+		let gridData = this.data.map(function(d) { 
+			let options = Object.assign({}, ...select_vars.map((i) => ({[i]: d[i]})));
+			let outcomes = Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+				))
+			return Object.assign({}, options, outcomes);
 		});
 
 		return gridData;
@@ -171,7 +180,6 @@ class multiverseMatrix {
 			let xpos = (i == 0) ? 0 : groupPadding*i + col_idx[i]*(cell.width+cell.padding) - (i-1)*cell.padding;
 			let w = (cell.width + cell.padding/2) * options.map(d => d.length)[i]
 
-			console.log(xpos, w);
 			new Tooltip({ 
 				target: node,
 				props: {
@@ -188,24 +196,28 @@ class multiverseMatrix {
 		let options = Object.values(params);
 		let col_idx = [0, ...options.map(d => d.length).map((sum => value => sum += value)(0))];
 		let colWidth = options.map(d => d.length)[col] * (cell.width + cell.padding);
+		let ypos;
 
-		let h = 80;
+		if (state_value == 0) {
+			ypos = 0;
+		} else {
+			ypos = namingDim + cell.padding;
+		}
 
 		xscale.domain(d3.range(options.map(d => d.length)[col]))
 			.range( [0, colWidth] );
 
 		let optionNames = grid_plot.append("g")
-			.attr( "transform",
-				`translate(
-					${col == 0 ? groupPadding : groupPadding*(col+1) + col_idx[col]*(cell.width+cell.padding) - (col-1)*cell.padding}, 
-					${yscale(0)}
-				)`)
+			.attr("class", "option-name")
+			.attr( "transform",`translate(
+				${col == 0 ? groupPadding : groupPadding*(col+1) + col_idx[col]*(cell.width+cell.padding) - (col-1)*cell.padding}, 
+				${yscale(0)})`)
 			.attr("text-anchor", "end")
 			.selectAll("text")
 			.data(options[col])
 			.join("foreignObject")
 			.attr("width", cell.width + cell.padding + "px" )
-			.attr("height", h + "px")
+			.attr("height", namingDim + "px")
 			.attr("x", (d, i) => xscale(i) )
 			.append("xhtml:div")
 			.attr("class", option_names)
@@ -213,11 +225,10 @@ class multiverseMatrix {
 			.on("click", handleSelection);
 
 		let optionCell = grid_plot.append("g")
-			.attr("transform", 
-				`translate(
-					${col == 0 ? groupPadding : groupPadding*(col+1) + col_idx[col]*(cell.width+cell.padding) - (col-1)*cell.padding}, 
-					${h + cell.padding}
-				)`)
+			.attr("class", "option-value")
+			.attr("transform",  `translate(
+				${col == 0 ? groupPadding : groupPadding*(col+1) + col_idx[col]*(cell.width+cell.padding) - (col-1)*cell.padding}, 
+				${ypos})`)
 			.selectAll("g")
 			.data(data)
 			.join("g")
@@ -242,14 +253,27 @@ class multiverseMatrix {
 	drawResults (data, elem, yscale) {
 		const height = this.size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 		const width = this.parameters().length * (cell.width + cell.padding); // to fix
+		let ypos;
+
+		d3.select("g.outcomePanel").remove();
 
 
 		let xscale = d3.scaleLinear()
 			.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
 			.range([margin.left, outVisWidth + margin.left]);
 
-		elem.append("g")
-			.append("line")
+		if (state_value == 0) {
+			ypos = 0;
+		} else {
+			ypos = namingDim + cell.padding;
+		}
+
+		let outcomePlot = elem.append("g")
+			.attr("class", "outcomePanel")
+			.attr( "transform",
+				`translate(0,  ${ypos})`)
+
+		outcomePlot.append("line")
 			.attr("class", "zero-line")
 			.attr("x1", xscale(0) )
 			.attr("y1", margin.top)
@@ -259,8 +283,7 @@ class multiverseMatrix {
 			.attr("stroke-width", 2);
 
 		// add a group for each universe
-		let panelPlot = elem.append("g")
-			.selectAll("g")
+		let panelPlot = outcomePlot.selectAll("g")
 			.data(data)
 			.enter()
 			.append("g")

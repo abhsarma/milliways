@@ -4,3 +4,4 @@ export const h1 = 14;
 export const text = 12;
 export const outVisWidth = 240;
 export const margin = {top: 30, right: 0, bottom: 15, left: 40};
+export const namingDim = 80;

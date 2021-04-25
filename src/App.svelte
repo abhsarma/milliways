@@ -2,18 +2,17 @@
 	import 'bootstrap-grid/dist/grid.min.css';
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/multiverse_table.json';
+	import * as data from '../static/data/data.json';
 	import multiverseMatrix from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin } from './components/dimensions.js'
+	import Toggle from './components/toggle-button.svelte'
+	import Dropdown from './components/dropdown-menu.svelte'
 
-	console.log(data.default);
 	const m = new multiverseMatrix(data.default);
 	const params = m.parameters();
 
-	const windowHeight = (window.innerHeight - 64) + "px";
-
 	let svg;
-
+	const windowHeight = (window.innerHeight - 64) + "px";
 	const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
 	const n_options = Object.values(params).map( d => d.length ).reduce( (a, b) => a + b, 0 );
@@ -35,14 +34,27 @@
 	// }
 
 	onMount(() => {
-		let t = "Fertilitylow"
-
-		// filter and build the grid for the particular term
-		let gridData = m.prepareGridData(t);
-
 		const res_container = d3.select("div.vis").select("svg");
 		const grid_container = d3.select("div.grid").select("svg");
 
+		const menu = new Dropdown({ 
+			target: d3.select("div.vis").node(),
+			props: {
+				items: m.outcome_vars()
+			}
+		});
+
+		// filter and build the grid for the particular term
+		let gridData = m.prepareGridData(); 
+
+		// update data when different option is selected using dropdown 
+		menu.$on("message", event => {
+			// console.log(event.detail.text);
+			gridData = m.prepareGridData(event.detail.text);
+			m.drawResults(gridData, res_container, y);
+		})
+
+		
 		m.drawGrid(gridData, grid_container, x_grid, y, margin);
 		m.drawResults(gridData, res_container, y);
 	});
@@ -55,6 +67,7 @@
 		font-family: 'Avenir Next';
 		font-size: 32px;
 		font-weight: 300;
+		display: inline-block;
 	}
 
 	svg {
@@ -91,12 +104,17 @@
 
 <main>
 	<div class = "container">
-		<h1>Multiverse Visualisation</h1>
+		<div class="row">
+			<div class="col-sm-8">
+				<h1 style="margin: {margin.top}px 0px">Multiverse Visualisation</h1>
+			</div>
+			<div class="col-sm-3">
+				<Toggle/>
+			</div>
+		</div>
 		<div style="margin: 40px 0"></div>
 		<div class="vis" style="height: {windowHeight}">
-			<svg bind:this={svg} height={h} width={w1}>
-				<g class="outcomePanel"></g>
-			</svg>
+			<svg bind:this={svg} height={h} width={w1}></svg>
 		</div>
 		<div class="grid-container">
 			<div class="grid" style="height: {windowHeight}">

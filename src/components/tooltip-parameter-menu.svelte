@@ -64,8 +64,8 @@
 	style="left: {xpos + parent_width + groupPadding + cell.padding}px;"
 	on:mouseenter={handleMouseenter} on:mouseleave={handleMouseleave}>
 	<ul>
-		<li>Hide names</li>
-		<li>Sort 1</li>
-		<li>Sort 2</li>
+		<li>Collapse parameter</li>
+		<li>Sort ascending</li>
+		<li>Sort descending</li>
 	</ul>
 </div>
