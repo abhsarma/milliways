@@ -1,21 +1,68 @@
 import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
-import { cell, groupPadding, margin, outVisWidth, h1, text, namingDim } from './dimensions.js'
+import { cell, groupPadding, margin, outVisWidth, h1, namingDim } from './dimensions.js'
 import Tooltip from './tooltip-parameter-menu.svelte'
+import OptionTooltip from './tooltip-option-menu.svelte'
 import Dropdown from './dropdown-menu.svelte'
-import { state } from './stores.js';
+import { state, selected, multi_param } from './stores.js';
 
-const header_size = h1;
-const text_size = text;
-let selected_options = [];
+// CSS Styles
+export const parameters = css`
+	font-size: ${h1 + "px"};
+	font-family: 'Avenir Next';
+	text-transform: uppercase;
+	padding: 0px ${cell.padding/2 + "px"};
+	cursor: default;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: center;
+	width: 100%;
+`;
 
+export const option_names = css`
+	font-size: ${h1 + "px"};
+	font-family: 'Avenir Next';
+	line-height: ${cell.width}px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: default;
+	height: 100%;
+	width: ${cell.width}px;
+	writing-mode: tb-rl; 
+	transform: rotate(-180deg);
+`;
+
+export const selected_style = css`
+	font-weight: 700;
+`;
+
+export const options_container = css`
+	fill: #ABB7C4;
+`;
+
+export const selected_option = css`
+	fill: #FF602B;
+`;
+
+// Stores
 let state_value;
-
-const unsubscribe = state.subscribe(value => {
+let selected_value;
+let selected_parameters;
+state.subscribe(value => {
 	state_value = value;
 });
+selected.subscribe(value => {
+	selected_value = value;
+});
+multi_param.subscribe(value => {
+	selected_parameters = value;
+});
 
+// global variables to store changes from interactions
+let selected_options;
+let option_xpos = [0];
 
+// Event handler functions 
 function handleMouseenter(event, d) {
 	d3.select("div.tooltip-menu." + d).transition()
 		.duration(0.3)
@@ -30,57 +77,103 @@ function handleMouseleave(event, d) {
 		.style("visibility", "hidden")
 }
 
-function handleSelection(event, d) {
+function handleSelection(event, d, node, parameter) {
+	let xpos = +d3.select(node.parentNode).attr("x");
+	let trans_xpos = d3.select(node.parentNode.parentNode)
+						.attr("transform")
+						.replace(/[a-z()\s]/g, '')
+						.split(",")
+						.map(x => +x);
 	if (event.metaKey) {
-		if (!selected_options.includes(d)) { 
-			selected_options.push(d)
-			d3.select(this).attr("class", option_names + " " + selected)
+		console.log(selected_options);
+		if (!selected_options[parameter].includes(d)) { 
+			selected_options[parameter].push(d)
+			d3.select(node).attr("class", option_names + " " + selected_style);
+
+			// update store
+			selected.update(n => n + 1);
+
+			// add the position of the node being selected
+			option_xpos.push((xpos + trans_xpos[0]));
 		} else {
-			let index = selected_options.indexOf(d);
+			let index = selected_options[parameter].indexOf(d);
 			if (index > -1) {
-				selected_options.splice(index, 1);
+				selected_options[parameter].splice(index, 1);
 			}
-			d3.select(this).attr("class", option_names)
+			d3.select(node).attr("class", option_names);
+			selected.update(n => n - 1);
+
+			// remove the position of the node being deselected
+			option_xpos.splice(option_xpos.indexOf((xpos + trans_xpos[0])), 1);
 		}
 	}
+
+	// update store if > 1;
+	if (Object.entries(selected_options).map(i => i[1]).filter(i => i.length > 0).length == 1) {
+		multi_param.set(1);
+	} else {
+		multi_param.set(0);
+	}
+
+	if (selected_value >= 1) {
+		d3.select("#option-menu")
+			.style("visibility", "visible")
+			.style("left", `${Math.max(...option_xpos) + 2 * cell.width}px`)
+			.style("top", "20px");
+	} else {
+		d3.select("#option-menu")
+			.style("visibility", "hidden")
+			.style("left", "0px")
+			.style("top", "20px");
+	}
+
+	console.log(selected_value);
+	console.log(selected_options);
 }
 
-export const parameters = css`
-	font-size: ${header_size + "px"};
-	font-family: 'Avenir Next';
-	text-transform: uppercase;
-	padding: 0px ${cell.padding/2 + "px"};
-	cursor: default;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-align: center;
-	width: 100%;
-`;
+// Initialise UI items
+export function drawResultsMenu(m, vis_node, grid_node, y, x) {
+	const menu = new Dropdown({ 
+		target: vis_node.node(),
+		props: {
+			items: m.outcome_vars()
+		}
+	});
 
-export const option_names = css`
-	font-size: ${header_size + "px"};
-	font-family: 'Avenir Next';
-	line-height: ${cell.width}px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	cursor: default;
-	height: 100%;
-	width: ${cell.width}px;
-	writing-mode: tb-rl; 
-	transform: rotate(-180deg);
-`;
+	// update data when different option is selected using dropdown 
+	menu.$on("message", event => {
+		m.changeOutcomeVar(event.detail.text);
+		m.prepareOutcomeData();
 
-export const selected = css`
-	font-weight: 700;
-`;
+		m.draw([], vis_node, grid_node, y, x);
+	})
+}
 
-export const options_container = css`
-	fill: #ABB7C4;
-`;
+// Initialise UI items
+export function drawOptionMenu(m, vis_node, grid_node, y, x) {
+	const optionMenu = new OptionTooltip({ 
+			target: grid_node.node()
+	});
 
-export const selected_option = css`
-	fill: #FF602B;
-`;
+	optionMenu.$on("message", event => {	
+		if (event.detail.action == "exclude") {
+			let exclude = Object.entries(selected_options)
+					.map( d => d[1].map( j => [d[0], j]) )
+					.flat(1)
+					.map( i => ({"parameter": i[0], "option": i[1]}) );
+
+			m.draw(exclude, vis_node, grid_node, y, x);
+		}
+
+		// deselect everything and hide the menu;
+		selected.set(0);
+		selected_options = Object.keys(selected_options).reduce((acc, key) => {acc[key] = []; return acc; }, {});
+		d3.select("#option-menu")
+			.style("visibility", "hidden")
+			.style("left", "0px")
+			.style("top", "20px");
+	})
+}
 
 class multiverseMatrix {
 	constructor (dat) {		
@@ -90,6 +183,14 @@ class multiverseMatrix {
 		// meta data for the multiverse object
 		this.universes = [...new Set(dat.map(d => d['.universe']))];
 		this.size = this.universes.length;
+		this.outcomeVar = dat[0]["results"].map(i => i["term"])[0]; // selects the first of the outcome vars
+		this.gridData = null;
+		this.outcomeData = null;
+		this.exclude = []
+	}
+
+	changeOutcomeVar(term) {
+		this.outcomeVar = term;
 	}
 
 	parameters() {
@@ -98,6 +199,7 @@ class multiverseMatrix {
 		let param_names = Object.keys(this.data[0]['.parameter_assignment'])
 
 		let dat = this.data.map(function(d) { 
+			// console.log( Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ) );	
 			return Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) );
 		});
 
@@ -115,23 +217,29 @@ class multiverseMatrix {
 	// input: JSON multiverse object (this.data), parameters (this.parameters)
 	// output: rectangular data structure with columns corresponding to each parameter, 
 	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
-	prepareGridData(term = null) {
+	prepareData() {
+		let parameters = [...Object.keys(this.parameters())];
+		selected_options = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
+
+		this.prepareGridData();
+		this.prepareOutcomeData();
+	}
+
+	prepareGridData(exclude = []) {
 		// creating a shallow copy which is fine for here
-		let select_vars = [...Object.keys(this.parameters())];
+		let parameters = [...Object.keys(this.parameters())];
+		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: d[i]}))) );
+	}
 
-		if (term == null) {
-			term = this.outcome_vars()[0];
-		}
+	prepareOutcomeData(exclude = []) {
+		// creating a shallow copy which is fine for here
+		let term = this.outcomeVar;
 
-		let gridData = this.data.map(function(d) { 
-			let options = Object.assign({}, ...select_vars.map((i) => ({[i]: d[i]})));
-			let outcomes = Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-				))
-			return Object.assign({}, options, outcomes);
+		this.outcomeData = this.data.map(function(d) { 
+			return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+				i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+			))
 		});
-
-		return gridData;
 	}
 
 	// function for sorting the gridMatrix
@@ -140,14 +248,59 @@ class multiverseMatrix {
 		
 	// }
 
-	// // function from drawing the decision grid
-	drawGrid (data, elem, xscale, yscale, margin) {
-		// check if the number of terms visualised is the same as the number of universes
-		if (data.length != this.size) {
-			throw 'number of terms not equal to the number of universes universes!';
+
+	draw (exclude = [], results_node, grid_node, y, x1, x2 = null) {
+		let gridData = this.gridData;
+		let	outcomeData = this.outcomeData;
+		let results_container = results_node.select("svg")
+		let grid_container = grid_node.select("svg")
+
+		// update grid
+		this.drawGrid(gridData, grid_container, x1, y);
+
+		// update results
+		this.drawResults(outcomeData, results_container, y);
+	}
+
+	update (exclude = [], results_node, grid_node, y, x1, x2 = null) {
+		let gridData;
+		let outcomeData;
+		let results_container = results_node.select("svg");
+		let grid_container = grid_node.select("svg");
+		let params = this.parameters();
+
+		// first exclude points from data
+		if (exclude.length > 0) {
+			let toFilter = this.gridData.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
+			gridData = this.gridData.filter( (i, n) => toFilter[n] );
+			outcomeData = this.outcomeData.filter( (i, n) => toFilter[n] );
+		} else {
+			gridData = this.gridData;
+			outcomeData = this.outcomeData;
 		}
 
+		// update grid
+		d3.selectAll("g.option-value").remove();
+		Object.keys(params).forEach( 
+			(d, i) => this.drawColumn(data, params, i, elem, xscale, yscale) 
+		);
+
+		// update results
+		this.drawResults(outcomeData, results_container, y);
+	}
+
+	// // function from drawing the decision grid
+	drawGrid (data, elem, xscale, yscale) {
+		// check if the number of terms visualised is the same as the number of universes
+		// if (data.length != this.size) {
+		// 	throw 'number of terms not equal to the number of universes universes!';
+		// }
 		let params = this.parameters();
+		let node = elem.node();
+
+
+		d3.selectAll("g.option-value").remove();
+		d3.selectAll("g.option-name").remove();
 
 		this.drawHeaders(params, xscale, elem, margin);
 		Object.keys(params).forEach( 
@@ -180,14 +333,14 @@ class multiverseMatrix {
 			let xpos = (i == 0) ? 0 : groupPadding*i + col_idx[i]*(cell.width+cell.padding) - (i-1)*cell.padding;
 			let w = (cell.width + cell.padding/2) * options.map(d => d.length)[i]
 
-			new Tooltip({ 
-				target: node,
-				props: {
-					parameter: d,
-					xpos: xpos,
-					parent_width: w
-				}
-			});
+			// new Tooltip({ 
+			// 	target: node,
+			// 	props: {
+			// 		parameter: d,
+			// 		xpos: xpos,
+			// 		parent_width: w
+			// 	}
+			// });
 		})
 	}
 
@@ -199,9 +352,9 @@ class multiverseMatrix {
 		let ypos;
 
 		if (state_value == 0) {
-			ypos = 0;
+			ypos = 4 * cell.padding;
 		} else {
-			ypos = namingDim + cell.padding;
+			ypos = namingDim + 4 * cell.padding;
 		}
 
 		xscale.domain(d3.range(options.map(d => d.length)[col]))
@@ -222,7 +375,7 @@ class multiverseMatrix {
 			.append("xhtml:div")
 			.attr("class", option_names)
 			.text(d => d)
-			.on("click", handleSelection);
+			.on("click", function(event, d) { handleSelection(event, d, this, param); });
 
 		let optionCell = grid_plot.append("g")
 			.attr("class", "option-value")
@@ -257,15 +410,14 @@ class multiverseMatrix {
 
 		d3.select("g.outcomePanel").remove();
 
-
 		let xscale = d3.scaleLinear()
 			.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
 			.range([margin.left, outVisWidth + margin.left]);
 
 		if (state_value == 0) {
-			ypos = 0;
+			ypos = 4 * cell.padding;
 		} else {
-			ypos = namingDim + cell.padding;
+			ypos = namingDim + 4 * cell.padding;
 		}
 
 		let outcomePlot = elem.append("g")

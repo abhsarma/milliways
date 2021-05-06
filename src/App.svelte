@@ -3,20 +3,27 @@
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
-	import multiverseMatrix from './components/multiverseMatrix.js';
+	import multiverseMatrix, { drawResultsMenu, drawOptionMenu } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
+	import Tooltip from './components/tooltip-option-menu.svelte'
 	import Dropdown from './components/dropdown-menu.svelte'
+	import OptionTooltip from './components/tooltip-option-menu.svelte'
 
 	const m = new multiverseMatrix(data.default);
+	m.prepareData();
+
 	const params = m.parameters();
 
 	let svg;
 	const windowHeight = (window.innerHeight - 64) + "px";
-	const size = m.size;
+	// const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
 	const n_options = Object.values(params).map( d => d.length ).reduce( (a, b) => a + b, 0 );
 
+	let gridData = m.gridData;
+
+	$: size = gridData.length;
 	$: h = size * cell.height;
 	$: w1 = outVisWidth + margin.left; 
 	$: w2 = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
@@ -28,35 +35,16 @@
 
 	$: x_grid = d3.scaleBand();
 
-	// function resize() {
-	// 	({ width, height } = svg.getBoundingClientRect());
-	// 	console.log('resize()', width, height);
-	// }
-
 	onMount(() => {
-		const res_container = d3.select("div.vis").select("svg");
-		const grid_container = d3.select("div.grid").select("svg");
+		const results_node = d3.select("div.vis");
+		const grid_node = d3.select("div.grid");
 
-		const menu = new Dropdown({ 
-			target: d3.select("div.vis").node(),
-			props: {
-				items: m.outcome_vars()
-			}
-		});
+		drawResultsMenu(m, results_node, grid_node, y, x_grid);
+		drawOptionMenu(m, results_node, grid_node, y, x_grid);
 
-		// filter and build the grid for the particular term
-		let gridData = m.prepareGridData(); 
-
-		// update data when different option is selected using dropdown 
-		menu.$on("message", event => {
-			// console.log(event.detail.text);
-			gridData = m.prepareGridData(event.detail.text);
-			m.drawResults(gridData, res_container, y);
-		})
-
-		
-		m.drawGrid(gridData, grid_container, x_grid, y, margin);
-		m.drawResults(gridData, res_container, y);
+		m.draw([], results_node, grid_node, y, x_grid);
+		// m.drawResults(gridData, res_container.select("svg"), y);
+		// m.drawGrid(gridData, grid_container.select("svg"), x_grid, y);
 	});
 </script>
 

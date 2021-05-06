@@ -67,6 +67,9 @@ var app = (function () {
     function space() {
         return text$2(' ');
     }
+    function empty$3() {
+        return text$2('');
+    }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
         return () => node.removeEventListener(event, handler, options);
@@ -20153,7 +20156,7 @@ var app = (function () {
         zoomIdentity: identity
     });
 
-    var data = [
+    var data$1 = [
     	{
     		".universe": 1,
     		cycle_length: "cl_option1",
@@ -33386,9 +33389,9 @@ var app = (function () {
     	}
     ];
 
-    var data$1 = /*#__PURE__*/Object.freeze({
+    var data$2 = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        'default': data
+        'default': data$1
     });
 
     /*
@@ -35153,80 +35156,307 @@ var app = (function () {
     const margin = {top: 30, right: 0, bottom: 15, left: 40};
     const namingDim = 80;
 
-    const file$3 = "src/components/tooltip-parameter-menu.svelte";
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop$4) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (let i = 0; i < subscribers.length; i += 1) {
+                        const s = subscribers[i];
+                        s[1]();
+                        subscriber_queue.push(s, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop$4) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop$4;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
 
-    function create_fragment$3(ctx) {
-    	let div;
+    const state = writable(1);
+    const selected = writable(0);
+    const multi_param = writable(0);
+
+    const file$3 = "src/components/tooltip-option-menu.svelte";
+
+    // (95:1) {:else}
+    function create_else_block_1(ctx) {
     	let ul;
-    	let li0;
-    	let t1;
-    	let li1;
-    	let t3;
-    	let li2;
-    	let div_class_value;
+    	let li;
     	let mounted;
     	let dispose;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			ul = element("ul");
+    			li = element("li");
+    			li.textContent = "Exclude option";
+    			attr_dev(li, "class", "svelte-3jen13");
+    			add_location(li, file$3, 96, 3, 1805);
+    			attr_dev(ul, "class", "svelte-3jen13");
+    			add_location(ul, file$3, 95, 2, 1797);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ul, anchor);
+    			append_dev(ul, li);
+
+    			if (!mounted) {
+    				dispose = listen_dev(li, "click", /*excludeOptions*/ ctx[2], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: noop$4,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(95:1) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (84:1) {#if selected_value > 1}
+    function create_if_block(ctx) {
+    	let if_block_anchor;
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*selected_parameters*/ ctx[1] === 1) return create_if_block_1;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty$3();
+    		},
+    		m: function mount(target, anchor) {
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(84:1) {#if selected_value > 1}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (90:2) {:else}
+    function create_else_block(ctx) {
+    	let ul;
+    	let li;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			ul = element("ul");
+    			li = element("li");
+    			li.textContent = "Exclude options";
+    			attr_dev(li, "class", "svelte-3jen13");
+    			add_location(li, file$3, 91, 4, 1718);
+    			attr_dev(ul, "class", "svelte-3jen13");
+    			add_location(ul, file$3, 90, 3, 1709);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ul, anchor);
+    			append_dev(ul, li);
+
+    			if (!mounted) {
+    				dispose = listen_dev(li, "click", /*excludeOptions*/ ctx[2], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: noop$4,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(90:2) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (85:2) {#if selected_parameters === 1}
+    function create_if_block_1(ctx) {
+    	let ul;
+    	let li0;
+    	let t1;
+    	let li1;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
     			ul = element("ul");
     			li0 = element("li");
-    			li0.textContent = "Collapse parameter";
+    			li0.textContent = "Exclude options";
     			t1 = space();
     			li1 = element("li");
-    			li1.textContent = "Sort ascending";
-    			t3 = space();
-    			li2 = element("li");
-    			li2.textContent = "Sort descending";
-    			attr_dev(li0, "class", "svelte-5z26om");
-    			add_location(li0, file$3, 66, 2, 1179);
-    			attr_dev(li1, "class", "svelte-5z26om");
-    			add_location(li1, file$3, 67, 2, 1209);
-    			attr_dev(li2, "class", "svelte-5z26om");
-    			add_location(li2, file$3, 68, 2, 1235);
-    			attr_dev(ul, "class", "svelte-5z26om");
-    			add_location(ul, file$3, 65, 1, 1172);
-    			attr_dev(div, "class", div_class_value = "tooltip-menu " + /*parameter*/ ctx[0] + " svelte-5z26om");
-    			set_style(div, "left", /*xpos*/ ctx[1] + /*parent_width*/ ctx[2] + groupPadding + cell.padding + "px");
-    			add_location(div, file$3, 61, 0, 992);
+    			li1.textContent = "Join options";
+    			attr_dev(li0, "class", "svelte-3jen13");
+    			add_location(li0, file$3, 86, 4, 1587);
+    			attr_dev(li1, "class", "svelte-3jen13");
+    			add_location(li1, file$3, 87, 4, 1642);
+    			attr_dev(ul, "class", "svelte-3jen13");
+    			add_location(ul, file$3, 85, 3, 1578);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ul, anchor);
+    			append_dev(ul, li0);
+    			append_dev(ul, t1);
+    			append_dev(ul, li1);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(li0, "click", /*excludeOptions*/ ctx[2], false, false, false),
+    					listen_dev(li1, "click", /*joinOptions*/ ctx[3], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: noop$4,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(85:2) {#if selected_parameters === 1}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$3(ctx) {
+    	let div;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*selected_value*/ ctx[0] > 1) return create_if_block;
+    		return create_else_block_1;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			if_block.c();
+    			attr_dev(div, "class", "tooltip-menu svelte-3jen13");
+    			attr_dev(div, "id", "option-menu");
+    			add_location(div, file$3, 82, 0, 1471);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			append_dev(div, ul);
-    			append_dev(ul, li0);
-    			append_dev(ul, t1);
-    			append_dev(ul, li1);
-    			append_dev(ul, t3);
-    			append_dev(ul, li2);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(div, "mouseenter", /*handleMouseenter*/ ctx[3], false, false, false),
-    					listen_dev(div, "mouseleave", /*handleMouseleave*/ ctx[4], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
+    			if_block.m(div, null);
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*parameter*/ 1 && div_class_value !== (div_class_value = "tooltip-menu " + /*parameter*/ ctx[0] + " svelte-5z26om")) {
-    				attr_dev(div, "class", div_class_value);
-    			}
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
 
-    			if (dirty & /*xpos, parent_width*/ 6) {
-    				set_style(div, "left", /*xpos*/ ctx[1] + /*parent_width*/ ctx[2] + groupPadding + cell.padding + "px");
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div, null);
+    				}
     			}
     		},
     		i: noop$4,
     		o: noop$4,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			mounted = false;
-    			run_all(dispose);
+    			if_block.d();
     		}
     	};
 
@@ -35243,105 +35473,83 @@ var app = (function () {
 
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("Tooltip_parameter_menu", slots, []);
-    	let { parameter } = $$props;
-    	let { xpos } = $$props;
-    	let { parent_width } = $$props;
+    	validate_slots("Tooltip_option_menu", slots, []);
+    	const dispatch = createEventDispatcher();
+    	let selected_value;
+    	let selected_parameters;
+    	let option;
+
+    	selected.subscribe(value => {
+    		$$invalidate(0, selected_value = value);
+    	});
+
+    	multi_param.subscribe(value => {
+    		$$invalidate(1, selected_parameters = value);
+    	});
 
     	function handleMouseenter(event) {
     		select(this).transition().duration(0).style("visibility", "visible");
     	}
 
     	function handleMouseleave(event) {
-    		select(this).transition().duration(0.3).delay(200).style("visibility", "hidden");
+    		select(this).transition().duration(0.2).delay(100).style("visibility", "hidden");
     	}
 
-    	const writable_props = ["parameter", "xpos", "parent_width"];
+    	function excludeOptions() {
+    		dispatch("message", { action: "exclude" });
+    	}
+
+    	function joinOptions() {
+    		dispatch("message", { action: "join" });
+    	}
+
+    	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Tooltip_parameter_menu> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Tooltip_option_menu> was created with unknown prop '${key}'`);
     	});
-
-    	$$self.$$set = $$props => {
-    		if ("parameter" in $$props) $$invalidate(0, parameter = $$props.parameter);
-    		if ("xpos" in $$props) $$invalidate(1, xpos = $$props.xpos);
-    		if ("parent_width" in $$props) $$invalidate(2, parent_width = $$props.parent_width);
-    	};
 
     	$$self.$capture_state = () => ({
     		cell,
     		groupPadding,
     		d3,
-    		parameter,
-    		xpos,
-    		parent_width,
+    		selected,
+    		multi_param,
+    		createEventDispatcher,
+    		dispatch,
+    		selected_value,
+    		selected_parameters,
+    		option,
     		handleMouseenter,
-    		handleMouseleave
+    		handleMouseleave,
+    		excludeOptions,
+    		joinOptions
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("parameter" in $$props) $$invalidate(0, parameter = $$props.parameter);
-    		if ("xpos" in $$props) $$invalidate(1, xpos = $$props.xpos);
-    		if ("parent_width" in $$props) $$invalidate(2, parent_width = $$props.parent_width);
+    		if ("selected_value" in $$props) $$invalidate(0, selected_value = $$props.selected_value);
+    		if ("selected_parameters" in $$props) $$invalidate(1, selected_parameters = $$props.selected_parameters);
+    		if ("option" in $$props) option = $$props.option;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [parameter, xpos, parent_width, handleMouseenter, handleMouseleave];
+    	return [selected_value, selected_parameters, excludeOptions, joinOptions];
     }
 
-    class Tooltip_parameter_menu extends SvelteComponentDev {
+    class Tooltip_option_menu extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, { parameter: 0, xpos: 1, parent_width: 2 });
+    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "Tooltip_parameter_menu",
+    			tagName: "Tooltip_option_menu",
     			options,
     			id: create_fragment$3.name
     		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*parameter*/ ctx[0] === undefined && !("parameter" in props)) {
-    			console.warn("<Tooltip_parameter_menu> was created without expected prop 'parameter'");
-    		}
-
-    		if (/*xpos*/ ctx[1] === undefined && !("xpos" in props)) {
-    			console.warn("<Tooltip_parameter_menu> was created without expected prop 'xpos'");
-    		}
-
-    		if (/*parent_width*/ ctx[2] === undefined && !("parent_width" in props)) {
-    			console.warn("<Tooltip_parameter_menu> was created without expected prop 'parent_width'");
-    		}
-    	}
-
-    	get parameter() {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set parameter(value) {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get xpos() {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set xpos(value) {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get parent_width() {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set parent_width(value) {
-    		throw new Error("<Tooltip_parameter_menu>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -35579,70 +35787,61 @@ var app = (function () {
     	}
     }
 
-    const subscriber_queue = [];
-    /**
-     * Create a `Writable` store that allows both updating and reading by subscription.
-     * @param {*=}value initial value
-     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
-     */
-    function writable(value, start = noop$4) {
-        let stop;
-        const subscribers = [];
-        function set(new_value) {
-            if (safe_not_equal(value, new_value)) {
-                value = new_value;
-                if (stop) { // store is ready
-                    const run_queue = !subscriber_queue.length;
-                    for (let i = 0; i < subscribers.length; i += 1) {
-                        const s = subscribers[i];
-                        s[1]();
-                        subscriber_queue.push(s, value);
-                    }
-                    if (run_queue) {
-                        for (let i = 0; i < subscriber_queue.length; i += 2) {
-                            subscriber_queue[i][0](subscriber_queue[i + 1]);
-                        }
-                        subscriber_queue.length = 0;
-                    }
-                }
-            }
-        }
-        function update(fn) {
-            set(fn(value));
-        }
-        function subscribe(run, invalidate = noop$4) {
-            const subscriber = [run, invalidate];
-            subscribers.push(subscriber);
-            if (subscribers.length === 1) {
-                stop = start(set) || noop$4;
-            }
-            run(value);
-            return () => {
-                const index = subscribers.indexOf(subscriber);
-                if (index !== -1) {
-                    subscribers.splice(index, 1);
-                }
-                if (subscribers.length === 0) {
-                    stop();
-                    stop = null;
-                }
-            };
-        }
-        return { set, update, subscribe };
-    }
+    // CSS Styles
+    const parameters = css`
+	font-size: ${h1 + "px"};
+	font-family: 'Avenir Next';
+	text-transform: uppercase;
+	padding: 0px ${cell.padding/2 + "px"};
+	cursor: default;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: center;
+	width: 100%;
+`;
 
-    const state = writable(1);
+    const option_names = css`
+	font-size: ${h1 + "px"};
+	font-family: 'Avenir Next';
+	line-height: ${cell.width}px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: default;
+	height: 100%;
+	width: ${cell.width}px;
+	writing-mode: tb-rl; 
+	transform: rotate(-180deg);
+`;
 
-    const header_size = h1;
-    let selected_options = [];
+    const selected_style = css`
+	font-weight: 700;
+`;
 
+    const options_container = css`
+	fill: #ABB7C4;
+`;
+
+    const selected_option = css`
+	fill: #FF602B;
+`;
+
+    // Stores
     let state_value;
-
+    let selected_value;
     state.subscribe(value => {
     	state_value = value;
     });
+    selected.subscribe(value => {
+    	selected_value = value;
+    });
+    multi_param.subscribe(value => {
+    });
 
+    // global variables to store changes from interactions
+    let selected_options;
+    let option_xpos = [0];
 
+    // Event handler functions 
     function handleMouseenter(event, d) {
     	select("div.tooltip-menu." + d).transition()
     		.duration(0.3)
@@ -35657,57 +35856,103 @@ var app = (function () {
     		.style("visibility", "hidden");
     }
 
-    function handleSelection(event, d) {
+    function handleSelection(event, d, node, parameter) {
+    	let xpos = +select(node.parentNode).attr("x");
+    	let trans_xpos = select(node.parentNode.parentNode)
+    						.attr("transform")
+    						.replace(/[a-z()\s]/g, '')
+    						.split(",")
+    						.map(x => +x);
     	if (event.metaKey) {
-    		if (!selected_options.includes(d)) { 
-    			selected_options.push(d);
-    			select(this).attr("class", option_names + " " + selected);
+    		console.log(selected_options);
+    		if (!selected_options[parameter].includes(d)) { 
+    			selected_options[parameter].push(d);
+    			select(node).attr("class", option_names + " " + selected_style);
+
+    			// update store
+    			selected.update(n => n + 1);
+
+    			// add the position of the node being selected
+    			option_xpos.push((xpos + trans_xpos[0]));
     		} else {
-    			let index = selected_options.indexOf(d);
+    			let index = selected_options[parameter].indexOf(d);
     			if (index > -1) {
-    				selected_options.splice(index, 1);
+    				selected_options[parameter].splice(index, 1);
     			}
-    			select(this).attr("class", option_names);
+    			select(node).attr("class", option_names);
+    			selected.update(n => n - 1);
+
+    			// remove the position of the node being deselected
+    			option_xpos.splice(option_xpos.indexOf((xpos + trans_xpos[0])), 1);
     		}
     	}
+
+    	// update store if > 1;
+    	if (Object.entries(selected_options).map(i => i[1]).filter(i => i.length > 0).length == 1) {
+    		multi_param.set(1);
+    	} else {
+    		multi_param.set(0);
+    	}
+
+    	if (selected_value >= 1) {
+    		select("#option-menu")
+    			.style("visibility", "visible")
+    			.style("left", `${Math.max(...option_xpos) + 2 * cell.width}px`)
+    			.style("top", "20px");
+    	} else {
+    		select("#option-menu")
+    			.style("visibility", "hidden")
+    			.style("left", "0px")
+    			.style("top", "20px");
+    	}
+
+    	console.log(selected_value);
+    	console.log(selected_options);
     }
 
-    const parameters = css`
-	font-size: ${header_size + "px"};
-	font-family: 'Avenir Next';
-	text-transform: uppercase;
-	padding: 0px ${cell.padding/2 + "px"};
-	cursor: default;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-align: center;
-	width: 100%;
-`;
+    // Initialise UI items
+    function drawResultsMenu(m, vis_node, grid_node, y, x) {
+    	const menu = new Dropdown_menu({ 
+    		target: vis_node.node(),
+    		props: {
+    			items: m.outcome_vars()
+    		}
+    	});
 
-    const option_names = css`
-	font-size: ${header_size + "px"};
-	font-family: 'Avenir Next';
-	line-height: ${cell.width}px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	cursor: default;
-	height: 100%;
-	width: ${cell.width}px;
-	writing-mode: tb-rl; 
-	transform: rotate(-180deg);
-`;
+    	// update data when different option is selected using dropdown 
+    	menu.$on("message", event => {
+    		m.changeOutcomeVar(event.detail.text);
+    		m.prepareOutcomeData();
 
-    const selected = css`
-	font-weight: 700;
-`;
+    		m.draw([], vis_node, grid_node, y, x);
+    	});
+    }
 
-    const options_container = css`
-	fill: #ABB7C4;
-`;
+    // Initialise UI items
+    function drawOptionMenu(m, vis_node, grid_node, y, x) {
+    	const optionMenu = new Tooltip_option_menu({ 
+    			target: grid_node.node()
+    	});
 
-    const selected_option = css`
-	fill: #FF602B;
-`;
+    	optionMenu.$on("message", event => {	
+    		if (event.detail.action == "exclude") {
+    			let exclude = Object.entries(selected_options)
+    					.map( d => d[1].map( j => [d[0], j]) )
+    					.flat(1)
+    					.map( i => ({"parameter": i[0], "option": i[1]}) );
+
+    			m.draw(exclude, vis_node, grid_node, y, x);
+    		}
+
+    		// deselect everything and hide the menu;
+    		selected.set(0);
+    		selected_options = Object.keys(selected_options).reduce((acc, key) => {acc[key] = []; return acc; }, {});
+    		select("#option-menu")
+    			.style("visibility", "hidden")
+    			.style("left", "0px")
+    			.style("top", "20px");
+    	});
+    }
 
     class multiverseMatrix {
     	constructor (dat) {		
@@ -35717,6 +35962,14 @@ var app = (function () {
     		// meta data for the multiverse object
     		this.universes = [...new Set(dat.map(d => d['.universe']))];
     		this.size = this.universes.length;
+    		this.outcomeVar = dat[0]["results"].map(i => i["term"])[0]; // selects the first of the outcome vars
+    		this.gridData = null;
+    		this.outcomeData = null;
+    		this.exclude = [];
+    	}
+
+    	changeOutcomeVar(term) {
+    		this.outcomeVar = term;
     	}
 
     	parameters() {
@@ -35725,6 +35978,7 @@ var app = (function () {
     		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
 
     		let dat = this.data.map(function(d) { 
+    			// console.log( Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ) );	
     			return Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) );
     		});
 
@@ -35742,23 +35996,29 @@ var app = (function () {
     	// input: JSON multiverse object (this.data), parameters (this.parameters)
     	// output: rectangular data structure with columns corresponding to each parameter, 
     	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
-    	prepareGridData(term = null) {
+    	prepareData() {
+    		let parameters = [...Object.keys(this.parameters())];
+    		selected_options = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
+
+    		this.prepareGridData();
+    		this.prepareOutcomeData();
+    	}
+
+    	prepareGridData(exclude = []) {
     		// creating a shallow copy which is fine for here
-    		let select_vars = [...Object.keys(this.parameters())];
+    		let parameters = [...Object.keys(this.parameters())];
+    		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: d[i]}))) );
+    	}
 
-    		if (term == null) {
-    			term = this.outcome_vars()[0];
-    		}
+    	prepareOutcomeData(exclude = []) {
+    		// creating a shallow copy which is fine for here
+    		let term = this.outcomeVar;
 
-    		let gridData = this.data.map(function(d) { 
-    			let options = Object.assign({}, ...select_vars.map((i) => ({[i]: d[i]})));
-    			let outcomes = Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-    					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-    				));
-    			return Object.assign({}, options, outcomes);
+    		this.outcomeData = this.data.map(function(d) { 
+    			return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+    				i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+    			))
     		});
-
-    		return gridData;
     	}
 
     	// function for sorting the gridMatrix
@@ -35767,14 +36027,58 @@ var app = (function () {
     		
     	// }
 
-    	// // function from drawing the decision grid
-    	drawGrid (data, elem, xscale, yscale, margin) {
-    		// check if the number of terms visualised is the same as the number of universes
-    		if (data.length != this.size) {
-    			throw 'number of terms not equal to the number of universes universes!';
+
+    	draw (exclude = [], results_node, grid_node, y, x1, x2 = null) {
+    		let gridData = this.gridData;
+    		let	outcomeData = this.outcomeData;
+    		let results_container = results_node.select("svg");
+    		let grid_container = grid_node.select("svg");
+
+    		// update grid
+    		this.drawGrid(gridData, grid_container, x1, y);
+
+    		// update results
+    		this.drawResults(outcomeData, results_container, y);
+    	}
+
+    	update (exclude = [], results_node, grid_node, y, x1, x2 = null) {
+    		let outcomeData;
+    		let results_container = results_node.select("svg");
+    		grid_node.select("svg");
+    		let params = this.parameters();
+
+    		// first exclude points from data
+    		if (exclude.length > 0) {
+    			let toFilter = this.gridData.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
+    			this.gridData.filter( (i, n) => toFilter[n] );
+    			outcomeData = this.outcomeData.filter( (i, n) => toFilter[n] );
+    		} else {
+    			this.gridData;
+    			outcomeData = this.outcomeData;
     		}
 
+    		// update grid
+    		selectAll("g.option-value").remove();
+    		Object.keys(params).forEach( 
+    			(d, i) => this.drawColumn(data, params, i, elem, xscale, yscale) 
+    		);
+
+    		// update results
+    		this.drawResults(outcomeData, results_container, y);
+    	}
+
+    	// // function from drawing the decision grid
+    	drawGrid (data, elem, xscale, yscale) {
+    		// check if the number of terms visualised is the same as the number of universes
+    		// if (data.length != this.size) {
+    		// 	throw 'number of terms not equal to the number of universes universes!';
+    		// }
     		let params = this.parameters();
+    		elem.node();
+
+
+    		selectAll("g.option-value").remove();
+    		selectAll("g.option-name").remove();
 
     		this.drawHeaders(params, xscale, elem, margin);
     		Object.keys(params).forEach( 
@@ -35803,18 +36107,17 @@ var app = (function () {
     			.on("mouseout", handleMouseleave);
 
     		param_names.each(function(d, i) {
-    			let node = select("div.grid").node();
-    			let xpos = (i == 0) ? 0 : groupPadding*i + col_idx[i]*(cell.width+cell.padding) - (i-1)*cell.padding;
-    			let w = (cell.width + cell.padding/2) * options.map(d => d.length)[i];
+    			select("div.grid").node();
+    			(cell.width + cell.padding/2) * options.map(d => d.length)[i];
 
-    			new Tooltip_parameter_menu({ 
-    				target: node,
-    				props: {
-    					parameter: d,
-    					xpos: xpos,
-    					parent_width: w
-    				}
-    			});
+    			// new Tooltip({ 
+    			// 	target: node,
+    			// 	props: {
+    			// 		parameter: d,
+    			// 		xpos: xpos,
+    			// 		parent_width: w
+    			// 	}
+    			// });
     		});
     	}
 
@@ -35826,9 +36129,9 @@ var app = (function () {
     		let ypos;
 
     		if (state_value == 0) {
-    			ypos = 0;
+    			ypos = 4 * cell.padding;
     		} else {
-    			ypos = namingDim + cell.padding;
+    			ypos = namingDim + 4 * cell.padding;
     		}
 
     		xscale.domain(sequence(options.map(d => d.length)[col]))
@@ -35849,7 +36152,7 @@ var app = (function () {
     			.append("xhtml:div")
     			.attr("class", option_names)
     			.text(d => d)
-    			.on("click", handleSelection);
+    			.on("click", function(event, d) { handleSelection(event, d, this, param); });
 
     		let optionCell = grid_plot.append("g")
     			.attr("class", "option-value")
@@ -35884,15 +36187,14 @@ var app = (function () {
 
     		select("g.outcomePanel").remove();
 
-
     		let xscale = linear()
     			.domain(extent$1(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
     			.range([margin.left, outVisWidth + margin.left]);
 
     		if (state_value == 0) {
-    			ypos = 0;
+    			ypos = 4 * cell.padding;
     		} else {
-    			ypos = namingDim + cell.padding;
+    			ypos = namingDim + 4 * cell.padding;
     		}
 
     		let outcomePlot = elem.append("g")
@@ -35966,19 +36268,19 @@ var app = (function () {
     			div1 = element("div");
     			div0 = element("div");
     			attr_dev(p, "class", "svelte-1pkk3b3");
-    			add_location(p, file$1, 128, 1, 2828);
+    			add_location(p, file$1, 133, 1, 2882);
     			attr_dev(div0, "class", "state-indicator svelte-1pkk3b3");
     			set_style(div0, "width", /*r*/ ctx[1] + "px");
     			set_style(div0, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div0, "active", /*active*/ ctx[0]);
-    			add_location(div0, file$1, 130, 2, 2953);
+    			add_location(div0, file$1, 135, 2, 3007);
     			attr_dev(div1, "class", "toggle-button svelte-1pkk3b3");
     			set_style(div1, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div1, "active", /*active*/ ctx[0]);
-    			add_location(div1, file$1, 129, 1, 2854);
+    			add_location(div1, file$1, 134, 1, 2908);
     			attr_dev(div2, "class", "toggle svelte-1pkk3b3");
     			set_style(div2, "margin", margin.top + "px 0px");
-    			add_location(div2, file$1, 122, 0, 2674);
+    			add_location(div2, file$1, 127, 0, 2728);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -36033,28 +36335,31 @@ var app = (function () {
     	function handleClick() {
     		$$invalidate(0, active = !active);
     		let t = 400;
+    		let ypos;
 
     		if (active) {
+    			ypos = 4 * cell.padding;
     			state.set(0);
     			selectAll("g.option-name").transition().duration(t).ease(cubicInOut).style("opacity", 0);
 
     			selectAll("g.option-value").each(function (d) {
     				let coords = select(this).attr("transform").replace(/[a-z()\s]/g, "").split(",").map(x => +x);
-    				select(this).transition().duration(t).ease(cubicInOut).attr("transform", `translate(${coords[0]}, 0)`);
+    				select(this).transition().duration(t).ease(cubicInOut).attr("transform", `translate(${coords[0]}, ${ypos})`);
     			});
 
-    			selectAll("g.outcomePanel").transition().duration(t).ease(cubicInOut).attr("transform", `translate(0, 0)`);
+    			selectAll("g.outcomePanel").transition().duration(t).ease(cubicInOut).attr("transform", `translate(0, ${ypos})`);
     		} else {
+    			ypos = namingDim + 4 * cell.padding;
     			state.set(1);
     			selectAll("g.option-name").transition().duration(t).ease(cubicInOut).style("opacity", 1);
 
     			// .attr("visibility", "visible");
     			selectAll("g.option-value").each(function (d) {
     				let coords = select(this).attr("transform").replace(/[a-z()\s]/g, "").split(",").map(x => +x);
-    				select(this).transition().duration(t).ease(cubicInOut).attr("transform", `translate(${coords[0]}, ${namingDim + cell.padding})`);
+    				select(this).transition().duration(t).ease(cubicInOut).attr("transform", `translate(${coords[0]}, ${ypos})`);
     			});
 
-    			selectAll("g.outcomePanel").transition().duration(t).ease(cubicInOut).attr("transform", `translate(0, ${namingDim + cell.padding})`);
+    			selectAll("g.outcomePanel").transition().duration(t).ease(cubicInOut).attr("transform", `translate(0, ${ypos})`);
     		}
     	}
 
@@ -36149,34 +36454,34 @@ var app = (function () {
     			svg1 = svg_element("svg");
     			set_style(h1, "margin", margin.top + "px 0px");
     			attr_dev(h1, "class", "svelte-mmjyk4");
-    			add_location(h1, file, 108, 4, 2594);
+    			add_location(h1, file, 96, 4, 2405);
     			attr_dev(div0, "class", "col-sm-8");
-    			add_location(div0, file, 107, 3, 2567);
+    			add_location(div0, file, 95, 3, 2378);
     			attr_dev(div1, "class", "col-sm-3");
-    			add_location(div1, file, 110, 3, 2676);
+    			add_location(div1, file, 98, 3, 2487);
     			attr_dev(div2, "class", "row");
-    			add_location(div2, file, 106, 2, 2546);
+    			add_location(div2, file, 94, 2, 2357);
     			set_style(div3, "margin", "40px 0");
-    			add_location(div3, file, 114, 2, 2734);
+    			add_location(div3, file, 102, 2, 2545);
     			attr_dev(svg0, "height", /*h*/ ctx[0]);
     			attr_dev(svg0, "width", /*w1*/ ctx[2]);
     			attr_dev(svg0, "class", "svelte-mmjyk4");
-    			add_location(svg0, file, 116, 3, 2823);
+    			add_location(svg0, file, 104, 3, 2634);
     			attr_dev(div4, "class", "vis svelte-mmjyk4");
     			set_style(div4, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div4, file, 115, 2, 2771);
+    			add_location(div4, file, 103, 2, 2582);
     			attr_dev(svg1, "height", /*h*/ ctx[0]);
     			attr_dev(svg1, "width", /*w2*/ ctx[3]);
     			attr_dev(svg1, "class", "svelte-mmjyk4");
-    			add_location(svg1, file, 120, 4, 2970);
+    			add_location(svg1, file, 108, 4, 2781);
     			attr_dev(div5, "class", "grid svelte-mmjyk4");
     			set_style(div5, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div5, file, 119, 3, 2916);
+    			add_location(div5, file, 107, 3, 2727);
     			attr_dev(div6, "class", "grid-container svelte-mmjyk4");
-    			add_location(div6, file, 118, 2, 2884);
+    			add_location(div6, file, 106, 2, 2695);
     			attr_dev(div7, "class", "container");
-    			add_location(div7, file, 105, 1, 2518);
-    			add_location(main, file, 104, 0, 2510);
+    			add_location(div7, file, 93, 1, 2329);
+    			add_location(main, file, 92, 0, 2321);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -36196,12 +36501,12 @@ var app = (function () {
     			append_dev(div7, t3);
     			append_dev(div7, div4);
     			append_dev(div4, svg0);
-    			/*svg0_binding*/ ctx[5](svg0);
+    			/*svg0_binding*/ ctx[6](svg0);
     			append_dev(div7, t4);
     			append_dev(div7, div6);
     			append_dev(div6, div5);
     			append_dev(div5, svg1);
-    			/*svg1_binding*/ ctx[6](svg1);
+    			/*svg1_binding*/ ctx[7](svg1);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -36233,8 +36538,8 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
     			destroy_component(toggle);
-    			/*svg0_binding*/ ctx[5](null);
-    			/*svg1_binding*/ ctx[6](null);
+    			/*svg0_binding*/ ctx[6](null);
+    			/*svg1_binding*/ ctx[7](null);
     		}
     	};
 
@@ -36250,6 +36555,7 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let size;
     	let h;
     	let w1;
     	let w2;
@@ -36257,41 +36563,26 @@ var app = (function () {
     	let x_grid;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
-    	const m = new multiverseMatrix(data);
+    	const m = new multiverseMatrix(data$1);
+    	m.prepareData();
     	const params = m.parameters();
     	let svg;
     	const windowHeight = window.innerHeight - 64 + "px";
-    	const size = m.size;
+
+    	// const size = m.size;
     	const cols = [...Object.keys(m.parameters())].length;
+
     	const n_options = Object.values(params).map(d => d.length).reduce((a, b) => a + b, 0);
+    	let gridData = m.gridData;
 
-    	// function resize() {
-    	// 	({ width, height } = svg.getBoundingClientRect());
-    	// 	console.log('resize()', width, height);
-    	// }
     	onMount(() => {
-    		const res_container = select("div.vis").select("svg");
-    		const grid_container = select("div.grid").select("svg");
-
-    		const menu = new Dropdown_menu({
-    				target: select("div.vis").node(),
-    				props: { items: m.outcome_vars() }
-    			});
-
-    		// filter and build the grid for the particular term
-    		let gridData = m.prepareGridData();
-
-    		// update data when different option is selected using dropdown 
-    		menu.$on("message", event => {
-    			// console.log(event.detail.text);
-    			gridData = m.prepareGridData(event.detail.text);
-
-    			m.drawResults(gridData, res_container, y);
-    		});
-
-    		m.drawGrid(gridData, grid_container, x_grid, y, margin);
-    		m.drawResults(gridData, res_container, y);
-    	});
+    		const results_node = select("div.vis");
+    		const grid_node = select("div.grid");
+    		drawResultsMenu(m, results_node, grid_node, y, x_grid);
+    		drawOptionMenu(m, results_node, grid_node, y, x_grid);
+    		m.draw([], results_node, grid_node, y, x_grid);
+    	}); // m.drawResults(gridData, res_container.select("svg"), y);
+    	// m.drawGrid(gridData, grid_container.select("svg"), x_grid, y);
 
     	const writable_props = [];
 
@@ -36316,21 +36607,26 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		onMount,
     		d3,
-    		data: data$1,
+    		data: data$2,
     		multiverseMatrix,
+    		drawResultsMenu,
+    		drawOptionMenu,
     		cell,
     		groupPadding,
     		outVisWidth,
     		margin,
     		Toggle: Toggle_button,
+    		Tooltip: Tooltip_option_menu,
     		Dropdown: Dropdown_menu,
+    		OptionTooltip: Tooltip_option_menu,
     		m,
     		params,
     		svg,
     		windowHeight,
-    		size,
     		cols,
     		n_options,
+    		gridData,
+    		size,
     		h,
     		w1,
     		w2,
@@ -36340,6 +36636,8 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ("svg" in $$props) $$invalidate(1, svg = $$props.svg);
+    		if ("gridData" in $$props) $$invalidate(14, gridData = $$props.gridData);
+    		if ("size" in $$props) $$invalidate(5, size = $$props.size);
     		if ("h" in $$props) $$invalidate(0, h = $$props.h);
     		if ("w1" in $$props) $$invalidate(2, w1 = $$props.w1);
     		if ("w2" in $$props) $$invalidate(3, w2 = $$props.w2);
@@ -36352,16 +36650,20 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*h*/ 1) {
+    		if ($$self.$$.dirty & /*size*/ 32) {
+    			$$invalidate(0, h = size * cell.height);
+    		}
+
+    		if ($$self.$$.dirty & /*size, h*/ 33) {
     			y = band().domain(sequence(size)).range([margin.top, h - margin.bottom]).padding(0.15);
     		}
     	};
 
-    	$$invalidate(0, h = size * cell.height);
+    	$$invalidate(5, size = gridData.length);
     	$$invalidate(2, w1 = outVisWidth + margin.left);
     	$$invalidate(3, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
     	x_grid = band();
-    	return [h, svg, w1, w2, windowHeight, svg0_binding, svg1_binding];
+    	return [h, svg, w1, w2, windowHeight, size, svg0_binding, svg1_binding];
     }
 
     class App extends SvelteComponentDev {

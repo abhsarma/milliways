@@ -9,8 +9,11 @@
 	function handleClick() {
 		active = !active;
 		let t = 400;
+		let ypos;
 
 		if (active) {
+			ypos = 4 * cell.padding;
+
 			state.set(0);
 			d3.selectAll("g.option-name")
 				.transition()
@@ -25,16 +28,18 @@
 						.transition()
 						.duration(t)
 						.ease(d3.easeCubic)
-						.attr("transform", `translate(${coords[0]}, 0)`)
+						.attr("transform", `translate(${coords[0]}, ${ypos})`)
 				})
 
 			d3.selectAll("g.outcomePanel")
 				.transition()
 				.duration(t)
 				.ease(d3.easeCubic)
-				.attr( "transform", `translate(0, 0)`)
+				.attr( "transform", `translate(0, ${ypos})`)
 
 		} else { 
+			ypos = namingDim + 4 * cell.padding;
+
 			state.set(1);
 			d3.selectAll("g.option-name")
 				.transition()
@@ -50,14 +55,14 @@
 						.transition()
 						.duration(t)
 						.ease(d3.easeCubic)
-						.attr("transform", `translate(${coords[0]}, ${namingDim + cell.padding})`)
+						.attr("transform", `translate(${coords[0]}, ${ypos})`)
 				})
 
 			d3.selectAll("g.outcomePanel")
 				.transition()
 				.duration(t)
 				.ease(d3.easeCubic)
-				.attr( "transform", `translate(0, ${namingDim + cell.padding})`)
+				.attr( "transform", `translate(0, ${ypos})`)
 		}
 	}
 </script>

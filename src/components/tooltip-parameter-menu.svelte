@@ -13,8 +13,8 @@
 
 	function handleMouseleave(event) {
 		d3.select(this).transition()
-			.duration(0.3)
-			.delay(200)
+			.duration(0.2)
+			.delay(100)
 			.style("visibility", "hidden")
 	}
 </script>
@@ -28,14 +28,10 @@
 		line-height: 14px;
 	}
 
-	li {
-		padding: 4px 10px;
-	}
-
 	.tooltip-menu {
 		visibility: hidden;
 		min-width: 120px;
-		min-height: 120px;
+		padding: 4px 10px;
 		background-color: #4a4a4a;
 		color: #fff;
 		border-radius: 2px;
