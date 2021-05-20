@@ -1,6 +1,6 @@
 <script>
 	import * as d3 from 'd3';
-	import { text, margin, namingDim, cell } from './dimensions.js'
+	import { text, header1, namingDim, cell } from './dimensions.js'
 	import { state } from './stores.js';
 
 	let active = false;
@@ -125,7 +125,7 @@
 	}
 </style>
 
-<div class="toggle" style="margin: {margin.top}px 0px">
+<div class="toggle" style="margin: {header1.top}px 0px">
 	<!-- {#if state == 0}
 		<p>hide option names</p>
 	{:else}
