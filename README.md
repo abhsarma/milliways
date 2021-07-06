@@ -15,7 +15,7 @@ npm install
 
 ## Development
 
-To contribute to this repository please pick an issue, and reference it in the branch name. Once you have solved it, please make a pull request and assign @abhsarma to review the code!
+To contribute to this repository please pick an issue, assign it to yourself and reference it in the branch name. Once you have solved it, please make a pull request and assign @abhsarma to review the code!
 
 To watch for changes and continually rebuild the package (this is useful if you're using npm link to test out changes in a project locally):
 
