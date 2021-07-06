@@ -4,6 +4,6 @@ export const groupPadding = 20;
 export const header1 = {size: 14, top: 30, right: 0, bottom: 0, left: 0};
 export const text = 12;
 export const outVisWidth = 240;
-export const margin = {top: 40, right: 0, bottom: 15, left: 40};
+export const margin = {top: 40, right: 20, bottom: 15, left: 40};
 export const iconSize = 24;
 export const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;

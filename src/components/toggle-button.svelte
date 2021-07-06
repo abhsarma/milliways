@@ -1,6 +1,6 @@
 <script>
 	import * as d3 from 'd3';
-	import { text, header1, namingDim, cell } from './dimensions.js'
+	import { text, header1, namingDim, cell, iconSize } from './dimensions.js'
 	import { state } from './stores.js';
 
 	let active = false;
@@ -12,10 +12,10 @@
 		let ypos;
 
 		if (active) {
-			ypos = 4 * cell.padding;
+			ypos = 4*cell.padding + 2*iconSize;
 
 			state.set(0);
-			d3.selectAll("g.option-name")
+			d3.selectAll("div.option-label")
 				.transition()
 				.duration(t)
 				.ease(d3.easeCubic)
@@ -41,12 +41,11 @@
 			ypos = namingDim + 4 * cell.padding;
 
 			state.set(1);
-			d3.selectAll("g.option-name")
+			d3.selectAll("div.option-label")
 				.transition()
 				.duration(t)
 				.ease(d3.easeCubic)
 				.style("opacity", 1);
-				// .attr("visibility", "visible");
 
 			d3.selectAll("g.option-value")
 				.each(function(d){

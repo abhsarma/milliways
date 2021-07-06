@@ -16,6 +16,7 @@
 <style>
 	div {
 		position: absolute;
+		background-color: #f7f7f7;
 	}
 
 	select {
@@ -28,9 +29,8 @@
 	}
 </style>
 
-<div>
-	<!-- <select value={selected} on:change="{() => answer = ''}"> -->
-	<select bind:value={selected} on:change={updateOutcome} style="width: ${outVisWidth + margin.left - 16}px">
+<div style="width:{outVisWidth + margin.left}px">
+	<select bind:value={selected} on:change={updateOutcome} style="width:{outVisWidth - 16}px">
 		{#each items as outcome}
 			<option value={outcome}>
 				{outcome}
