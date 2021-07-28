@@ -415,7 +415,7 @@ class multiverseMatrix {
 
 		// update results
 		// this.drawCI(outcomeData, results_node, grid_node, y);
-		vis_fun(this.outcomeData, results_node, grid_node, this.size, this.parameters(), y);
+		vis_fun(this.outcomeData, results_node, this.size, this.parameters(), y);
 	}
 
 	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
@@ -435,7 +435,7 @@ class multiverseMatrix {
 		);
 
 		// update results
-		vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
+		vis_fun(outcomeData, results_node, this.size, this.parameters(), y);
 
 		Object.values(options_to_exclude)
 			.flat()
@@ -454,11 +454,11 @@ function drawGrid (data, m_obj, results_node, grid_node, yscale, x) {
 	d3.selectAll("g.option-value").remove();
 	d3.selectAll("g.option-name").remove();
 
-	drawHeaders(params, results_node, grid_node, margin, x);
+	drawHeaders(params, grid_node, x);
 	drawCols(data, m_obj, results_node, grid_node, yscale, x);
 }
 
-function drawHeaders(params, results_node, grid_node, margin, xscale) {
+function drawHeaders(params, grid_node, xscale) {
 	let plot = grid_node.select("svg");
 
 	let options = Object.values(params);
@@ -701,7 +701,7 @@ function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale,
 }
 
 
-export function CI (data, results_node, grid_node, size, parameters, yscale) {
+export function CI (data, results_node, size, parameters, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	const width = parameters.length * (cell.width + cell.padding); // to fix
@@ -779,13 +779,13 @@ export function CI (data, results_node, grid_node, size, parameters, yscale) {
 		.attr("fill", "#333333");
 }
 
-export function CDF (data, results_node, grid_node, size, parameters, yscale) {
+export function CDF (data, results_node, size, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	const width = parameters.length * (cell.width + cell.padding); // to fix
+	// const width = parameters.length * (cell.width + cell.padding); // to fix
 	let ypos;
 
-	d3.select("g.outcomePanel").remove();
+	results_plot.select("g.outcomePanel").remove();
 
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))
