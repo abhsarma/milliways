@@ -210830,56 +210830,6 @@ var app = (function () {
     let options_to_exclude = [];
     let options_to_join = [];
 
-    function any_common(arr) {
-    	let new_arr = arr.forEach((d, i) => {
-    		let new_arr = [...arr];
-    		let common = new_arr.splice(i, 1).map(x => d.map(item => x.includes(item))).reduce((a, b) => (a||b));
-    		console.log(common);
-    		return common
-    	});
-
-    	console.log(new_arr);
-    	return (new_arr);
-    }
-
-    console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]));
-
-
-    function recurseCombine(input) {
-    	let arr = JSON.parse(JSON.stringify(input));
-    	let n = arr.length;
-    	if ((n == 1)){ //} || no_common(arr)) {
-    		return arr
-    	} else {
-    		let contains = arr[0].map(d => arr[1].includes(d)).reduce((a,b) => (a||b)); // do the first two lists have any elements in common?
-    		if (contains) {
-    			// if they do, combine them
-    			let new_arr = [[...new Set(arr[0].concat(arr[1]))]].concat(arr.slice(2, (n + 1)));
-    			console.log(new_arr);
-    			return recurseCombine(new_arr);
-    		} else {
-    			return [arr[0]].concat(recurseCombine(arr.slice(1, (n+1))))
-    		}
-    	}
-    }
-
-    function combineJoinOptions(input_array) {
-    	let arr = JSON.parse(JSON.stringify(input_array));
-    	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
-    	let new_arr = {};
-
-    	for (let i in params) {
-    		let input = arr.filter(d => (d['parameter'] == params[i]))
-    						.map(d => d['options']);
-    		console.log(input);
-    		let output = recurseCombine(input);
-    		// console.log(output);
-    		new_arr[params[i]] = output;
-    	}
-
-    	return Object.entries(new_arr);
-    }
-
     // Initialise UI items
     function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
     	const menu = new Dropdown_menu({ 
@@ -210896,144 +210846,6 @@ var app = (function () {
 
     		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
     	});
-    }
-
-    function which_idx(option_list, curr_options) {
-    	return option_list.map((d, i) => {
-    		if (curr_options.includes(d)) {
-    			return i;
-    		} else {
-    			return null;
-    		}
-    	}).filter(i => (i != null))
-    }
-
-    function updateData(gridData, outcomeData, params, vis_fun, join_data = [], exclude_data = []) {
-    	// deep copy data structures
-    	let toJoin = JSON.parse(JSON.stringify(join_data));
-    	let toExclude = JSON.parse(JSON.stringify(exclude_data));
-    	let parameters = JSON.parse(JSON.stringify(params));
-
-    	// console.log(toJoin);
-    	let combine = combineJoinOptions(toJoin);
-
-    	let dat1 = updateGridData(gridData, parameters, combine, toJoin, toExclude);
-    	let dat2 = updateOutcomeData(gridData, outcomeData, parameters, vis_fun, combine, toJoin, toExclude);
-
-    	// sortByOutcome(dat1, dat2);
-    	// sortInGroups(dat1, dat2);
-
-    	return [dat1, dat2]
-    }
-
-    function updateGridData(gridData, parameters, combine, toJoin = [], toExclude = []) {
-    	// deep copy data structures
-    	let g_data = JSON.parse(JSON.stringify(gridData));
-
-    	combine
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
-
-    	let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1]}) );
-
-    	if (exclude.length > 0) {
-    		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-    		g_data = g_data.filter( (i, n) => toFilter[n] );
-    	}
-
-    	if (combine.length > 0) {
-    		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-    						.flat()
-    						.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-
-    		let vec = g_data.map((d, i) => {
-    			let options = Object.values(d).flat();
-    			groups.forEach(x => {
-    					let includes = options.map(d => x['group'].includes(d)).reduce((a, b) => (a || b));
-    					if (includes) {
-    						d[x['parameter']] = x['group'];
-    					}
-    				});
-    			return d
-    		});
-
-    		let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
-
-    		let non_duplicates = duplicates_data.map((d, i) => {
-    			return duplicates_data.indexOf(d) == i;
-    		});
-
-    		g_data = vec.filter((d, i) => non_duplicates[i]);
-    	}
-
-    	return g_data;
-    }
-
-    function updateOutcomeData(gridData, outcomeData, parameters, vis_fun, combine, toJoin = [], toExclude = []) {
-    	// deep copy data structures
-    	let g_data = JSON.parse(JSON.stringify(gridData));
-    	let o_data = JSON.parse(JSON.stringify(outcomeData));
-    	let size = g_data.length;
-    	let option_list = Object.entries(parameters).map(d => d[1]);
-
-    	let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1]}) );
-
-    	if (exclude.length > 0) {
-    		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-
-    		g_data = g_data.filter( (i, n) => toFilter[n] );
-    		o_data = o_data.filter( (i, n) => toFilter[n] );
-    	}
-
-    	if (combine.length > 0) {
-    		let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
-    						.flat()
-    						.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-
-    		let grouping_vector = g_data.map((d, i) => {
-    			let options = Object.values(d).flat();
-    			let idx = option_list.map(x => which_idx(x, options)).flat();
-    			let g = groups$1
-    				.map(x => {
-    					let includes = options.map(d => x['group'].includes(d)); // .reduce((a, b) => (a || b));
-    					return [includes.indexOf(true), x['id']];
-    				});
-
-    			g.forEach(x => {
-    				if (x[0] > -1) {
-    					idx[x[0]] = size + x[1];
-    				}
-    			});
-
-    			return JSON.stringify(idx);
-    		});
-
-    		// console.log(grouping_vector);
-
-    		o_data = groups(
-    				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
-    				d => d.group
-    			).map(d => d[1].map(x => {
-    				delete x.group;
-    				return Object.values(x).flat();
-    			}))
-    			.map(x => {
-    				let mod = rollups(x.flat(), v => {
-    					return [min$2(v, d => d[1]), max$3(v, d => d[1])]
-    				}, d => d[0]);
-    				return mod
-    			})
-    			.map(x => x.map(p => p.flat()));
-    	}
-
-    	return o_data
     }
 
     class multiverseMatrix {
@@ -211111,44 +210923,50 @@ var app = (function () {
     			this.outcomeData = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
     		}
     	}
-
-    	draw (selected_options = [], results_node, grid_node, vis_fun, y, x) {
-    		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, [], selected_options);
-
-    		// update grid
-    		drawGrid(gridData, this, results_node, grid_node, y, x);
-
-    		// update results
-    		// this.drawCI(outcomeData, results_node, grid_node, y);
-    		vis_fun(this.outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-    	}
-
-    	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
-    		let params = this.parameters();
-    		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, toJoin, toExclude);
-
-    		let options = Object.values(params);
-    		let colWidth = max$3(options.map(d => d.length)) * (cell.width + cell.padding);
-    		let x2 = band()
-    			.domain(sequence(max$3(options.map(d => d.length))))
-    			.range( [0, colWidth] );
-
-    		// update grid
-    		selectAll("g.option-value").remove();		
-    		Object.keys(params).forEach( 
-    			(d, i) => drawColOptions(gridData, this, d, results_node, grid_node, y, x, x2)
-    		);
-
-    		// update results
-    		vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-
-    		Object.values(options_to_exclude)
-    			.flat()
-    			.forEach(d => {
-    				selectAll(`rect.${d}`).style("opacity", 0.2);
-    			});
-    	}
     }
+
+    function draw (m, selected_options = [], results_node, grid_node, vis_fun, y, x) {
+    	let parameters = m.parameters();
+    	let gridData = m.gridData;
+    	let outcomeData = m.outcomeData;
+    	let size = m.size;
+
+    	console.log(outcomeData);
+    	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
+
+    	// update grid
+    	drawGrid(gridData, m, results_node, grid_node, y, x);
+
+    	// update results
+    	// this.drawCI(outcomeData, results_node, grid_node, y);
+    	vis_fun(outcomeData, results_node, grid_node, size, parameters, y);
+    }
+
+    // export function	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
+    // 	let params = parameters();
+    // 	let [gridData, outcomeData] = updateData(gridData, outcomeData, parameters(), vis_fun, toJoin, toExclude);
+
+    // 	let options = Object.values(params);
+    // 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
+    // 	let x2 = d3.scaleBand()
+    // 		.domain(d3.range(d3.max(options.map(d => d.length))))
+    // 		.range( [0, colWidth] )
+
+    // 	// update grid
+    // 	d3.selectAll("g.option-value").remove();		
+    // 	Object.keys(params).forEach( 
+    // 		(d, i) => drawColOptions(gridData, m, d, results_node, grid_node, y, x, x2)
+    // 	);
+
+    // 	// update results
+    // 	vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
+
+    // 	Object.values(options_to_exclude)
+    // 		.flat()
+    // 		.forEach(d => {
+    // 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
+    // 		})
+    // }
 
     // function from drawing the decision grid
     function drawGrid (data, m_obj, results_node, grid_node, yscale, x) {
@@ -212115,35 +211933,35 @@ var app = (function () {
     			div5 = element("div");
     			svg1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 140, 1, 3456);
+    			add_location(div0, file, 140, 1, 3466);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-mmjyk4");
-    			add_location(h1, file, 144, 4, 3558);
+    			add_location(h1, file, 144, 4, 3568);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 143, 3, 3531);
+    			add_location(div1, file, 143, 3, 3541);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 146, 3, 3641);
+    			add_location(div2, file, 146, 3, 3651);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 142, 2, 3510);
+    			add_location(div3, file, 142, 2, 3520);
     			attr_dev(svg0, "height", /*h*/ ctx[0]);
     			attr_dev(svg0, "width", /*w1*/ ctx[2]);
     			attr_dev(svg0, "class", "svelte-mmjyk4");
-    			add_location(svg0, file, 151, 3, 3751);
+    			add_location(svg0, file, 151, 3, 3761);
     			attr_dev(div4, "class", "vis svelte-mmjyk4");
     			set_style(div4, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div4, file, 150, 2, 3699);
+    			add_location(div4, file, 150, 2, 3709);
     			attr_dev(svg1, "height", /*h*/ ctx[0]);
     			attr_dev(svg1, "width", /*w2*/ ctx[3]);
     			attr_dev(svg1, "class", "svelte-mmjyk4");
-    			add_location(svg1, file, 155, 4, 3898);
+    			add_location(svg1, file, 155, 4, 3908);
     			attr_dev(div5, "class", "grid svelte-mmjyk4");
     			set_style(div5, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div5, file, 154, 3, 3844);
+    			add_location(div5, file, 154, 3, 3854);
     			attr_dev(div6, "class", "grid-container svelte-mmjyk4");
-    			add_location(div6, file, 153, 2, 3812);
+    			add_location(div6, file, 153, 2, 3822);
     			attr_dev(div7, "class", "container");
-    			add_location(div7, file, 141, 1, 3482);
-    			add_location(main, file, 139, 0, 3448);
+    			add_location(div7, file, 141, 1, 3492);
+    			add_location(main, file, 139, 0, 3458);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212260,7 +212078,7 @@ var app = (function () {
     		drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
 
     		// drawOptionMenu(m, results_node, grid_node, y, x_grid);
-    		m.draw([], results_node, grid_node, vis, y, x_params); //, x_opts);
+    		draw(m, [], results_node, grid_node, vis, y, x_params); //, x_opts);
 
     		let isSyncingLeftScroll = false;
     		let isSyncingRightScroll = false;
@@ -212311,6 +212129,7 @@ var app = (function () {
     		d3,
     		data,
     		multiverseMatrix,
+    		draw,
     		drawResultsMenu,
     		CI,
     		CDF,

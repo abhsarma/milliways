@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { drawResultsMenu, CI, CDF } from './components/multiverseMatrix.js';
+	import multiverseMatrix, { draw, drawResultsMenu, CI, CDF } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
 	import Tooltip from './components/tooltip-option-menu.svelte'
@@ -67,7 +67,7 @@
 		drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
 		// drawOptionMenu(m, results_node, grid_node, y, x_grid);
 
-		m.draw([], results_node, grid_node, vis, y, x_params); //, x_opts);
+		$: draw(m, [], results_node, grid_node, vis, y, x_params); //, x_opts);
 
 
 		let isSyncingLeftScroll = false;
