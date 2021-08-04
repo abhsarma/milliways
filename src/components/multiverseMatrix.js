@@ -410,21 +410,20 @@ class multiverseMatrix {
 
 export default multiverseMatrix
 
-export function draw (m, selected_options = [], results_node, grid_node, vis_fun, y, x) {
+export function draw (m, selected_options = [], grid_node, vis_fun, y, x) {
 	let parameters = m.parameters();
 	let gridData = m.gridData;
 	let outcomeData = m.outcomeData;
 	let size = m.size;
 
-	console.log(outcomeData);
 	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
 
 	// update grid
-	drawGrid(gridData, m, results_node, grid_node, y, x);
+	drawGrid(gridData, m, grid_node, y, x);
 
 	// update results
 	// this.drawCI(outcomeData, results_node, grid_node, y);
-	vis_fun(outcomeData, results_node, grid_node, size, parameters, y);
+	// vis_fun(outcomeData, results_node, grid_node, size, parameters, y);
 }
 
 // export function	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
@@ -454,17 +453,17 @@ export function draw (m, selected_options = [], results_node, grid_node, vis_fun
 // }
 
 // function from drawing the decision grid
-function drawGrid (data, m_obj, results_node, grid_node, yscale, x) {
+function drawGrid (data, m_obj, grid_node, yscale, x) {
 	let params = m_obj.parameters();
 
 	d3.selectAll("g.option-value").remove();
 	d3.selectAll("g.option-name").remove();
 
-	drawHeaders(params, results_node, grid_node, margin, x);
-	drawCols(data, m_obj, results_node, grid_node, yscale, x);
+	drawHeaders(params, grid_node, x);
+	drawCols(data, m_obj, grid_node, yscale, x);
 }
 
-function drawHeaders(params, results_node, grid_node, margin, xscale) {
+function drawHeaders(params, grid_node, xscale) {
 	let plot = grid_node.select("svg");
 
 	let options = Object.values(params);
@@ -492,7 +491,7 @@ function drawHeaders(params, results_node, grid_node, margin, xscale) {
 	})
 }
 
-function drawCols(data, m_obj, results_node, grid_node, yscale, x1) {
+function drawCols(data, m_obj, grid_node, yscale, x1) {
 	let plot = grid_node.select("svg");
 	let params = m_obj.parameters();
 	let parameter_list = Object.entries(params)
@@ -526,8 +525,8 @@ function drawCols(data, m_obj, results_node, grid_node, yscale, x1) {
 	Object.keys(params).forEach( 
 		(d, i) => {
 			// drawCols(data, m_obj, i, results_node, grid_node, yscale, x);
-			drawColNames(m_obj, d, results_node, grid_node, optionContainer, yscale, x1, x2);
-			drawColOptions(data, m_obj, d, results_node, grid_node, yscale, x1, x2);
+			drawColNames(m_obj, d, grid_node, optionContainer, yscale, x1, x2);
+			drawColOptions(data, m_obj, d, grid_node, yscale, x1, x2);
 	});
 
 	let drag = d3.drag();
@@ -587,7 +586,7 @@ function dragTransition(g) {
   	return g.transition().duration(500);
 }
 
-function drawColNames(m_obj, parameter, results_node, grid_node, container, yscale, x1, x2) {
+function drawColNames(m_obj, parameter, grid_node, container, yscale, x1, x2) {
 	let options = m_obj.parameters()[parameter]
 
 	d3.select(`g.option-name.${parameter}`)
@@ -616,7 +615,7 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 				} else {
 					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
 				}
-				m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+				// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
 			})
 		});
 
@@ -654,7 +653,7 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 				}
 			}
 
-			m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+			// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
 		})
 	})
 
@@ -663,7 +662,7 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 		.text(d => d);
 }
 
-function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale, x1, x2) {
+function drawColOptions(data, m_obj, parameter, grid_node, yscale, x1, x2) {
 	let plot = grid_node.select("svg");
 	let options = m_obj.parameters()[parameter];
 	let ypos;
@@ -707,7 +706,7 @@ function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale,
 }
 
 
-export function CI (data, results_node, grid_node, size, parameters, yscale) {
+export function CI (data, results_node, size, parameters, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	const width = parameters.length * (cell.width + cell.padding); // to fix
@@ -785,13 +784,13 @@ export function CI (data, results_node, grid_node, size, parameters, yscale) {
 		.attr("fill", "#333333");
 }
 
-export function CDF (data, results_node, grid_node, size, parameters, yscale) {
+export function CDF (data, results_node, size, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	const width = parameters.length * (cell.width + cell.padding); // to fix
+	// const width = parameters.length * (cell.width + cell.padding); // to fix
 	let ypos;
 
-	d3.select("g.outcomePanel").remove();
+	results_plot.select("g.outcomePanel").remove();
 
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))

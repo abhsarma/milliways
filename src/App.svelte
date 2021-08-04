@@ -10,6 +10,7 @@
 	import Dropdown from './components/dropdown-menu.svelte'
 	import OptionTooltip from './components/tooltip-option-menu.svelte'
 	import {scrollTop} from './components/scrollTop.js'
+	import Vis from './components/Vis.svelte';
 
 	const m = new multiverseMatrix(data.default);
 	let vis = CDF;
@@ -60,42 +61,52 @@
 			}, [])
 		)
 
+	let visComponents = [];
+
+	function addVisComponent(){
+		visComponents = visComponents.concat('Intercept');
+	}
+
 	onMount(() => {
-		const results_node = d3.select("div.vis");
+		// const results_node = d3.select("div.vis");
 		const grid_node = d3.select("div.grid");
+		$: draw(m, [], grid_node, vis, y, x_params); 
+	    
+		// 	drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
+		// 	// drawOptionMenu(m, results_node, grid_node, y, x_grid);
 
-		drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
-		// drawOptionMenu(m, results_node, grid_node, y, x_grid);
+			// $: draw(m, [], results_node, grid_node, vis, y, x_params); //, x_opts);
 
-		$: draw(m, [], results_node, grid_node, vis, y, x_params); //, x_opts);
+		// 	let isSyncingLeftScroll = false;
+		// 	let isSyncingRightScroll = false;
+		// 	let leftDiv = d3.select('div.vis').node();
+		// 	let rightDiv = d3.select('div.grid').node();
 
+		// 	leftDiv.onscroll = function() {
+		// 		if (!isSyncingLeftScroll) {
+		// 			isSyncingRightScroll = true;
+		// 			rightDiv.scrollTop = this.scrollTop;
+		// 		}
 
-		let isSyncingLeftScroll = false;
-		let isSyncingRightScroll = false;
-		let leftDiv = d3.select('div.vis').node();
-		let rightDiv = d3.select('div.grid').node();
+		// 		isSyncingLeftScroll = false;
+		// 	}
 
-		leftDiv.onscroll = function() {
-			if (!isSyncingLeftScroll) {
-				isSyncingRightScroll = true;
-				rightDiv.scrollTop = this.scrollTop;
-			}
-
-			isSyncingLeftScroll = false;
-		}
-
-		rightDiv.onscroll = function() {
-			if (!isSyncingRightScroll) {
-				isSyncingLeftScroll = true;
-				leftDiv.scrollTop = this.scrollTop;
-			}
-			isSyncingRightScroll = false;
-		}
+		// 	rightDiv.onscroll = function() {
+		// 		if (!isSyncingRightScroll) {
+		// 			isSyncingLeftScroll = true;
+		// 			leftDiv.scrollTop = this.scrollTop;
+		// 		}
+		// 		isSyncingRightScroll = false;
+		// 	}
 
 	});
 </script>
 
 <style>
+	main {
+		overflow-x: hidden;
+	}
+
 	h1 {
 		color: #ff3e00;
 		text-transform: uppercase;
@@ -130,7 +141,7 @@
 
 	/*@media (min-width: 640px) {
 		main {
-			max-width: none;
+			max-width: none;scr
 		}
 	}*/
 </style>
@@ -148,9 +159,13 @@
 				<Toggle/>
 			</div>
 		</div>
-		<div class="vis" style="height: {windowHeight}">
-			<svg bind:this={svg} height={h} width={w1}></svg>
-		</div>
+  </div>
+	<button on:click={addVisComponent}>ADD VIS</button>
+	<!-- <button disabled={numVisComponents === 0} on:click={() => numVisComponents.append('Intercept')}>REMOVE VIS</button> -->
+	<div class="main-content">
+		{#each visComponents as outcome, i}
+			<Vis id={outcome}/>
+		{/each}
 		<div class="grid-container">
 			<div class="grid" style="height: {windowHeight}">
 				<svg bind:this={svg} height={h} width={w2}></svg>
