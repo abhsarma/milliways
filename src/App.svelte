@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { drawResultsMenu, CI, CDF } from './components/multiverseMatrix.js';
+	import multiverseMatrix, { draw, drawResultsMenu, CI, CDF, drawGrid } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
 	import Tooltip from './components/tooltip-option-menu.svelte'
@@ -12,15 +12,15 @@
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 
-	const m = new multiverseMatrix(data.default);
+	let m = new multiverseMatrix(data.default);
 	let vis = CDF;
-	m.prepareData(vis);
-
+	m.initializeData(vis);
+	
 	const params = m.parameters();
 
 	let svg;
 	// let vis = drawCDF;
-	const windowHeight = (window.innerHeight - 64) + "px";
+	const windowHeight = (window.innerHeight - 170) + "px";
 	// const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
 	const accum_options = Object.values(params).map( d => d.length )
@@ -35,8 +35,6 @@
 		}, []);
 
 	const n_options = accum_options[accum_options.length - 1];
-
-	let gridData = m.gridData;
 
 	$: size = m.gridData.length; // todo: reactive update
 	$: h = size * cell.height;
@@ -61,45 +59,46 @@
 			}, [])
 		)
 
-	$: numVisComponents = 0;
+	// could have done `$:` instead of `let` but `let` is noticeably faster than `$:`, but we might need to do it anyway later
+	let gridData = m.gridData;
+	// below is being called twice when adding vis and once when removing if you put m.gridData in directly. also makes it very slow
+	$: drawGrid(gridData, params, d3.select("div.grid"), y, x_params);
 
-	// onMount(() => {
-	// 	const results_node = d3.select("div.vis");
-	// 	const grid_node = d3.select("div.grid");
-    
-	// 	drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
-	// 	// drawOptionMenu(m, results_node, grid_node, y, x_grid);
+	// maybe move into multiverseMatrix.js
+	function drawVis(id) {
+		m.initializeOutcomeData(id);
+		m = m;
+		vis(m.outcomeData[id], d3.select('svg#vis-'+id), m.size, y);
+	}
 
-	// 	m.draw([], results_node, grid_node, vis, y, x_params); //, x_opts);
+	onMount(() => {
+		let grid = d3.select("div.grid")
+		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
 
-	// 	let isSyncingLeftScroll = false;
-	// 	let isSyncingRightScroll = false;
-	// 	let leftDiv = d3.select('div.vis').node();
-	// 	let rightDiv = d3.select('div.grid').node();
-
-	// 	leftDiv.onscroll = function() {
-	// 		if (!isSyncingLeftScroll) {
-	// 			isSyncingRightScroll = true;
-	// 			rightDiv.scrollTop = this.scrollTop;
-	// 		}
-
-	// 		isSyncingLeftScroll = false;
-	// 	}
-
-	// 	rightDiv.onscroll = function() {
-	// 		if (!isSyncingRightScroll) {
-	// 			isSyncingLeftScroll = true;
-	// 			leftDiv.scrollTop = this.scrollTop;
-	// 		}
-	// 		isSyncingRightScroll = false;
-	// 	}
-
-	// });
+		let isSyncingLeftScroll = false;
+		let isSyncingRightScroll = false;
+		let leftDiv = d3.select('div.vis-container').node();
+		let rightDiv = d3.select('div.grid').node();
+		leftDiv.onscroll = function() {
+			if (!isSyncingLeftScroll) {
+				isSyncingRightScroll = true;
+				rightDiv.scrollTop = this.scrollTop;
+			}
+			isSyncingLeftScroll = false;
+		}
+		rightDiv.onscroll = function() {
+			if (!isSyncingRightScroll) {
+				isSyncingLeftScroll = true;
+				leftDiv.scrollTop = this.scrollTop;
+			}
+			isSyncingRightScroll = false;
+		}
+	});
 </script>
 
 <style>
 	main {
-		overflow-x: hidden;
+		white-space: nowrap;
 	}
 
 	h1 {
@@ -117,26 +116,41 @@
 		float: left;
 	}
 
-	div.grid-container {
+	.button-wrapper button {
+		position: sticky;
+		left: 8px; /* page padding */
+	}
+	.button-wrapper button:hover {
+		background-color: lightgreen;
+	}
+	.button-wrapper button:active {
+		background-color: darkgreen;
+		color: white;
+	}
+
+	.main-content {
+		display: inline-block;
+	}
+	
+	.vis-container {
+		display: inline-block;
+		overflow-x: auto;
+	}
+
+	.grid-container {
 		display: inline-block;
 		position: relative;
 		margin-left: 32px;
 	}
 
-	div.grid {
+	.grid {
 		display: inline-block;
 		overflow-y: scroll;
 	}
 
-	div.vis {
-		display: inline-block;
-		float: left;
-		overflow-y: auto;
-	}
-
 	/*@media (min-width: 640px) {
 		main {
-			max-width: none;
+			max-width: none;scr
 		}
 	}*/
 </style>
@@ -154,13 +168,25 @@
 				<Toggle/>
 			</div>
 		</div>
-  </div>
-	<button on:click={() => numVisComponents++}>ADD VIS</button>
-	<button disabled={numVisComponents === 0} on:click={() => numVisComponents--}>REMOVE VIS</button>
-  <div class="main-content">
-		{#each Array(numVisComponents) as _, i}
-			<Vis id={i}/>
-		{/each}
+	</div>
+	<div class="button-wrapper">
+		<button on:click={() => { m.addVis(); m=m; }}>+</button>
+	</div>
+	<div class="main-content">
+		<div class="vis-container" style="height: {windowHeight};">
+			{#each m.outcomeVars as outcomeVar, id (id)}
+				<Vis 
+					id             = {id}
+					allOutcomeVars = {m.allOutcomeVars}
+					bind:w         = {w1}
+					bind:h         = {h}
+					bind:term      = {outcomeVar}
+					on:change      = {() => drawVis(id)}
+					on:mount       = {() => drawVis(id)}
+					on:remove      = {() => { m.removeVis(id); m=m; }}
+				/>
+			{/each}
+		</div>
 		<div class="grid-container">
 			<div class="grid" style="height: {windowHeight}">
 				<svg bind:this={svg} height={h} width={w2}></svg>

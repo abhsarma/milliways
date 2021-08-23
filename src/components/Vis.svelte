@@ -1,96 +1,83 @@
-<div class="vis" id={"n"+id} style="height: {windowHeight}">
-	<!-- <select bind:value={term} on:change={update}>
-		{#each terms as t}
-			<option value={t}>
-				{t}
-			</option>
-		{/each}
-	</select> -->
-	<svg bind:this={svg} height={h} width={w1}></svg>
-</div>
-
 <script>
-	import { outVisWidth, margin, cell, namingDim } from './dimensions.js';
-	import * as d3 from 'd3';
-	import Dropdown from './dropdown-menu.svelte';
-	import * as dat from '../../static/data/data2.json';
-	import { state } from './stores.js';
-	import { onMount } from 'svelte';
-	import { CDF } from './multiverseMatrix';
+	import { onMount, createEventDispatcher } from 'svelte';
 	
 	// this is out of necessity, not really used in the <script>
 	let svg;
 
-	export let id;
+	const dispatch = createEventDispatcher();
 	
-	const data = dat.default;
-	const terms = data[0]["results"].map(i => i["term"]); // not sure if should be const in the future tho
-
-	let term = terms[0];
-	let size = data.length;
-
-	// this `let` variable is bound below; works similar to $:
-	let outcomeData;
-
-	$: windowHeight = (window.innerHeight - 64) + "px";
-	$: h = "100%"
-	$: w1 = outVisWidth + margin.left; 
-
-	// previously was $:
-	let yscale = d3.scaleBand()
-		.domain(d3.range(size))
-		.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
-		.padding(0.1);
-
-
-	// FUNCTIONS
-	const prepareOutcomeData = () => {
-		// in the future, implement CI graphs, not just CDF
-		let temp = data.map(function(d) { 
-			return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-				i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-			))
-		});
-
-		outcomeData = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
-		console.log(outcomeData);
-	}
-
-	const update = () => {
-		prepareOutcomeData();
-		CDF(outcomeData, d3.select("#n"+id), size, yscale);
-	}
-
-
+	export let id;
+	export let allOutcomeVars;
+	export let w; 
+	export let h;
+	export let term = allOutcomeVars[0];
+	
+	
 	onMount(() => {
-		const menu = new Dropdown({ 
-			target: d3.select("#n"+id).node(),
-			props: {
-				items: terms
-			}
-		});
-
-		// update data when different option is selected using dropdown 
-		menu.$on("message", event => {
-			term = event.detail.text;
-			update();
-		})
-
-		update();
+		// this is used to make <Vis/> not blank on mount
+		dispatch("mount");
 	});
 </script>
 
 <style>
 	svg {
-		margin-left: 5px;
-		margin-right: 0;
 		background-color: #f7f7f7;
 		/* display: inline-block; */
 		float: left;
 	}
-	div.vis {
-		/* display: inline-block; */
+
+	.vis-dropdown {
+		position: sticky;
+		top: 0;
+		z-index: 1;
 		float: left;
-		overflow-y: auto;
+		/* height: 38px; (default) */
+	}
+
+	.vis-remove {
+		/* 38px is the height of the dropdown */
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		float: right;
+		width: 38px;
+		height: 38px;
+		right: 0;
+		margin: 0 0 0 -38px;
+	}
+	.vis-remove:hover {
+		background-color:lightcoral;
+	}
+	.vis-remove:active {
+		background-color: darkred;
+		color: white;
+	}
+
+	.vis {
+		display: inline-block;
+		margin-left: 3px;
+	}
+	.vis:first-child {
+		margin-left: 0;
 	}
 </style>
+
+<div class="vis" id={"vis-"+id}>
+	<select class="vis-dropdown"
+			id={"vis-"+id}
+			style="
+				left:{-w}px;
+				width:{w - 38}px;
+				margin: 0 {-w}px 0 0;
+			"
+			bind:value={term}
+			on:change={() => dispatch("change")}>
+		{#each allOutcomeVars as t}
+			<option value={t}>
+				{t}
+			</option>
+		{/each}
+	</select>
+	<button class="vis-remove" id={"vis-"+id} on:click={() => dispatch("remove")}>X</button>
+	<svg id={"vis-"+id} bind:this={svg} height={h} width={w}></svg>
+</div>
