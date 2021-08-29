@@ -133,22 +133,22 @@ function combineJoinOptions(input_array) {
 }
 
 // Initialise UI items
-export function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
-	const menu = new Dropdown({ 
-		target: vis_node.node(),
-		props: {
-			items: m.outcome_vars()
-		}
-	});
+// export function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
+// 	const menu = new Dropdown({ 
+// 		target: vis_node.node(),
+// 		props: {
+// 			items: m.allOutcomeVars
+// 		}
+// 	});
 
-	// update data when different option is selected using dropdown 
-	menu.$on("message", event => {
-		m.changeOutcomeVar(event.detail.text);
-		m.prepareOutcomeData();
+// 	// update data when different option is selected using dropdown 
+// 	menu.$on("message", event => {
+// 		m.changeOutcomeVar(event.detail.text);
+// 		m.prepareOutcomeData();
 
-		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
-	})
-}
+// 		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
+// 	})
+// }
 
 function which_idx(option_list, curr_options) {
 	return option_list.map((d, i) => {
@@ -340,26 +340,25 @@ class multiverseMatrix {
 		this.universes = [...new Set(dat.map(d => d['.universe']))];
 		this.size = this.universes.length;
 		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
-		this.outcomeVars = []; // selects the first of the outcome vars
+		this.outcomes = [];
 		this.gridData = null;
-		this.outcomeData = [];
-		this.exclude = []
 	}
 
 	addVis = () => {
-		this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
-		this.outcomeData = this.outcomeData.concat(null);
-		this.initializeOutcomeData(this.outcomeData.length-1);
+		this.outcomes = this.outcomes.concat({
+			var: this.allOutcomeVars[0],
+			data: null,
+			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
+		});
+		this.initializeOutcomeData(this.outcomes.length-1)
+		// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
+		// this.outcomeData = this.outcomeData.concat(null);
+		// this.initializeOutcomeData(this.outcomeData.length-1);
 	}
 
-	removeVis = (id) => {
-		this.outcomeVars.splice(id, 1);
-		this.outcomeData.splice(id, 1);
+	removeVis = (i) => {
+		this.outcomes.splice(i, 1);
 	} 
-
-	changeOutcomeVar = (term, toJoin, toExclude) => {
-		this.outcomeVar = term;
-	}
 
 	parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
@@ -371,11 +370,11 @@ class multiverseMatrix {
 		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
-	outcome_vars = () => {
-		// get the variables from the results in first row as this is a rectangular dataset
-		// is there a better way to do this?
-		return this.data[0]["results"].map(i => i["term"]);
-	}
+	// outcome_vars = () => {
+	// 	// get the variables from the results in first row as this is a rectangular dataset
+	// 	// is there a better way to do this?
+	// 	return this.data[0]["results"].map(i => i["term"]);
+	// }
 
 	// creates the data structure for the grid matrix
 	// we will draw this plot as a bar chart
@@ -398,10 +397,10 @@ class multiverseMatrix {
 
 	initializeOutcomeData = (i, graph = CDF) => {
 		// creating a shallow copy which is fine for here
-		let term = this.outcomeVars[i];
+		let term = this.outcomes[i].var;
 
 		if (graph == CI) {
-			this.outcomeData[i] = this.data.map(function(d) { 
+			this.outcomes[i].data = this.data.map(function(d) { 
 				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
 					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
 				))
@@ -415,7 +414,7 @@ class multiverseMatrix {
 
 			let indices = temp[0]['cdf.x'].map((d, i) => i);
 
-			this.outcomeData[i] = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+			this.outcomes[i].data = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
 		}
 	}
 }
@@ -425,7 +424,7 @@ export default multiverseMatrix
 export function draw (m, selected_options = [], grid_node, results_nodes, vis_fun, y, x) {
 	let parameters = m.parameters();
 	let gridData = m.gridData;
-	let outcomeData = m.outcomeData;
+	let outcomes = m.outcomes;
 	let size = m.size;
 
 	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
@@ -436,8 +435,8 @@ export function draw (m, selected_options = [], grid_node, results_nodes, vis_fu
 	// update results
 	// this.drawCI(outcomeData, results_node, grid_node, y);
 	results_nodes.each((d, i, nodes) => {
-		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-			vis_fun(outcomeData[i], d3.select(nodes[i]), size, y);
+		if (i < outcomes.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+			vis_fun(outcomes[i].data, d3.select(nodes[i]), size, y);
 	});
 }
 
@@ -599,10 +598,10 @@ function dragTransition(g) {
   	return g.transition().duration(500);
 }
 
-function drawColNames(params, parameter, x2) {
-	let options = params[parameter]
+function drawColNames(params, param, x2) {
+	let options = params[param]
 
-	d3.select(`g.option-name.${parameter}`)
+	d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(d => options.slice(0, -1))
 		.join("foreignObject")
@@ -624,7 +623,7 @@ function drawColNames(params, parameter, x2) {
 			optionJoin.$on('message', event => {
 				let option_pair = [options[i], options[i+1]];
 				if (event.detail.text) {
-					options_to_join.push({'parameter': parameter, 'options': option_pair});
+					options_to_join.push({'parameter': param, 'options': option_pair});
 				} else {
 					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
 				}
@@ -632,7 +631,7 @@ function drawColNames(params, parameter, x2) {
 			})
 		});
 
-	let optionNames = d3.select(`g.option-name.${parameter}`)
+	let optionNames = d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(options)
 		.join("foreignObject")
@@ -654,13 +653,13 @@ function drawColNames(params, parameter, x2) {
 
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
-				options_to_exclude[parameter].push(d);
+				options_to_exclude[param].push(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", true)
 			} else {
-				let index = options_to_exclude[parameter].indexOf(d);
+				let index = options_to_exclude[param].indexOf(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", false)
 				if (index > -1) {
-					options_to_exclude[parameter].splice(index, 1);
+					options_to_exclude[param].splice(index, 1);
 				} else {
 					console.log("error option index not found");
 				}
@@ -675,9 +674,9 @@ function drawColNames(params, parameter, x2) {
 		.text(d => d);
 }
 
-function drawColOptions(data, params, parameter, grid_node, yscale, x1, x2) {
+function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 	let plot = grid_node.select("svg");
-	let options = params[parameter];
+	let options = params[param];
 	let ypos;
 
 	if (state_value == 0) {
@@ -688,7 +687,7 @@ function drawColOptions(data, params, parameter, grid_node, yscale, x1, x2) {
 
 	let optionCell = plot.append("g")
 		.attr("class", "option-value")
-		.attr("transform",  `translate(${x1(parameter)}, ${ypos})`)
+		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
 		.selectAll("g")
 		.data(data)
 		.join("g")
@@ -700,7 +699,7 @@ function drawColOptions(data, params, parameter, grid_node, yscale, x1, x2) {
 			return `translate(0, ${yscale(i) + whitespace})`
 		})
 		.attr("class", function (d, i) {
-			return d[parameter].join(" ")
+			return d[param].join(" ")
 		})
 
 	optionCell.selectAll("rect")

@@ -6,7 +6,7 @@
 
 	const dispatch = createEventDispatcher();
 	
-	export let id;
+	export let i;
 	export let allOutcomeVars;
 	export let w; 
 	export let h;
@@ -62,9 +62,9 @@
 	}
 </style>
 
-<div class="vis" id={"vis-"+id}>
+<div class="vis" id={"vis-"+i}>
 	<select class="vis-dropdown"
-			id={"vis-"+id}
+			id={"vis-"+i}
 			style="
 				left:{-w}px;
 				width:{w - 38}px;
@@ -78,6 +78,6 @@
 			</option>
 		{/each}
 	</select>
-	<button class="vis-remove" id={"vis-"+id} on:click={() => dispatch("remove")}>X</button>
-	<svg id={"vis-"+id} bind:this={svg} height={h} width={w}></svg>
+	<button class="vis-remove" id={"vis-"+i} on:click={() => dispatch("remove")}>X</button>
+	<svg id={"vis-"+i} bind:this={svg} height={h} width={w}></svg>
 </div>

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { draw, drawResultsMenu, CI, CDF, drawGrid } from './components/multiverseMatrix.js';
+	import multiverseMatrix, { draw, CI, CDF, drawGrid } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
 	import Tooltip from './components/tooltip-option-menu.svelte'
@@ -65,10 +65,11 @@
 	$: drawGrid(gridData, params, d3.select("div.grid"), y, x_params);
 
 	// maybe move into multiverseMatrix.js
-	function drawVis(id) {
-		m.initializeOutcomeData(id);
+	// used for specifically changing a single <Vis/> component
+	function drawVis(i) {
+		m.initializeOutcomeData(i);
 		m = m;
-		vis(m.outcomeData[id], d3.select('svg#vis-'+id), m.size, y);
+		vis(m.outcomes[i].data, d3.select('svg#vis-'+i), m.size, y);
 	}
 
 	onMount(() => {
@@ -174,16 +175,16 @@
 	</div>
 	<div class="main-content">
 		<div class="vis-container" style="height: {windowHeight};">
-			{#each m.outcomeVars as outcomeVar, id (id)}
-				<Vis 
-					id             = {id}
+			{#each m.outcomes as outcome, i (outcome.id)}
+				<Vis
+					i              = {i}
 					allOutcomeVars = {m.allOutcomeVars}
 					bind:w         = {w1}
 					bind:h         = {h}
-					bind:term      = {outcomeVar}
-					on:change      = {() => drawVis(id)}
-					on:mount       = {() => drawVis(id)}
-					on:remove      = {() => { m.removeVis(id); m=m; }}
+					bind:term      = {outcome.var}
+					on:change      = {() => drawVis(i)}
+					on:mount       = {() => drawVis(i)}
+					on:remove      = {() => { m.removeVis(i); m=m; }}
 				/>
 			{/each}
 		</div>
