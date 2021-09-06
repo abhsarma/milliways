@@ -90,11 +90,11 @@ function any_common(arr) {
 		return common
 	})
 
-	console.log(new_arr);
+	// console.log(new_arr);
 	return (new_arr);
 }
 
-console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]))
+// console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]))
 
 
 function recurseCombine(input) {
@@ -133,22 +133,22 @@ function combineJoinOptions(input_array) {
 }
 
 // Initialise UI items
-export function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
-	const menu = new Dropdown({ 
-		target: vis_node.node(),
-		props: {
-			items: m.outcome_vars()
-		}
-	});
+// export function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
+// 	const menu = new Dropdown({ 
+// 		target: vis_node.node(),
+// 		props: {
+// 			items: m.allOutcomeVars
+// 		}
+// 	});
 
-	// update data when different option is selected using dropdown 
-	menu.$on("message", event => {
-		m.changeOutcomeVar(event.detail.text);
-		m.prepareOutcomeData();
+// 	// update data when different option is selected using dropdown 
+// 	menu.$on("message", event => {
+// 		m.changeOutcomeVar(event.detail.text);
+// 		m.prepareOutcomeData();
 
-		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
-	})
-}
+// 		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
+// 	})
+// }
 
 function which_idx(option_list, curr_options) {
 	return option_list.map((d, i) => {
@@ -339,17 +339,28 @@ class multiverseMatrix {
 		// meta data for the multiverse object
 		this.universes = [...new Set(dat.map(d => d['.universe']))];
 		this.size = this.universes.length;
-		this.outcomeVar = dat[0]["results"].map(i => i["term"])[0]; // selects the first of the outcome vars
+		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
+		this.outcomes = [];
 		this.gridData = null;
-		this.outcomeData = null;
-		this.exclude = []
 	}
 
-	changeOutcomeVar(term, toJoin, toExclude) {
-		this.outcomeVar = term;
+	addVis = () => {
+		this.outcomes = this.outcomes.concat({
+			var: this.allOutcomeVars[0],
+			data: null,
+			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
+		});
+		this.initializeOutcomeData(this.outcomes.length-1)
+		// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
+		// this.outcomeData = this.outcomeData.concat(null);
+		// this.initializeOutcomeData(this.outcomeData.length-1);
 	}
 
-	parameters() {
+	removeVis = (i) => {
+		this.outcomes.splice(i, 1);
+	} 
+
+	parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
 		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
@@ -359,37 +370,37 @@ class multiverseMatrix {
 		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
-	outcome_vars() {
-		// get the variables from the results in first row as this is a rectangular dataset
-		// is there a better way to do this?
-		return this.data[0]["results"].map(i => i["term"]);
-	}
+	// outcome_vars = () => {
+	// 	// get the variables from the results in first row as this is a rectangular dataset
+	// 	// is there a better way to do this?
+	// 	return this.data[0]["results"].map(i => i["term"]);
+	// }
 
 	// creates the data structure for the grid matrix
 	// we will draw this plot as a bar chart
 	// input: JSON multiverse object (this.data), parameters (this.parameters)
 	// output: rectangular data structure with columns corresponding to each parameter, 
 	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
-	prepareData(vis = "CDF") {
+	initializeData = (vis = "CDF") => {
 		let parameters = [...Object.keys(this.parameters())];
 		options_to_exclude = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
 
-		this.prepareGridData();
-		this.prepareOutcomeData(vis = "CDF");
+		this.initializeGridData();
+		// this.prepareOutcomeData(vis = "CDF");
 	}
 
-	prepareGridData() {
+	initializeGridData = () => {
 		// creating a shallow copy which is fine for here
 		let parameters = [...Object.keys(this.parameters())];
 		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
 	}
 
-	prepareOutcomeData(graph = CDF) {
+	initializeOutcomeData = (i, graph = CDF) => {
 		// creating a shallow copy which is fine for here
-		let term = this.outcomeVar;
+		let term = this.outcomes[i].var;
 
 		if (graph == CI) {
-			this.outcomeData = this.data.map(function(d) { 
+			this.outcomes[i].data = this.data.map(function(d) { 
 				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
 					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
 				))
@@ -403,62 +414,69 @@ class multiverseMatrix {
 
 			let indices = temp[0]['cdf.x'].map((d, i) => i);
 
-			this.outcomeData = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+			this.outcomes[i].data = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
 		}
-	}
-
-	draw (selected_options = [], results_node, grid_node, vis_fun, y, x) {
-		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, [], selected_options);
-
-		// update grid
-		drawGrid(gridData, this, results_node, grid_node, y, x);
-
-		// update results
-		// this.drawCI(outcomeData, results_node, grid_node, y);
-		vis_fun(this.outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-	}
-
-	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
-		let params = this.parameters();
-		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, toJoin, toExclude);
-
-		let options = Object.values(params);
-		let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-		let x2 = d3.scaleBand()
-			.domain(d3.range(d3.max(options.map(d => d.length))))
-			.range( [0, colWidth] )
-
-		// update grid
-		d3.selectAll("g.option-value").remove();		
-		Object.keys(params).forEach( 
-			(d, i) => drawColOptions(gridData, this, d, results_node, grid_node, y, x, x2)
-		);
-
-		// update results
-		vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-
-		Object.values(options_to_exclude)
-			.flat()
-			.forEach(d => {
-				d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-			})
 	}
 }
 
 export default multiverseMatrix
 
+export function draw (m, selected_options = [], grid_node, results_nodes, vis_fun, y, x) {
+	let parameters = m.parameters();
+	let gridData = m.gridData;
+	let outcomes = m.outcomes;
+	let size = m.size;
+
+	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
+
+	// update grid
+	drawGrid(gridData, parameters, grid_node, y, x);
+
+	// update results
+	// this.drawCI(outcomeData, results_node, grid_node, y);
+	results_nodes.each((d, i, nodes) => {
+		if (i < outcomes.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+			vis_fun(outcomes[i].data, d3.select(nodes[i]), size, y);
+	});
+}
+
+// export function	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
+// 	let params = parameters();
+// 	let [gridData, outcomeData] = updateData(gridData, outcomeData, parameters(), vis_fun, toJoin, toExclude);
+
+// 	let options = Object.values(params);
+// 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
+// 	let x2 = d3.scaleBand()
+// 		.domain(d3.range(d3.max(options.map(d => d.length))))
+// 		.range( [0, colWidth] )
+
+// 	// update grid
+// 	d3.selectAll("g.option-value").remove();		
+// 	Object.keys(params).forEach( 
+// 		(d, i) => drawColOptions(gridData, m, d, results_node, grid_node, y, x, x2)
+// 	);
+
+// 	// update results
+// 	vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
+
+// 	Object.values(options_to_exclude)
+// 		.flat()
+// 		.forEach(d => {
+// 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
+// 		})
+// }
+
 // function from drawing the decision grid
-function drawGrid (data, m_obj, results_node, grid_node, yscale, x) {
-	let params = m_obj.parameters();
+export function drawGrid (gridData, params, grid_node, yscale, x) {
 
 	d3.selectAll("g.option-value").remove();
 	d3.selectAll("g.option-name").remove();
 
-	drawHeaders(params, results_node, grid_node, margin, x);
-	drawCols(data, m_obj, results_node, grid_node, yscale, x);
+	drawHeaders(params, grid_node, x);
+	drawCols(gridData, params, grid_node, yscale, x);
 }
 
-function drawHeaders(params, results_node, grid_node, margin, xscale) {
+function drawHeaders(params, grid_node, xscale) {
 	let plot = grid_node.select("svg");
 
 	let options = Object.values(params);
@@ -486,9 +504,8 @@ function drawHeaders(params, results_node, grid_node, margin, xscale) {
 	})
 }
 
-function drawCols(data, m_obj, results_node, grid_node, yscale, x1) {
+function drawCols(data, params, grid_node, yscale, x1) {
 	let plot = grid_node.select("svg");
-	let params = m_obj.parameters();
 	let parameter_list = Object.entries(params)
 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
 
@@ -520,8 +537,8 @@ function drawCols(data, m_obj, results_node, grid_node, yscale, x1) {
 	Object.keys(params).forEach( 
 		(d, i) => {
 			// drawCols(data, m_obj, i, results_node, grid_node, yscale, x);
-			drawColNames(m_obj, d, results_node, grid_node, optionContainer, yscale, x1, x2);
-			drawColOptions(data, m_obj, d, results_node, grid_node, yscale, x1, x2);
+			drawColNames(params, d, x2);
+			drawColOptions(data, params, d, grid_node, yscale, x1, x2);
 	});
 
 	let drag = d3.drag();
@@ -581,10 +598,10 @@ function dragTransition(g) {
   	return g.transition().duration(500);
 }
 
-function drawColNames(m_obj, parameter, results_node, grid_node, container, yscale, x1, x2) {
-	let options = m_obj.parameters()[parameter]
+function drawColNames(params, param, x2) {
+	let options = params[param]
 
-	d3.select(`g.option-name.${parameter}`)
+	d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(d => options.slice(0, -1))
 		.join("foreignObject")
@@ -606,15 +623,15 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 			optionJoin.$on('message', event => {
 				let option_pair = [options[i], options[i+1]];
 				if (event.detail.text) {
-					options_to_join.push({'parameter': parameter, 'options': option_pair});
+					options_to_join.push({'parameter': param, 'options': option_pair});
 				} else {
 					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
 				}
-				m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+				// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
 			})
 		});
 
-	let optionNames = d3.select(`g.option-name.${parameter}`)
+	let optionNames = d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(options)
 		.join("foreignObject")
@@ -636,19 +653,19 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
-				options_to_exclude[parameter].push(d);
+				options_to_exclude[param].push(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", true)
 			} else {
-				let index = options_to_exclude[parameter].indexOf(d);
+				let index = options_to_exclude[param].indexOf(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", false)
 				if (index > -1) {
-					options_to_exclude[parameter].splice(index, 1);
+					options_to_exclude[param].splice(index, 1);
 				} else {
 					console.log("error option index not found");
 				}
 			}
 
-			m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+			// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
 		})
 	})
 
@@ -657,9 +674,9 @@ function drawColNames(m_obj, parameter, results_node, grid_node, container, ysca
 		.text(d => d);
 }
 
-function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale, x1, x2) {
+function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 	let plot = grid_node.select("svg");
-	let options = m_obj.parameters()[parameter];
+	let options = params[param];
 	let ypos;
 
 	if (state_value == 0) {
@@ -670,7 +687,7 @@ function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale,
 
 	let optionCell = plot.append("g")
 		.attr("class", "option-value")
-		.attr("transform",  `translate(${x1(parameter)}, ${ypos})`)
+		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
 		.selectAll("g")
 		.data(data)
 		.join("g")
@@ -682,7 +699,7 @@ function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale,
 			return `translate(0, ${yscale(i) + whitespace})`
 		})
 		.attr("class", function (d, i) {
-			return d[parameter].join(" ")
+			return d[param].join(" ")
 		})
 
 	optionCell.selectAll("rect")
@@ -701,7 +718,7 @@ function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale,
 }
 
 
-export function CI (data, results_node, grid_node, size, parameters, yscale) {
+export function CI (data, results_node, size, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	const width = parameters.length * (cell.width + cell.padding); // to fix
@@ -779,18 +796,18 @@ export function CI (data, results_node, grid_node, size, parameters, yscale) {
 		.attr("fill", "#333333");
 }
 
-export function CDF (data, results_node, grid_node, size, parameters, yscale) {
-	let results_plot = results_node.select("svg")
+export function CDF (data, results_node, size, yscale) {
+	let results_plot = results_node
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	const width = parameters.length * (cell.width + cell.padding); // to fix
+	// const width = parameters.length * (cell.width + cell.padding); // to fix
 	let ypos;
 
-	d3.select("g.outcomePanel").remove();
+	results_plot.select("g.outcomePanel").remove();
 
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))
 		.range([margin.left, outVisWidth]);
-
+	
 	let y = d3.scaleLinear()
 		.domain(d3.extent( data.map(d => d.map(x => x[1])).flat() ))
 		.range([(yscale.step() - cell.padding), 0]);

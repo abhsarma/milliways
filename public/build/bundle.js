@@ -150,6 +150,9 @@ var app = (function () {
     function add_render_callback(fn) {
         render_callbacks.push(fn);
     }
+    function add_flush_callback(fn) {
+        flush_callbacks.push(fn);
+    }
     let flushing = false;
     const seen_callbacks = new Set();
     function flush() {
@@ -200,6 +203,19 @@ var app = (function () {
     }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -228,6 +244,104 @@ var app = (function () {
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                block.p(child_ctx, dirty);
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
+        }
+    }
+
+    function bind(component, name, callback) {
+        const index = component.$$.props[name];
+        if (index !== undefined) {
+            component.$$.bound[index] = callback;
+            callback(component.$$.ctx[index]);
+        }
+    }
     function create_component(block) {
         block && block.c();
     }
@@ -209879,16 +209993,16 @@ var app = (function () {
     const iconSize = 24;
     const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;
 
-    const file$5 = "src/components/dropdown-menu.svelte";
+    const file$6 = "src\\components\\dropdown-menu.svelte";
 
-    function get_each_context(ctx, list, i) {
+    function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
     // (34:2) {#each items as outcome}
-    function create_each_block(ctx) {
+    function create_each_block$2(ctx) {
     	let option;
     	let t0_value = /*outcome*/ ctx[5] + "";
     	let t0;
@@ -209902,7 +210016,7 @@ var app = (function () {
     			t1 = space();
     			option.__value = option_value_value = /*outcome*/ ctx[5];
     			option.value = option.__value;
-    			add_location(option, file$5, 34, 3, 702);
+    			add_location(option, file$6, 34, 3, 736);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -209924,7 +210038,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block.name,
+    		id: create_each_block$2.name,
     		type: "each",
     		source: "(34:2) {#each items as outcome}",
     		ctx
@@ -209933,7 +210047,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$5(ctx) {
+    function create_fragment$6(ctx) {
     	let div;
     	let select;
     	let mounted;
@@ -209943,7 +210057,7 @@ var app = (function () {
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
     	}
 
     	const block = {
@@ -209958,10 +210072,10 @@ var app = (function () {
     			set_style(select, "width", outVisWidth - 16 + "px");
     			attr_dev(select, "class", "svelte-1ng3pzf");
     			if (/*selected*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[3].call(select));
-    			add_location(select, file$5, 32, 1, 580);
+    			add_location(select, file$6, 32, 1, 612);
     			set_style(div, "width", outVisWidth + margin.left + "px");
     			attr_dev(div, "class", "svelte-1ng3pzf");
-    			add_location(div, file$5, 31, 0, 529);
+    			add_location(div, file$6, 31, 0, 560);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -209992,12 +210106,12 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
+    					const child_ctx = get_each_context$2(ctx, each_value, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i] = create_each_block$2(child_ctx);
     						each_blocks[i].c();
     						each_blocks[i].m(select, null);
     					}
@@ -210026,7 +210140,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$5.name,
+    		id: create_fragment$6.name,
     		type: "component",
     		source: "",
     		ctx
@@ -210035,7 +210149,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$5($$self, $$props, $$invalidate) {
+    function instance$6($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Dropdown_menu", slots, []);
     	const dispatch = createEventDispatcher();
@@ -210088,13 +210202,13 @@ var app = (function () {
     class Dropdown_menu extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, { items: 0 });
+    		init$1(this, options, instance$6, create_fragment$6, safe_not_equal, { items: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Dropdown_menu",
     			options,
-    			id: create_fragment$5.name
+    			id: create_fragment$6.name
     		});
 
     		const { ctx } = this.$$;
@@ -210114,7 +210228,7 @@ var app = (function () {
     	}
     }
 
-    const file$4 = "src/components/toggle-hide-option.svelte";
+    const file$5 = "src\\components\\toggle-hide-option.svelte";
 
     // (43:0) {:else}
     function create_else_block$2(ctx) {
@@ -210132,16 +210246,16 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$4, 44, 174, 1392);
+    			add_location(path0, file$5, 44, 174, 1436);
     			attr_dev(path1, "d", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z");
-    			add_location(path1, file$4, 44, 213, 1431);
+    			add_location(path1, file$5, 44, 213, 1475);
     			attr_dev(svg, "class", svg_class_value = "icon include-icon " + /*option*/ ctx[0] + " " + /*iconStyle*/ ctx[1] + " svelte-8jc5b3");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$4, 44, 1, 1219);
+    			add_location(svg, file$5, 44, 1, 1263);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, svg, anchor);
@@ -210192,16 +210306,16 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$4, 41, 174, 992);
+    			add_location(path0, file$5, 41, 174, 1033);
     			attr_dev(path1, "d", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z");
-    			add_location(path1, file$4, 41, 213, 1031);
+    			add_location(path1, file$5, 41, 213, 1072);
     			attr_dev(svg, "class", svg_class_value = "icon exclude-icon " + /*option*/ ctx[0] + " " + /*iconStyle*/ ctx[1] + " svelte-8jc5b3");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$4, 41, 1, 819);
+    			add_location(svg, file$5, 41, 1, 860);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, svg, anchor);
@@ -210236,7 +210350,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$4(ctx) {
+    function create_fragment$5(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
@@ -210282,7 +210396,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$4.name,
+    		id: create_fragment$5.name,
     		type: "component",
     		source: "",
     		ctx
@@ -210291,7 +210405,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$4($$self, $$props, $$invalidate) {
+    function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_hide_option", slots, []);
     	let { option } = $$props;
@@ -210359,13 +210473,13 @@ var app = (function () {
     class Toggle_hide_option extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$4, create_fragment$4, safe_not_equal, { option: 0, iconStyle: 1 });
+    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, { option: 0, iconStyle: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Toggle_hide_option",
     			options,
-    			id: create_fragment$4.name
+    			id: create_fragment$5.name
     		});
 
     		const { ctx } = this.$$;
@@ -210393,7 +210507,7 @@ var app = (function () {
     	}
     }
 
-    const file$3 = "src/components/toggle-join-option.svelte";
+    const file$4 = "src\\components\\toggle-join-option.svelte";
 
     // (51:0) {:else}
     function create_else_block$1(ctx) {
@@ -210413,18 +210527,18 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$3, 53, 141, 1772);
+    			add_location(path0, file$4, 53, 141, 1825);
     			attr_dev(path1, "d", "M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z");
-    			add_location(path1, file$3, 53, 180, 1811);
+    			add_location(path1, file$4, 53, 180, 1864);
     			attr_dev(svg, "class", "icon unlink-icon " + /*iconStyle*/ ctx[2] + " svelte-vp1pj6");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$3, 53, 2, 1633);
+    			add_location(svg, file$4, 53, 2, 1686);
     			attr_dev(button, "class", button_class_value = "join unlink-button " + /*buttonStyle*/ ctx[3] + " " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " svelte-vp1pj6");
-    			add_location(button, file$3, 52, 1, 1531);
+    			add_location(button, file$4, 52, 1, 1583);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -210479,18 +210593,18 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$3, 48, 159, 1064);
+    			add_location(path0, file$4, 48, 159, 1112);
     			attr_dev(path1, "d", "M14.39 11L16 12.61V11zM17 7h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1 0 1.27-.77 2.37-1.87 2.84l1.4 1.4C21.05 15.36 22 13.79 22 12c0-2.76-2.24-5-5-5zM2 4.27l3.11 3.11C3.29 8.12 2 9.91 2 12c0 2.76 2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1 0-1.59 1.21-2.9 2.76-3.07L8.73 11H8v2h2.73L13 15.27V17h1.73l4.01 4.01 1.41-1.41L3.41 2.86 2 4.27z");
-    			add_location(path1, file$3, 48, 198, 1103);
+    			add_location(path1, file$4, 48, 198, 1151);
     			attr_dev(svg, "class", svg_class_value = "icon link-icon " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " " + /*iconStyle*/ ctx[2] + " svelte-vp1pj6");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$3, 48, 2, 907);
+    			add_location(svg, file$4, 48, 2, 955);
     			attr_dev(button, "class", button_class_value = "join unlink-button " + /*buttonStyle*/ ctx[3] + " " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " svelte-vp1pj6");
-    			add_location(button, file$3, 47, 1, 807);
+    			add_location(button, file$4, 47, 1, 854);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -210530,7 +210644,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$3(ctx) {
+    function create_fragment$4(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
@@ -210576,7 +210690,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -210585,7 +210699,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_join_option", slots, []);
     	let { option1 } = $$props;
@@ -210660,7 +210774,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {
+    		init$1(this, options, instance$4, create_fragment$4, safe_not_equal, {
     			option1: 0,
     			option2: 1,
     			iconStyle: 2,
@@ -210671,7 +210785,7 @@ var app = (function () {
     			component: this,
     			tagName: "Toggle_join_option",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$4.name
     		});
 
     		const { ctx } = this.$$;
@@ -210816,7 +210930,6 @@ var app = (function () {
 
     // Stores
     let state_value;
-    let vis_type = CDF;
 
     state.subscribe(value => {
     	state_value = value;
@@ -210830,212 +210943,6 @@ var app = (function () {
     let options_to_exclude = [];
     let options_to_join = [];
 
-    function any_common(arr) {
-    	let new_arr = arr.forEach((d, i) => {
-    		let new_arr = [...arr];
-    		let common = new_arr.splice(i, 1).map(x => d.map(item => x.includes(item))).reduce((a, b) => (a||b));
-    		console.log(common);
-    		return common
-    	});
-
-    	console.log(new_arr);
-    	return (new_arr);
-    }
-
-    console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]));
-
-
-    function recurseCombine(input) {
-    	let arr = JSON.parse(JSON.stringify(input));
-    	let n = arr.length;
-    	if ((n == 1)){ //} || no_common(arr)) {
-    		return arr
-    	} else {
-    		let contains = arr[0].map(d => arr[1].includes(d)).reduce((a,b) => (a||b)); // do the first two lists have any elements in common?
-    		if (contains) {
-    			// if they do, combine them
-    			let new_arr = [[...new Set(arr[0].concat(arr[1]))]].concat(arr.slice(2, (n + 1)));
-    			console.log(new_arr);
-    			return recurseCombine(new_arr);
-    		} else {
-    			return [arr[0]].concat(recurseCombine(arr.slice(1, (n+1))))
-    		}
-    	}
-    }
-
-    function combineJoinOptions(input_array) {
-    	let arr = JSON.parse(JSON.stringify(input_array));
-    	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
-    	let new_arr = {};
-
-    	for (let i in params) {
-    		let input = arr.filter(d => (d['parameter'] == params[i]))
-    						.map(d => d['options']);
-    		console.log(input);
-    		let output = recurseCombine(input);
-    		// console.log(output);
-    		new_arr[params[i]] = output;
-    	}
-
-    	return Object.entries(new_arr);
-    }
-
-    // Initialise UI items
-    function drawResultsMenu(m, vis_node, grid_node, vis_fun, y, x) {
-    	const menu = new Dropdown_menu({ 
-    		target: vis_node.node(),
-    		props: {
-    			items: m.outcome_vars()
-    		}
-    	});
-
-    	// update data when different option is selected using dropdown 
-    	menu.$on("message", event => {
-    		m.changeOutcomeVar(event.detail.text);
-    		m.prepareOutcomeData();
-
-    		m.update(options_to_join, options_to_exclude, vis_node, grid_node, vis_fun, y, x);
-    	});
-    }
-
-    function which_idx(option_list, curr_options) {
-    	return option_list.map((d, i) => {
-    		if (curr_options.includes(d)) {
-    			return i;
-    		} else {
-    			return null;
-    		}
-    	}).filter(i => (i != null))
-    }
-
-    function updateData(gridData, outcomeData, params, vis_fun, join_data = [], exclude_data = []) {
-    	// deep copy data structures
-    	let toJoin = JSON.parse(JSON.stringify(join_data));
-    	let toExclude = JSON.parse(JSON.stringify(exclude_data));
-    	let parameters = JSON.parse(JSON.stringify(params));
-
-    	// console.log(toJoin);
-    	let combine = combineJoinOptions(toJoin);
-
-    	let dat1 = updateGridData(gridData, parameters, combine, toJoin, toExclude);
-    	let dat2 = updateOutcomeData(gridData, outcomeData, parameters, vis_fun, combine, toJoin, toExclude);
-
-    	// sortByOutcome(dat1, dat2);
-    	// sortInGroups(dat1, dat2);
-
-    	return [dat1, dat2]
-    }
-
-    function updateGridData(gridData, parameters, combine, toJoin = [], toExclude = []) {
-    	// deep copy data structures
-    	let g_data = JSON.parse(JSON.stringify(gridData));
-
-    	combine
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
-
-    	let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1]}) );
-
-    	if (exclude.length > 0) {
-    		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-    		g_data = g_data.filter( (i, n) => toFilter[n] );
-    	}
-
-    	if (combine.length > 0) {
-    		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-    						.flat()
-    						.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-
-    		let vec = g_data.map((d, i) => {
-    			let options = Object.values(d).flat();
-    			groups.forEach(x => {
-    					let includes = options.map(d => x['group'].includes(d)).reduce((a, b) => (a || b));
-    					if (includes) {
-    						d[x['parameter']] = x['group'];
-    					}
-    				});
-    			return d
-    		});
-
-    		let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
-
-    		let non_duplicates = duplicates_data.map((d, i) => {
-    			return duplicates_data.indexOf(d) == i;
-    		});
-
-    		g_data = vec.filter((d, i) => non_duplicates[i]);
-    	}
-
-    	return g_data;
-    }
-
-    function updateOutcomeData(gridData, outcomeData, parameters, vis_fun, combine, toJoin = [], toExclude = []) {
-    	// deep copy data structures
-    	let g_data = JSON.parse(JSON.stringify(gridData));
-    	let o_data = JSON.parse(JSON.stringify(outcomeData));
-    	let size = g_data.length;
-    	let option_list = Object.entries(parameters).map(d => d[1]);
-
-    	let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
-    				.map( d => d[1].map( j => [d[0], j]) )
-    				.flat(1)
-    				.map( i => ({"parameter": i[0], "option": i[1]}) );
-
-    	if (exclude.length > 0) {
-    		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-
-    		g_data = g_data.filter( (i, n) => toFilter[n] );
-    		o_data = o_data.filter( (i, n) => toFilter[n] );
-    	}
-
-    	if (combine.length > 0) {
-    		let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
-    						.flat()
-    						.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-
-    		let grouping_vector = g_data.map((d, i) => {
-    			let options = Object.values(d).flat();
-    			let idx = option_list.map(x => which_idx(x, options)).flat();
-    			let g = groups$1
-    				.map(x => {
-    					let includes = options.map(d => x['group'].includes(d)); // .reduce((a, b) => (a || b));
-    					return [includes.indexOf(true), x['id']];
-    				});
-
-    			g.forEach(x => {
-    				if (x[0] > -1) {
-    					idx[x[0]] = size + x[1];
-    				}
-    			});
-
-    			return JSON.stringify(idx);
-    		});
-
-    		// console.log(grouping_vector);
-
-    		o_data = groups(
-    				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
-    				d => d.group
-    			).map(d => d[1].map(x => {
-    				delete x.group;
-    				return Object.values(x).flat();
-    			}))
-    			.map(x => {
-    				let mod = rollups(x.flat(), v => {
-    					return [min$2(v, d => d[1]), max$3(v, d => d[1])]
-    				}, d => d[0]);
-    				return mod
-    			})
-    			.map(x => x.map(p => p.flat()));
-    	}
-
-    	return o_data
-    }
-
     class multiverseMatrix {
     	constructor (dat) {		
     		// data for the plot constructor
@@ -211044,17 +210951,28 @@ var app = (function () {
     		// meta data for the multiverse object
     		this.universes = [...new Set(dat.map(d => d['.universe']))];
     		this.size = this.universes.length;
-    		this.outcomeVar = dat[0]["results"].map(i => i["term"])[0]; // selects the first of the outcome vars
+    		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
+    		this.outcomes = [];
     		this.gridData = null;
-    		this.outcomeData = null;
-    		this.exclude = [];
     	}
 
-    	changeOutcomeVar(term, toJoin, toExclude) {
-    		this.outcomeVar = term;
+    	addVis = () => {
+    		this.outcomes = this.outcomes.concat({
+    			var: this.allOutcomeVars[0],
+    			data: null,
+    			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
+    		});
+    		this.initializeOutcomeData(this.outcomes.length-1);
+    		// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
+    		// this.outcomeData = this.outcomeData.concat(null);
+    		// this.initializeOutcomeData(this.outcomeData.length-1);
     	}
 
-    	parameters() {
+    	removeVis = (i) => {
+    		this.outcomes.splice(i, 1);
+    	} 
+
+    	parameters = () => {
     		// get the parameters from the first row as this is a rectangular dataset
     		// is there a better way to do this?
     		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
@@ -211064,37 +210982,37 @@ var app = (function () {
     		return Object.assign( {}, ...param_names.map( (x) => ({[x]: groups(dat, d => d[x]).map( i => i[0] )}) ) );
     	}
 
-    	outcome_vars() {
-    		// get the variables from the results in first row as this is a rectangular dataset
-    		// is there a better way to do this?
-    		return this.data[0]["results"].map(i => i["term"]);
-    	}
+    	// outcome_vars = () => {
+    	// 	// get the variables from the results in first row as this is a rectangular dataset
+    	// 	// is there a better way to do this?
+    	// 	return this.data[0]["results"].map(i => i["term"]);
+    	// }
 
     	// creates the data structure for the grid matrix
     	// we will draw this plot as a bar chart
     	// input: JSON multiverse object (this.data), parameters (this.parameters)
     	// output: rectangular data structure with columns corresponding to each parameter, 
     	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
-    	prepareData(vis = "CDF") {
+    	initializeData = (vis = "CDF") => {
     		let parameters = [...Object.keys(this.parameters())];
     		options_to_exclude = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
 
-    		this.prepareGridData();
-    		this.prepareOutcomeData(vis = "CDF");
+    		this.initializeGridData();
+    		// this.prepareOutcomeData(vis = "CDF");
     	}
 
-    	prepareGridData() {
+    	initializeGridData = () => {
     		// creating a shallow copy which is fine for here
     		let parameters = [...Object.keys(this.parameters())];
     		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
     	}
 
-    	prepareOutcomeData(graph = CDF) {
+    	initializeOutcomeData = (i, graph = CDF) => {
     		// creating a shallow copy which is fine for here
-    		let term = this.outcomeVar;
+    		let term = this.outcomes[i].var;
 
     		if (graph == CI) {
-    			this.outcomeData = this.data.map(function(d) { 
+    			this.outcomes[i].data = this.data.map(function(d) { 
     				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
     					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
     				))
@@ -211108,60 +211026,67 @@ var app = (function () {
 
     			temp[0]['cdf.x'].map((d, i) => i);
 
-    			this.outcomeData = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			this.outcomes[i].data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
     		}
-    	}
-
-    	draw (selected_options = [], results_node, grid_node, vis_fun, y, x) {
-    		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, [], selected_options);
-
-    		// update grid
-    		drawGrid(gridData, this, results_node, grid_node, y, x);
-
-    		// update results
-    		// this.drawCI(outcomeData, results_node, grid_node, y);
-    		vis_fun(this.outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-    	}
-
-    	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
-    		let params = this.parameters();
-    		let [gridData, outcomeData] = updateData(this.gridData, this.outcomeData, this.parameters(), vis_fun, toJoin, toExclude);
-
-    		let options = Object.values(params);
-    		let colWidth = max$3(options.map(d => d.length)) * (cell.width + cell.padding);
-    		let x2 = band()
-    			.domain(sequence(max$3(options.map(d => d.length))))
-    			.range( [0, colWidth] );
-
-    		// update grid
-    		selectAll("g.option-value").remove();		
-    		Object.keys(params).forEach( 
-    			(d, i) => drawColOptions(gridData, this, d, results_node, grid_node, y, x, x2)
-    		);
-
-    		// update results
-    		vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-
-    		Object.values(options_to_exclude)
-    			.flat()
-    			.forEach(d => {
-    				selectAll(`rect.${d}`).style("opacity", 0.2);
-    			});
     	}
     }
 
+    function draw (m, selected_options = [], grid_node, results_nodes, vis_fun, y, x) {
+    	let parameters = m.parameters();
+    	let gridData = m.gridData;
+    	let outcomes = m.outcomes;
+    	let size = m.size;
+
+    	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
+
+    	// update grid
+    	drawGrid(gridData, parameters, grid_node, y, x);
+
+    	// update results
+    	// this.drawCI(outcomeData, results_node, grid_node, y);
+    	results_nodes.each((d, i, nodes) => {
+    		if (i < outcomes.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+    			vis_fun(outcomes[i].data, select(nodes[i]), size, y);
+    	});
+    }
+
+    // export function	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
+    // 	let params = parameters();
+    // 	let [gridData, outcomeData] = updateData(gridData, outcomeData, parameters(), vis_fun, toJoin, toExclude);
+
+    // 	let options = Object.values(params);
+    // 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
+    // 	let x2 = d3.scaleBand()
+    // 		.domain(d3.range(d3.max(options.map(d => d.length))))
+    // 		.range( [0, colWidth] )
+
+    // 	// update grid
+    // 	d3.selectAll("g.option-value").remove();		
+    // 	Object.keys(params).forEach( 
+    // 		(d, i) => drawColOptions(gridData, m, d, results_node, grid_node, y, x, x2)
+    // 	);
+
+    // 	// update results
+    // 	vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
+
+    // 	Object.values(options_to_exclude)
+    // 		.flat()
+    // 		.forEach(d => {
+    // 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
+    // 		})
+    // }
+
     // function from drawing the decision grid
-    function drawGrid (data, m_obj, results_node, grid_node, yscale, x) {
-    	let params = m_obj.parameters();
+    function drawGrid (gridData, params, grid_node, yscale, x) {
 
     	selectAll("g.option-value").remove();
     	selectAll("g.option-name").remove();
 
-    	drawHeaders(params, results_node, grid_node, margin, x);
-    	drawCols(data, m_obj, results_node, grid_node, yscale, x);
+    	drawHeaders(params, grid_node, x);
+    	drawCols(gridData, params, grid_node, yscale, x);
     }
 
-    function drawHeaders(params, results_node, grid_node, margin, xscale) {
+    function drawHeaders(params, grid_node, xscale) {
     	let plot = grid_node.select("svg");
 
     	let options = Object.values(params);
@@ -211188,13 +211113,12 @@ var app = (function () {
     	});
     }
 
-    function drawCols(data, m_obj, results_node, grid_node, yscale, x1) {
+    function drawCols(data, params, grid_node, yscale, x1) {
     	let plot = grid_node.select("svg");
-    	let params = m_obj.parameters();
     	let parameter_list = Object.entries(params)
     		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
 
-    	let optionContainer = plot.append("g")
+    	plot.append("g")
     		.attr("class", "parameter-options")
     		.selectAll("g")
     		.data(parameter_list)
@@ -211215,8 +211139,8 @@ var app = (function () {
     	Object.keys(params).forEach( 
     		(d, i) => {
     			// drawCols(data, m_obj, i, results_node, grid_node, yscale, x);
-    			drawColNames(m_obj, d, results_node, grid_node, optionContainer, yscale, x1, x2);
-    			drawColOptions(data, m_obj, d, results_node, grid_node, yscale, x1, x2);
+    			drawColNames(params, d, x2);
+    			drawColOptions(data, params, d, grid_node, yscale, x1, x2);
     	});
 
     	drag();
@@ -211266,10 +211190,10 @@ var app = (function () {
     	});
     };
 
-    function drawColNames(m_obj, parameter, results_node, grid_node, container, yscale, x1, x2) {
-    	let options = m_obj.parameters()[parameter];
+    function drawColNames(params, param, x2) {
+    	let options = params[param];
 
-    	select(`g.option-name.${parameter}`)
+    	select(`g.option-name.${param}`)
     		.selectAll("text")
     		.data(d => options.slice(0, -1))
     		.join("foreignObject")
@@ -211291,15 +211215,15 @@ var app = (function () {
     			optionJoin.$on('message', event => {
     				let option_pair = [options[i], options[i+1]];
     				if (event.detail.text) {
-    					options_to_join.push({'parameter': parameter, 'options': option_pair});
+    					options_to_join.push({'parameter': param, 'options': option_pair});
     				} else {
     					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
     				}
-    				m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+    				// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
     			});
     		});
 
-    	let optionNames = select(`g.option-name.${parameter}`)
+    	let optionNames = select(`g.option-name.${param}`)
     		.selectAll("text")
     		.data(options)
     		.join("foreignObject")
@@ -211321,19 +211245,19 @@ var app = (function () {
 
     		optionSwitch.$on('message', event => {
     			if (!event.detail.text) {
-    				options_to_exclude[parameter].push(d);
+    				options_to_exclude[param].push(d);
     				selectAll(`button.join.${d}`).property("disabled", true);
     			} else {
-    				let index = options_to_exclude[parameter].indexOf(d);
+    				let index = options_to_exclude[param].indexOf(d);
     				selectAll(`button.join.${d}`).property("disabled", false);
     				if (index > -1) {
-    					options_to_exclude[parameter].splice(index, 1);
+    					options_to_exclude[param].splice(index, 1);
     				} else {
     					console.log("error option index not found");
     				}
     			}
 
-    			m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
+    			// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
     		});
     	});
 
@@ -211342,9 +211266,9 @@ var app = (function () {
     		.text(d => d);
     }
 
-    function drawColOptions(data, m_obj, parameter, results_node, grid_node, yscale, x1, x2) {
+    function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
     	let plot = grid_node.select("svg");
-    	let options = m_obj.parameters()[parameter];
+    	let options = params[param];
     	let ypos;
 
     	if (state_value == 0) {
@@ -211355,7 +211279,7 @@ var app = (function () {
 
     	let optionCell = plot.append("g")
     		.attr("class", "option-value")
-    		.attr("transform",  `translate(${x1(parameter)}, ${ypos})`)
+    		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
     		.selectAll("g")
     		.data(data)
     		.join("g")
@@ -211367,7 +211291,7 @@ var app = (function () {
     			return `translate(0, ${yscale(i) + whitespace})`
     		})
     		.attr("class", function (d, i) {
-    			return d[parameter].join(" ")
+    			return d[param].join(" ")
     		});
 
     	optionCell.selectAll("rect")
@@ -211386,7 +211310,7 @@ var app = (function () {
     }
 
 
-    function CI (data, results_node, grid_node, size, parameters, yscale) {
+    function CI (data, results_node, size, yscale) {
     	let results_plot = results_node.select("svg");
     	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
     	parameters.length * (cell.width + cell.padding); // to fix
@@ -211464,18 +211388,18 @@ var app = (function () {
     		.attr("fill", "#333333");
     }
 
-    function CDF (data, results_node, grid_node, size, parameters, yscale) {
-    	let results_plot = results_node.select("svg");
+    function CDF (data, results_node, size, yscale) {
+    	let results_plot = results_node;
     	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-    	parameters.length * (cell.width + cell.padding); // to fix
+    	// const width = parameters.length * (cell.width + cell.padding); // to fix
     	let ypos;
 
-    	select("g.outcomePanel").remove();
+    	results_plot.select("g.outcomePanel").remove();
 
     	let xscale = linear()
     		.domain(extent$1(data.map(d => d.map(x => x[0])).flat()))
     		.range([margin.left, outVisWidth]);
-
+    	
     	let y = linear()
     		.domain(extent$1( data.map(d => d.map(x => x[1])).flat() ))
     		.range([(yscale.step() - cell.padding), 0]);
@@ -211554,9 +211478,9 @@ var app = (function () {
     // 	let drag = d3.drag();
     // }
 
-    const file$2 = "src/components/toggle-button.svelte";
+    const file$3 = "src\\components\\toggle-button.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let div2;
     	let p;
     	let t1;
@@ -211574,19 +211498,19 @@ var app = (function () {
     			div1 = element("div");
     			div0 = element("div");
     			attr_dev(p, "class", "svelte-1pkk3b3");
-    			add_location(p, file$2, 132, 1, 2872);
+    			add_location(p, file$3, 132, 1, 3004);
     			attr_dev(div0, "class", "state-indicator svelte-1pkk3b3");
     			set_style(div0, "width", /*r*/ ctx[1] + "px");
     			set_style(div0, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div0, "active", /*active*/ ctx[0]);
-    			add_location(div0, file$2, 134, 2, 2997);
+    			add_location(div0, file$3, 134, 2, 3131);
     			attr_dev(div1, "class", "toggle-button svelte-1pkk3b3");
     			set_style(div1, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div1, "active", /*active*/ ctx[0]);
-    			add_location(div1, file$2, 133, 1, 2898);
+    			add_location(div1, file$3, 133, 1, 3031);
     			attr_dev(div2, "class", "toggle svelte-1pkk3b3");
     			set_style(div2, "margin", header1.top + "px 0px");
-    			add_location(div2, file$2, 126, 0, 2717);
+    			add_location(div2, file$3, 126, 0, 2843);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -211623,7 +211547,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -211632,7 +211556,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_button", slots, []);
     	let active = false;
@@ -211702,18 +211626,18 @@ var app = (function () {
     class Toggle_button extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Toggle_button",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
     }
 
-    const file$1 = "src/components/tooltip-option-menu.svelte";
+    const file$2 = "src\\components\\tooltip-option-menu.svelte";
 
     // (95:1) {:else}
     function create_else_block_1(ctx) {
@@ -211728,9 +211652,9 @@ var app = (function () {
     			li = element("li");
     			li.textContent = "Exclude option";
     			attr_dev(li, "class", "svelte-3jen13");
-    			add_location(li, file$1, 96, 3, 1805);
+    			add_location(li, file$2, 96, 3, 1901);
     			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$1, 95, 2, 1797);
+    			add_location(ul, file$2, 95, 2, 1892);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -211824,9 +211748,9 @@ var app = (function () {
     			li = element("li");
     			li.textContent = "Exclude options";
     			attr_dev(li, "class", "svelte-3jen13");
-    			add_location(li, file$1, 91, 4, 1718);
+    			add_location(li, file$2, 91, 4, 1809);
     			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$1, 90, 3, 1709);
+    			add_location(ul, file$2, 90, 3, 1799);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -211874,11 +211798,11 @@ var app = (function () {
     			li1 = element("li");
     			li1.textContent = "Join options";
     			attr_dev(li0, "class", "svelte-3jen13");
-    			add_location(li0, file$1, 86, 4, 1587);
+    			add_location(li0, file$2, 86, 4, 1673);
     			attr_dev(li1, "class", "svelte-3jen13");
-    			add_location(li1, file$1, 87, 4, 1642);
+    			add_location(li1, file$2, 87, 4, 1729);
     			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$1, 85, 3, 1578);
+    			add_location(ul, file$2, 85, 3, 1663);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -211914,7 +211838,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$1(ctx) {
+    function create_fragment$2(ctx) {
     	let div;
 
     	function select_block_type(ctx, dirty) {
@@ -211931,7 +211855,7 @@ var app = (function () {
     			if_block.c();
     			attr_dev(div, "class", "tooltip-menu svelte-3jen13");
     			attr_dev(div, "id", "option-menu");
-    			add_location(div, file$1, 82, 0, 1471);
+    			add_location(div, file$2, 82, 0, 1553);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -211963,7 +211887,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$1.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -211972,7 +211896,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Tooltip_option_menu", slots, []);
     	const dispatch = createEventDispatcher();
@@ -212043,13 +211967,13 @@ var app = (function () {
     class Tooltip_option_menu extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init$1(this, options, instance$2, create_fragment$2, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Tooltip_option_menu",
     			options,
-    			id: create_fragment$1.name
+    			id: create_fragment$2.name
     		});
     	}
     }
@@ -212069,14 +211993,536 @@ var app = (function () {
         })(step, start--), 50);
     }
 
+    const file$1 = "src\\components\\Vis.svelte";
+
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[11] = list[i];
+    	return child_ctx;
+    }
+
+    // (75:2) {#each allOutcomeVars as t}
+    function create_each_block$1(ctx) {
+    	let option;
+    	let t0_value = /*t*/ ctx[11] + "";
+    	let t0;
+    	let t1;
+    	let option_value_value;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t0 = text$2(t0_value);
+    			t1 = space();
+    			option.__value = option_value_value = /*t*/ ctx[11];
+    			option.value = option.__value;
+    			add_location(option, file$1, 75, 3, 1365);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t0);
+    			append_dev(option, t1);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*allOutcomeVars*/ 4 && t0_value !== (t0_value = /*t*/ ctx[11] + "")) set_data_dev(t0, t0_value);
+
+    			if (dirty & /*allOutcomeVars*/ 4 && option_value_value !== (option_value_value = /*t*/ ctx[11])) {
+    				prop_dev(option, "__value", option_value_value);
+    				option.value = option.__value;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(75:2) {#each allOutcomeVars as t}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div;
+    	let select;
+    	let select_id_value;
+    	let t0;
+    	let button;
+    	let t1;
+    	let button_id_value;
+    	let t2;
+    	let svg_1;
+    	let svg_1_id_value;
+    	let div_id_value;
+    	let mounted;
+    	let dispose;
+    	let each_value = /*allOutcomeVars*/ ctx[2];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			select = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t0 = space();
+    			button = element("button");
+    			t1 = text$2("X");
+    			t2 = space();
+    			svg_1 = svg_element("svg");
+    			attr_dev(select, "class", "vis-dropdown svelte-1upgcjq");
+    			attr_dev(select, "id", select_id_value = "vis-" + /*i*/ ctx[1]);
+    			set_style(select, "left", -/*w*/ ctx[3] + "px");
+    			set_style(select, "width", /*w*/ ctx[3] - 38 + "px");
+    			set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 0");
+    			if (/*term*/ ctx[0] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[7].call(select));
+    			add_location(select, file$1, 65, 1, 1133);
+    			attr_dev(button, "class", "vis-remove svelte-1upgcjq");
+    			attr_dev(button, "id", button_id_value = "vis-" + /*i*/ ctx[1]);
+    			add_location(button, file$1, 80, 1, 1432);
+    			attr_dev(svg_1, "id", svg_1_id_value = "vis-" + /*i*/ ctx[1]);
+    			attr_dev(svg_1, "height", /*h*/ ctx[4]);
+    			attr_dev(svg_1, "width", /*w*/ ctx[3]);
+    			attr_dev(svg_1, "class", "svelte-1upgcjq");
+    			add_location(svg_1, file$1, 81, 1, 1522);
+    			attr_dev(div, "class", "vis svelte-1upgcjq");
+    			attr_dev(div, "id", div_id_value = "vis-" + /*i*/ ctx[1]);
+    			add_location(div, file$1, 64, 0, 1099);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, select);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_option(select, /*term*/ ctx[0]);
+    			append_dev(div, t0);
+    			append_dev(div, button);
+    			append_dev(button, t1);
+    			append_dev(div, t2);
+    			append_dev(div, svg_1);
+    			/*svg_1_binding*/ ctx[10](svg_1);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[7]),
+    					listen_dev(select, "change", /*change_handler*/ ctx[8], false, false, false),
+    					listen_dev(button, "click", /*click_handler*/ ctx[9], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*allOutcomeVars*/ 4) {
+    				each_value = /*allOutcomeVars*/ ctx[2];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$1(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (dirty & /*i*/ 2 && select_id_value !== (select_id_value = "vis-" + /*i*/ ctx[1])) {
+    				attr_dev(select, "id", select_id_value);
+    			}
+
+    			if (dirty & /*w*/ 8) {
+    				set_style(select, "left", -/*w*/ ctx[3] + "px");
+    			}
+
+    			if (dirty & /*w*/ 8) {
+    				set_style(select, "width", /*w*/ ctx[3] - 38 + "px");
+    			}
+
+    			if (dirty & /*w*/ 8) {
+    				set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 0");
+    			}
+
+    			if (dirty & /*term, allOutcomeVars*/ 5) {
+    				select_option(select, /*term*/ ctx[0]);
+    			}
+
+    			if (dirty & /*i*/ 2 && button_id_value !== (button_id_value = "vis-" + /*i*/ ctx[1])) {
+    				attr_dev(button, "id", button_id_value);
+    			}
+
+    			if (dirty & /*i*/ 2 && svg_1_id_value !== (svg_1_id_value = "vis-" + /*i*/ ctx[1])) {
+    				attr_dev(svg_1, "id", svg_1_id_value);
+    			}
+
+    			if (dirty & /*h*/ 16) {
+    				attr_dev(svg_1, "height", /*h*/ ctx[4]);
+    			}
+
+    			if (dirty & /*w*/ 8) {
+    				attr_dev(svg_1, "width", /*w*/ ctx[3]);
+    			}
+
+    			if (dirty & /*i*/ 2 && div_id_value !== (div_id_value = "vis-" + /*i*/ ctx[1])) {
+    				attr_dev(div, "id", div_id_value);
+    			}
+    		},
+    		i: noop$4,
+    		o: noop$4,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
+    			/*svg_1_binding*/ ctx[10](null);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("Vis", slots, []);
+    	let svg;
+    	const dispatch = createEventDispatcher();
+    	let { i } = $$props;
+    	let { allOutcomeVars } = $$props;
+    	let { w } = $$props;
+    	let { h } = $$props;
+    	let { term = allOutcomeVars[0] } = $$props;
+
+    	onMount(() => {
+    		// this is used to make <Vis/> not blank on mount
+    		dispatch("mount");
+    	});
+
+    	const writable_props = ["i", "allOutcomeVars", "w", "h", "term"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Vis> was created with unknown prop '${key}'`);
+    	});
+
+    	function select_change_handler() {
+    		term = select_value(this);
+    		$$invalidate(0, term);
+    		$$invalidate(2, allOutcomeVars);
+    	}
+
+    	const change_handler = () => dispatch("change");
+    	const click_handler = () => dispatch("remove");
+
+    	function svg_1_binding($$value) {
+    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    			svg = $$value;
+    			$$invalidate(5, svg);
+    		});
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ("i" in $$props) $$invalidate(1, i = $$props.i);
+    		if ("allOutcomeVars" in $$props) $$invalidate(2, allOutcomeVars = $$props.allOutcomeVars);
+    		if ("w" in $$props) $$invalidate(3, w = $$props.w);
+    		if ("h" in $$props) $$invalidate(4, h = $$props.h);
+    		if ("term" in $$props) $$invalidate(0, term = $$props.term);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		onMount,
+    		createEventDispatcher,
+    		svg,
+    		dispatch,
+    		i,
+    		allOutcomeVars,
+    		w,
+    		h,
+    		term
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ("svg" in $$props) $$invalidate(5, svg = $$props.svg);
+    		if ("i" in $$props) $$invalidate(1, i = $$props.i);
+    		if ("allOutcomeVars" in $$props) $$invalidate(2, allOutcomeVars = $$props.allOutcomeVars);
+    		if ("w" in $$props) $$invalidate(3, w = $$props.w);
+    		if ("h" in $$props) $$invalidate(4, h = $$props.h);
+    		if ("term" in $$props) $$invalidate(0, term = $$props.term);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		term,
+    		i,
+    		allOutcomeVars,
+    		w,
+    		h,
+    		svg,
+    		dispatch,
+    		select_change_handler,
+    		change_handler,
+    		click_handler,
+    		svg_1_binding
+    	];
+    }
+
+    class Vis extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init$1(this, options, instance$1, create_fragment$1, safe_not_equal, {
+    			i: 1,
+    			allOutcomeVars: 2,
+    			w: 3,
+    			h: 4,
+    			term: 0
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Vis",
+    			options,
+    			id: create_fragment$1.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*i*/ ctx[1] === undefined && !("i" in props)) {
+    			console.warn("<Vis> was created without expected prop 'i'");
+    		}
+
+    		if (/*allOutcomeVars*/ ctx[2] === undefined && !("allOutcomeVars" in props)) {
+    			console.warn("<Vis> was created without expected prop 'allOutcomeVars'");
+    		}
+
+    		if (/*w*/ ctx[3] === undefined && !("w" in props)) {
+    			console.warn("<Vis> was created without expected prop 'w'");
+    		}
+
+    		if (/*h*/ ctx[4] === undefined && !("h" in props)) {
+    			console.warn("<Vis> was created without expected prop 'h'");
+    		}
+    	}
+
+    	get i() {
+    		throw new Error("<Vis>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set i(value) {
+    		throw new Error("<Vis>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get allOutcomeVars() {
+    		throw new Error("<Vis>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set allOutcomeVars(value) {
+    		throw new Error("<Vis>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get w() {
+    		throw new Error("<Vis>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set w(value) {
+    		throw new Error("<Vis>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get h() {
+    		throw new Error("<Vis>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set h(value) {
+    		throw new Error("<Vis>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get term() {
+    		throw new Error("<Vis>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set term(value) {
+    		throw new Error("<Vis>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
     const { Object: Object_1 } = globals;
-    const file = "src/App.svelte";
+    const file = "src\\App.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[24] = list[i];
+    	child_ctx[25] = list;
+    	child_ctx[26] = i;
+    	return child_ctx;
+    }
+
+    // (178:3) {#each m.outcomes as outcome, i (outcome.id)}
+    function create_each_block(key_1, ctx) {
+    	let first;
+    	let vis_1;
+    	let updating_w;
+    	let updating_h;
+    	let updating_term;
+    	let current;
+
+    	function vis_1_w_binding(value) {
+    		/*vis_1_w_binding*/ ctx[11](value);
+    	}
+
+    	function vis_1_h_binding(value) {
+    		/*vis_1_h_binding*/ ctx[12](value);
+    	}
+
+    	function vis_1_term_binding(value) {
+    		/*vis_1_term_binding*/ ctx[13](value, /*outcome*/ ctx[24]);
+    	}
+
+    	function change_handler() {
+    		return /*change_handler*/ ctx[14](/*i*/ ctx[26]);
+    	}
+
+    	function mount_handler() {
+    		return /*mount_handler*/ ctx[15](/*i*/ ctx[26]);
+    	}
+
+    	function remove_handler() {
+    		return /*remove_handler*/ ctx[16](/*i*/ ctx[26]);
+    	}
+
+    	let vis_1_props = {
+    		i: /*i*/ ctx[26],
+    		allOutcomeVars: /*m*/ ctx[0].allOutcomeVars
+    	};
+
+    	if (/*w1*/ ctx[3] !== void 0) {
+    		vis_1_props.w = /*w1*/ ctx[3];
+    	}
+
+    	if (/*h*/ ctx[1] !== void 0) {
+    		vis_1_props.h = /*h*/ ctx[1];
+    	}
+
+    	if (/*outcome*/ ctx[24].var !== void 0) {
+    		vis_1_props.term = /*outcome*/ ctx[24].var;
+    	}
+
+    	vis_1 = new Vis({ props: vis_1_props, $$inline: true });
+    	binding_callbacks.push(() => bind(vis_1, "w", vis_1_w_binding));
+    	binding_callbacks.push(() => bind(vis_1, "h", vis_1_h_binding));
+    	binding_callbacks.push(() => bind(vis_1, "term", vis_1_term_binding));
+    	vis_1.$on("change", change_handler);
+    	vis_1.$on("mount", mount_handler);
+    	vis_1.$on("remove", remove_handler);
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			first = empty$3();
+    			create_component(vis_1.$$.fragment);
+    			this.first = first;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, first, anchor);
+    			mount_component(vis_1, target, anchor);
+    			current = true;
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			const vis_1_changes = {};
+    			if (dirty & /*m*/ 1) vis_1_changes.i = /*i*/ ctx[26];
+    			if (dirty & /*m*/ 1) vis_1_changes.allOutcomeVars = /*m*/ ctx[0].allOutcomeVars;
+
+    			if (!updating_w && dirty & /*w1*/ 8) {
+    				updating_w = true;
+    				vis_1_changes.w = /*w1*/ ctx[3];
+    				add_flush_callback(() => updating_w = false);
+    			}
+
+    			if (!updating_h && dirty & /*h*/ 2) {
+    				updating_h = true;
+    				vis_1_changes.h = /*h*/ ctx[1];
+    				add_flush_callback(() => updating_h = false);
+    			}
+
+    			if (!updating_term && dirty & /*m*/ 1) {
+    				updating_term = true;
+    				vis_1_changes.term = /*outcome*/ ctx[24].var;
+    				add_flush_callback(() => updating_term = false);
+    			}
+
+    			vis_1.$set(vis_1_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(vis_1.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(vis_1.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(first);
+    			destroy_component(vis_1, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(178:3) {#each m.outcomes as outcome, i (outcome.id)}",
+    		ctx
+    	});
+
+    	return block;
+    }
 
     function create_fragment(ctx) {
     	let main;
     	let div0;
     	let t0;
-    	let div7;
+    	let div4;
     	let div3;
     	let div1;
     	let h1;
@@ -212085,21 +212531,38 @@ var app = (function () {
     	let div2;
     	let toggle;
     	let t3;
-    	let div4;
-    	let svg0;
-    	let t4;
-    	let div6;
     	let div5;
-    	let svg1;
+    	let button;
+    	let t5;
+    	let div9;
+    	let div6;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t6;
+    	let div8;
+    	let div7;
+    	let svg_1;
     	let current;
+    	let mounted;
+    	let dispose;
     	toggle = new Toggle_button({ $$inline: true });
+    	let each_value = /*m*/ ctx[0].outcomes;
+    	validate_each_argument(each_value);
+    	const get_key = ctx => /*outcome*/ ctx[24].id;
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
+    	}
 
     	const block = {
     		c: function create() {
     			main = element("main");
     			div0 = element("div");
     			t0 = space();
-    			div7 = element("div");
+    			div4 = element("div");
     			div3 = element("div");
     			div1 = element("div");
     			h1 = element("h1");
@@ -212108,42 +212571,54 @@ var app = (function () {
     			div2 = element("div");
     			create_component(toggle.$$.fragment);
     			t3 = space();
-    			div4 = element("div");
-    			svg0 = svg_element("svg");
-    			t4 = space();
-    			div6 = element("div");
     			div5 = element("div");
-    			svg1 = svg_element("svg");
+    			button = element("button");
+    			button.textContent = "+";
+    			t5 = space();
+    			div9 = element("div");
+    			div6 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t6 = space();
+    			div8 = element("div");
+    			div7 = element("div");
+    			svg_1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 140, 1, 3456);
+    			add_location(div0, file, 161, 1, 4319);
     			set_style(h1, "margin", header1.top + "px 0px");
-    			attr_dev(h1, "class", "svelte-mmjyk4");
-    			add_location(h1, file, 144, 4, 3558);
+    			attr_dev(h1, "class", "svelte-49eiev");
+    			add_location(h1, file, 165, 4, 4425);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 143, 3, 3531);
+    			add_location(div1, file, 164, 3, 4397);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 146, 3, 3641);
+    			add_location(div2, file, 167, 3, 4510);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 142, 2, 3510);
-    			attr_dev(svg0, "height", /*h*/ ctx[0]);
-    			attr_dev(svg0, "width", /*w1*/ ctx[2]);
-    			attr_dev(svg0, "class", "svelte-mmjyk4");
-    			add_location(svg0, file, 151, 3, 3751);
-    			attr_dev(div4, "class", "vis svelte-mmjyk4");
-    			set_style(div4, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div4, file, 150, 2, 3699);
-    			attr_dev(svg1, "height", /*h*/ ctx[0]);
-    			attr_dev(svg1, "width", /*w2*/ ctx[3]);
-    			attr_dev(svg1, "class", "svelte-mmjyk4");
-    			add_location(svg1, file, 155, 4, 3898);
-    			attr_dev(div5, "class", "grid svelte-mmjyk4");
-    			set_style(div5, "height", /*windowHeight*/ ctx[4]);
-    			add_location(div5, file, 154, 3, 3844);
-    			attr_dev(div6, "class", "grid-container svelte-mmjyk4");
-    			add_location(div6, file, 153, 2, 3812);
-    			attr_dev(div7, "class", "container");
-    			add_location(div7, file, 141, 1, 3482);
-    			add_location(main, file, 139, 0, 3448);
+    			add_location(div3, file, 163, 2, 4375);
+    			attr_dev(div4, "class", "container");
+    			add_location(div4, file, 162, 1, 4346);
+    			attr_dev(button, "class", "svelte-49eiev");
+    			add_location(button, file, 173, 2, 4612);
+    			attr_dev(div5, "class", "button-wrapper svelte-49eiev");
+    			add_location(div5, file, 172, 1, 4580);
+    			attr_dev(div6, "class", "vis-container svelte-49eiev");
+    			set_style(div6, "height", /*windowHeight*/ ctx[5]);
+    			add_location(div6, file, 176, 2, 4710);
+    			attr_dev(svg_1, "height", /*h*/ ctx[1]);
+    			attr_dev(svg_1, "width", /*w2*/ ctx[4]);
+    			attr_dev(svg_1, "class", "svelte-49eiev");
+    			add_location(svg_1, file, 192, 4, 5252);
+    			attr_dev(div7, "class", "grid svelte-49eiev");
+    			set_style(div7, "height", /*windowHeight*/ ctx[5]);
+    			add_location(div7, file, 191, 3, 5197);
+    			attr_dev(div8, "class", "grid-container svelte-49eiev");
+    			add_location(div8, file, 190, 2, 5164);
+    			attr_dev(div9, "class", "main-content svelte-49eiev");
+    			add_location(div9, file, 175, 1, 4680);
+    			attr_dev(main, "class", "svelte-49eiev");
+    			add_location(main, file, 160, 0, 4310);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212152,56 +212627,85 @@ var app = (function () {
     			insert_dev(target, main, anchor);
     			append_dev(main, div0);
     			append_dev(main, t0);
-    			append_dev(main, div7);
-    			append_dev(div7, div3);
+    			append_dev(main, div4);
+    			append_dev(div4, div3);
     			append_dev(div3, div1);
     			append_dev(div1, h1);
     			append_dev(h1, t1);
     			append_dev(div3, t2);
     			append_dev(div3, div2);
     			mount_component(toggle, div2, null);
-    			append_dev(div7, t3);
-    			append_dev(div7, div4);
-    			append_dev(div4, svg0);
-    			/*svg0_binding*/ ctx[6](svg0);
-    			append_dev(div7, t4);
-    			append_dev(div7, div6);
-    			append_dev(div6, div5);
-    			append_dev(div5, svg1);
-    			/*svg1_binding*/ ctx[7](svg1);
+    			append_dev(main, t3);
+    			append_dev(main, div5);
+    			append_dev(div5, button);
+    			append_dev(main, t5);
+    			append_dev(main, div9);
+    			append_dev(div9, div6);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div6, null);
+    			}
+
+    			append_dev(div9, t6);
+    			append_dev(div9, div8);
+    			append_dev(div8, div7);
+    			append_dev(div7, svg_1);
+    			/*svg_1_binding*/ ctx[17](svg_1);
     			current = true;
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[10], false, false, false);
+    				mounted = true;
+    			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*h*/ 1) {
-    				attr_dev(svg0, "height", /*h*/ ctx[0]);
+    			if (dirty & /*m, w1, h, drawVis*/ 75) {
+    				each_value = /*m*/ ctx[0].outcomes;
+    				validate_each_argument(each_value);
+    				group_outros();
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div6, outro_and_destroy_block, create_each_block, null, get_each_context);
+    				check_outros();
     			}
 
-    			if (!current || dirty & /*w1*/ 4) {
-    				attr_dev(svg0, "width", /*w1*/ ctx[2]);
+    			if (!current || dirty & /*h*/ 2) {
+    				attr_dev(svg_1, "height", /*h*/ ctx[1]);
     			}
 
-    			if (!current || dirty & /*h*/ 1) {
-    				attr_dev(svg1, "height", /*h*/ ctx[0]);
-    			}
-
-    			if (!current || dirty & /*w2*/ 8) {
-    				attr_dev(svg1, "width", /*w2*/ ctx[3]);
+    			if (!current || dirty & /*w2*/ 16) {
+    				attr_dev(svg_1, "width", /*w2*/ ctx[4]);
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(toggle.$$.fragment, local);
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(toggle.$$.fragment, local);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
     			destroy_component(toggle);
-    			/*svg0_binding*/ ctx[6](null);
-    			/*svg1_binding*/ ctx[7](null);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+
+    			/*svg_1_binding*/ ctx[17](null);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -212225,14 +212729,14 @@ var app = (function () {
     	let x_params;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
-    	const m = new multiverseMatrix(data2);
+    	let m = new multiverseMatrix(data2);
     	let vis = CDF;
-    	m.prepareData(vis);
+    	m.initializeData(vis);
     	const params = m.parameters();
     	let svg;
 
     	// let vis = drawCDF;
-    	const windowHeight = window.innerHeight - 64 + "px";
+    	const windowHeight = window.innerHeight - 170 + "px";
 
     	// const size = m.size;
     	const cols = [...Object.keys(m.parameters())].length;
@@ -212252,19 +212756,24 @@ var app = (function () {
     	);
 
     	const n_options = accum_options[accum_options.length - 1];
+
+    	// could have done `$:` instead of `let` but `let` is noticeably faster than `$:`, but we might need to do it anyway later
     	let gridData = m.gridData;
 
+    	// maybe move into multiverseMatrix.js
+    	// used for specifically changing a single <Vis/> component
+    	function drawVis(i) {
+    		m.initializeOutcomeData(i);
+    		$$invalidate(0, m);
+    		vis(m.outcomes[i].data, select("svg#vis-" + i), m.size, y);
+    	}
+
     	onMount(() => {
-    		const results_node = select("div.vis");
-    		const grid_node = select("div.grid");
-    		drawResultsMenu(m, results_node, grid_node, vis, y, x_params); //, x_opts);
-
-    		// drawOptionMenu(m, results_node, grid_node, y, x_grid);
-    		m.draw([], results_node, grid_node, vis, y, x_params); //, x_opts);
-
+    		let grid = select("div.grid");
+    		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
     		let isSyncingLeftScroll = false;
     		let isSyncingRightScroll = false;
-    		let leftDiv = select("div.vis").node();
+    		let leftDiv = select("div.vis-container").node();
     		let rightDiv = select("div.grid").node();
 
     		leftDiv.onscroll = function () {
@@ -212292,17 +212801,40 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	function svg0_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
-    			svg = $$value;
-    			$$invalidate(1, svg);
-    		});
+    	const click_handler = () => {
+    		m.addVis();
+    		$$invalidate(0, m);
+    	};
+
+    	function vis_1_w_binding(value) {
+    		w1 = value;
+    		$$invalidate(3, w1);
     	}
 
-    	function svg1_binding($$value) {
+    	function vis_1_h_binding(value) {
+    		h = value;
+    		(($$invalidate(1, h), $$invalidate(7, size)), $$invalidate(0, m));
+    	}
+
+    	function vis_1_term_binding(value, outcome) {
+    		if ($$self.$$.not_equal(outcome.var, value)) {
+    			outcome.var = value;
+    			$$invalidate(0, m);
+    		}
+    	}
+
+    	const change_handler = i => drawVis(i);
+    	const mount_handler = i => drawVis(i);
+
+    	const remove_handler = i => {
+    		m.removeVis(i);
+    		$$invalidate(0, m);
+    	};
+
+    	function svg_1_binding($$value) {
     		binding_callbacks[$$value ? "unshift" : "push"](() => {
     			svg = $$value;
-    			$$invalidate(1, svg);
+    			$$invalidate(2, svg);
     		});
     	}
 
@@ -212311,9 +212843,10 @@ var app = (function () {
     		d3,
     		data,
     		multiverseMatrix,
-    		drawResultsMenu,
+    		draw,
     		CI,
     		CDF,
+    		drawGrid,
     		cell,
     		groupPadding,
     		outVisWidth,
@@ -212326,6 +212859,7 @@ var app = (function () {
     		Dropdown: Dropdown_menu,
     		OptionTooltip: Tooltip_option_menu,
     		scrollTop,
+    		Vis,
     		m,
     		vis,
     		params,
@@ -212335,6 +212869,7 @@ var app = (function () {
     		accum_options,
     		n_options,
     		gridData,
+    		drawVis,
     		size,
     		h,
     		w1,
@@ -212344,15 +212879,16 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
+    		if ("m" in $$props) $$invalidate(0, m = $$props.m);
     		if ("vis" in $$props) vis = $$props.vis;
-    		if ("svg" in $$props) $$invalidate(1, svg = $$props.svg);
-    		if ("gridData" in $$props) gridData = $$props.gridData;
-    		if ("size" in $$props) $$invalidate(5, size = $$props.size);
-    		if ("h" in $$props) $$invalidate(0, h = $$props.h);
-    		if ("w1" in $$props) $$invalidate(2, w1 = $$props.w1);
-    		if ("w2" in $$props) $$invalidate(3, w2 = $$props.w2);
-    		if ("y" in $$props) y = $$props.y;
-    		if ("x_params" in $$props) x_params = $$props.x_params;
+    		if ("svg" in $$props) $$invalidate(2, svg = $$props.svg);
+    		if ("gridData" in $$props) $$invalidate(23, gridData = $$props.gridData);
+    		if ("size" in $$props) $$invalidate(7, size = $$props.size);
+    		if ("h" in $$props) $$invalidate(1, h = $$props.h);
+    		if ("w1" in $$props) $$invalidate(3, w1 = $$props.w1);
+    		if ("w2" in $$props) $$invalidate(4, w2 = $$props.w2);
+    		if ("y" in $$props) $$invalidate(8, y = $$props.y);
+    		if ("x_params" in $$props) $$invalidate(9, x_params = $$props.x_params);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -212360,20 +212896,28 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*size*/ 32) {
-    			$$invalidate(0, h = size * cell.height);
+    		if ($$self.$$.dirty & /*m*/ 1) {
+    			$$invalidate(7, size = m.gridData.length); // todo: reactive update
     		}
 
-    		if ($$self.$$.dirty & /*size, h*/ 33) {
-    			y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1);
+    		if ($$self.$$.dirty & /*size*/ 128) {
+    			$$invalidate(1, h = size * cell.height);
+    		}
+
+    		if ($$self.$$.dirty & /*size, h*/ 130) {
+    			$$invalidate(8, y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1));
+    		}
+
+    		if ($$self.$$.dirty & /*y, x_params*/ 768) {
+    			// below is being called twice when adding vis and once when removing if you put m.gridData in directly. also makes it very slow
+    			drawGrid(gridData, params, select("div.grid"), y, x_params);
     		}
     	};
 
-    	$$invalidate(5, size = m.gridData.length); // todo: reactive update
-    	$$invalidate(2, w1 = outVisWidth + margin.left);
-    	$$invalidate(3, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
+    	$$invalidate(3, w1 = outVisWidth + margin.left);
+    	$$invalidate(4, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
 
-    	x_params = ordinal().domain(Object.keys(params)).range(accum_options.reduce(
+    	$$invalidate(9, x_params = ordinal().domain(Object.keys(params)).range(accum_options.reduce(
     		(a, v, i, arr) => {
     			if (i > 0) {
     				let opts = arr[i] - arr[i - 1];
@@ -212385,9 +212929,28 @@ var app = (function () {
     			return a;
     		},
     		[]
-    	));
+    	)));
 
-    	return [h, svg, w1, w2, windowHeight, size, svg0_binding, svg1_binding];
+    	return [
+    		m,
+    		h,
+    		svg,
+    		w1,
+    		w2,
+    		windowHeight,
+    		drawVis,
+    		size,
+    		y,
+    		x_params,
+    		click_handler,
+    		vis_1_w_binding,
+    		vis_1_h_binding,
+    		vis_1_term_binding,
+    		change_handler,
+    		mount_handler,
+    		remove_handler,
+    		svg_1_binding
+    	];
     }
 
     class App extends SvelteComponentDev {
