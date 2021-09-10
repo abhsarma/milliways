@@ -120,6 +120,9 @@ var app = (function () {
     function onMount(fn) {
         get_current_component().$$.on_mount.push(fn);
     }
+    function onDestroy(fn) {
+        get_current_component().$$.on_destroy.push(fn);
+    }
     function createEventDispatcher() {
         const component = get_current_component();
         return (type, detail) => {
@@ -210888,6 +210891,8 @@ var app = (function () {
     const state = writable(1);
     const selected = writable(0);
     const multi_param = writable(0);
+    const exclude_options = writable([]);
+    const join_options = writable([]);
 
     // CSS Styles
     const parameters = css`
@@ -210930,6 +210935,8 @@ var app = (function () {
 
     // Stores
     let state_value;
+    let options_to_exclude;
+    let options_to_join;
 
     state.subscribe(value => {
     	state_value = value;
@@ -210938,10 +210945,55 @@ var app = (function () {
     });
     multi_param.subscribe(value => {
     });
+    exclude_options.subscribe(value => options_to_exclude = value);
+    join_options.subscribe(value => options_to_join = value);
 
-    // global variables to store changes from interactions
-    let options_to_exclude = [];
-    let options_to_join = [];
+    // console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]))
+
+
+    function recurseCombine(input) {
+    	let arr = JSON.parse(JSON.stringify(input));
+    	let n = arr.length;
+    	if ((n == 1)){ //} || no_common(arr)) {
+    		return arr
+    	} else {
+    		let contains = arr[0].map(d => arr[1].includes(d)).reduce((a,b) => (a||b)); // do the first two lists have any elements in common?
+    		if (contains) {
+    			// if they do, combine them
+    			let new_arr = [[...new Set(arr[0].concat(arr[1]))]].concat(arr.slice(2, (n + 1)));
+    			return recurseCombine(new_arr);
+    		} else {
+    			return [arr[0]].concat(recurseCombine(arr.slice(1, (n+1))))
+    		}
+    	}
+    }
+
+    function combineJoinOptions(input_array) {
+    	let arr = JSON.parse(JSON.stringify(input_array));
+    	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
+    	let new_arr = {};
+
+    	for (let i in params) {
+    		let input = arr.filter(d => (d['parameter'] == params[i]))
+    						.map(d => d['options']);
+    		// console.log(input);
+    		let output = recurseCombine(input);
+    		// console.log(output);
+    		new_arr[params[i]] = output;
+    	}
+
+    	return Object.entries(new_arr);
+    }
+
+    function which_idx(option_list, curr_options) {
+    	return option_list.map((d, i) => {
+    		if (curr_options.includes(d)) {
+    			return i;
+    		} else {
+    			return null;
+    		}
+    	}).filter(i => (i != null))
+    }
 
     class multiverseMatrix {
     	constructor (dat) {		
@@ -210957,7 +211009,7 @@ var app = (function () {
     	}
 
     	addVis = () => {
-    		this.outcomes = this.outcomes.concat({
+    		this.outcomes.push({
     			var: this.allOutcomeVars[0],
     			data: null,
     			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
@@ -210996,6 +211048,7 @@ var app = (function () {
     	initializeData = (vis = "CDF") => {
     		let parameters = [...Object.keys(this.parameters())];
     		options_to_exclude = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
+    		exclude_options.update(arr => options_to_exclude);
 
     		this.initializeGridData();
     		// this.prepareOutcomeData(vis = "CDF");
@@ -211029,52 +211082,165 @@ var app = (function () {
     			this.outcomes[i].data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
     		}
     	}
+
+    	updateData = (join_data = [], exclude_data = []) => {
+    		// deep copy data structures
+    		let toJoin = JSON.parse(JSON.stringify(join_data));
+    		let toExclude = JSON.parse(JSON.stringify(exclude_data));
+    		JSON.parse(JSON.stringify(this.parameters()));
+    	
+    		// console.log(toJoin);
+    		let combine = combineJoinOptions(toJoin);
+    	
+    		let dat1 = this.updateGridData(combine, toJoin, toExclude);
+    		let dat2 = this.outcomes.map((_, i) => this.updateOutcomeData(i, combine, [], toExclude));
+    	
+    		// sortByOutcome(dat1, dat2);
+    		// sortInGroups(dat1, dat2);
+    	
+    		return [dat1, dat2]
+    	}
+    	
+    	updateGridData = (combine, toJoin = [], toExclude = []) => {
+    		// deep copy data structures
+    		let g_data = JSON.parse(JSON.stringify(this.gridData));
+    	
+    		combine
+    					.map( d => d[1].map( j => [d[0], j]) )
+    					.flat(1)
+    					.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
+    	
+    		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
+    					.map( d => d[1].map( j => [d[0], j]) )
+    					.flat(1)
+    					.map( i => ({"parameter": i[0], "option": i[1]}) );
+    	
+    		if (exclude.length > 0) {
+    			let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
+    			g_data = g_data.filter( (i, n) => toFilter[n] );
+    		}
+    	
+    		if (combine.length > 0) {
+    			let groups = combine.map(d => d[1].map(x => ([d[0], x])))
+    							.flat()
+    							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
+    	
+    			let vec = g_data.map((d, i) => {
+    				let options = Object.values(d).flat();
+    				groups.forEach(x => {
+    						let includes = options.map(d => x['group'].includes(d)).reduce((a, b) => (a || b));
+    						if (includes) {
+    							d[x['parameter']] = x['group'];
+    						}
+    					});
+    				return d
+    			});
+    	
+    			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
+    	
+    			let non_duplicates = duplicates_data.map((d, i) => {
+    				return duplicates_data.indexOf(d) == i;
+    			});
+    	
+    			g_data = vec.filter((d, i) => non_duplicates[i]);
+    		}
+    	
+    		return g_data;
+    	}
+    	
+    	updateOutcomeData = (index, combine, toJoin = [], toExclude = []) => {
+    		// deep copy data structures
+    		let g_data = JSON.parse(JSON.stringify(this.gridData));
+    		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].data));
+    		let size = g_data.length;
+    		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+
+    		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
+    					.map( d => d[1].map( j => [d[0], j]) )
+    					.flat(1)
+    					.map( i => ({"parameter": i[0], "option": i[1]}) );
+    	
+    		if (exclude.length > 0) {
+    			let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
+    	
+    			g_data = g_data.filter( (i, n) => toFilter[n] );
+    			o_data = o_data.filter( (i, n) => toFilter[n] );
+    		}
+    	
+    		if (combine.length > 0) {
+    			let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
+    							.flat()
+    							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
+    	
+    			let grouping_vector = g_data.map((d, i) => {
+    				let options = Object.values(d).flat();
+    				let idx = option_list.map(x => which_idx(x, options)).flat();
+    				let g = groups$1
+    					.map(x => {
+    						let includes = options.map(d => x['group'].includes(d)); // .reduce((a, b) => (a || b));
+    						return [includes.indexOf(true), x['id']];
+    					});
+    	
+    				g.forEach(x => {
+    					if (x[0] > -1) {
+    						idx[x[0]] = size + x[1];
+    					}
+    				});
+    	
+    				return JSON.stringify(idx);
+    			});
+    	
+    			// console.log(grouping_vector);
+    	
+    			o_data = groups(
+    					o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
+    					d => d.group
+    				).map(d => d[1].map(x => {
+    					delete x.group;
+    					return Object.values(x).flat();
+    				}))
+    				.map(x => {
+    					let mod = rollups(x.flat(), v => {
+    						return [min$2(v, d => d[1]), max$3(v, d => d[1])]
+    					}, d => d[0]);
+    					return mod
+    				})
+    				.map(x => x.map(p => p.flat()));
+    		}
+    	
+    		return o_data
+    	}
     }
 
-    function draw (m, selected_options = [], grid_node, results_nodes, vis_fun, y, x) {
-    	let parameters = m.parameters();
-    	let gridData = m.gridData;
-    	let outcomes = m.outcomes;
-    	let size = m.size;
+    function draw (gridData, outcomeData, parameters, size, grid_node, results_nodes, vis_fun, y, x, selected_options = []) {
+    	// update only the grid options
+    	selectAll(".option-value").remove();
 
-    	// let [gridData, outcomeData] = updateData(m, parameters, vis_fun, [], selected_options);
+    	let parameter_list = Object.entries(parameters)
+    		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
+    	let options = parameter_list.map(d => d.options);
+    	let colWidth = max$3(options.map(d => d.length)) * (cell.width + cell.padding);
+    	let x2 = band()
+    		.domain(sequence(max$3(options.map(d => d.length))))
+    		.range( [0, colWidth] );
 
-    	// update grid
-    	drawGrid(gridData, parameters, grid_node, y, x);
+    	for (let p of Object.keys(parameters)) {
+    		drawColOptions(gridData, parameters, p, grid_node, y, x, x2);
+    	}
 
+    	Object.values(options_to_exclude)
+    		.flat()
+    		.forEach(d => {
+    			selectAll(`rect.${d}`).style("opacity", 0.2);
+    		});
+    	
     	// update results
     	// this.drawCI(outcomeData, results_node, grid_node, y);
     	results_nodes.each((d, i, nodes) => {
-    		if (i < outcomes.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-    			vis_fun(outcomes[i].data, select(nodes[i]), size, y);
+    		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+    			vis_fun(outcomeData[i], select(nodes[i]), size, y);
     	});
     }
-
-    // export function	update (toJoin = [], toExclude = [], results_node, grid_node, vis_fun, y, x) {
-    // 	let params = parameters();
-    // 	let [gridData, outcomeData] = updateData(gridData, outcomeData, parameters(), vis_fun, toJoin, toExclude);
-
-    // 	let options = Object.values(params);
-    // 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-    // 	let x2 = d3.scaleBand()
-    // 		.domain(d3.range(d3.max(options.map(d => d.length))))
-    // 		.range( [0, colWidth] )
-
-    // 	// update grid
-    // 	d3.selectAll("g.option-value").remove();		
-    // 	Object.keys(params).forEach( 
-    // 		(d, i) => drawColOptions(gridData, m, d, results_node, grid_node, y, x, x2)
-    // 	);
-
-    // 	// update results
-    // 	vis_fun(outcomeData, results_node, grid_node, this.size, this.parameters(), y);
-
-    // 	Object.values(options_to_exclude)
-    // 		.flat()
-    // 		.forEach(d => {
-    // 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-    // 		})
-    // }
 
     // function from drawing the decision grid
     function drawGrid (gridData, params, grid_node, yscale, x) {
@@ -211219,6 +211385,7 @@ var app = (function () {
     				} else {
     					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
     				}
+    				join_options.update(arr => options_to_join);
     				// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
     			});
     		});
@@ -211256,7 +211423,7 @@ var app = (function () {
     					console.log("error option index not found");
     				}
     			}
-
+    			exclude_options.update(arr => options_to_exclude);
     			// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
     		});
     	});
@@ -211389,7 +211556,7 @@ var app = (function () {
     }
 
     function CDF (data, results_node, size, yscale) {
-    	let results_plot = results_node;
+    	let results_plot = results_node; //.select('svg);
     	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
     	// const width = parameters.length * (cell.width + cell.padding); // to fix
     	let ypos;
@@ -211466,11 +211633,11 @@ var app = (function () {
     		.y1(d => y(d[2]));
 
     	panelPlot.append("path")
-          .datum(d => d)
-          .attr("fill", "steelblue")
-          .attr("stroke", "steelblue")
-          .attr("stroke-width", 1.5)
-          .attr("d", area$1);
+    	.datum(d => d)
+    	.attr("fill", "steelblue")
+    	.attr("stroke", "steelblue")
+    	.attr("stroke-width", 1.5)
+    	.attr("d", area$1);
     }
 
 
@@ -212389,13 +212556,13 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[24] = list[i];
-    	child_ctx[25] = list;
-    	child_ctx[26] = i;
+    	child_ctx[28] = list[i];
+    	child_ctx[29] = list;
+    	child_ctx[30] = i;
     	return child_ctx;
     }
 
-    // (178:3) {#each m.outcomes as outcome, i (outcome.id)}
+    // (191:3) {#each m.outcomes as outcome, i (outcome.id)}
     function create_each_block(key_1, ctx) {
     	let first;
     	let vis_1;
@@ -212413,23 +212580,23 @@ var app = (function () {
     	}
 
     	function vis_1_term_binding(value) {
-    		/*vis_1_term_binding*/ ctx[13](value, /*outcome*/ ctx[24]);
+    		/*vis_1_term_binding*/ ctx[13](value, /*outcome*/ ctx[28]);
     	}
 
     	function change_handler() {
-    		return /*change_handler*/ ctx[14](/*i*/ ctx[26]);
+    		return /*change_handler*/ ctx[14](/*i*/ ctx[30]);
     	}
 
     	function mount_handler() {
-    		return /*mount_handler*/ ctx[15](/*i*/ ctx[26]);
+    		return /*mount_handler*/ ctx[15](/*i*/ ctx[30]);
     	}
 
     	function remove_handler() {
-    		return /*remove_handler*/ ctx[16](/*i*/ ctx[26]);
+    		return /*remove_handler*/ ctx[16](/*i*/ ctx[30]);
     	}
 
     	let vis_1_props = {
-    		i: /*i*/ ctx[26],
+    		i: /*i*/ ctx[30],
     		allOutcomeVars: /*m*/ ctx[0].allOutcomeVars
     	};
 
@@ -212441,8 +212608,8 @@ var app = (function () {
     		vis_1_props.h = /*h*/ ctx[1];
     	}
 
-    	if (/*outcome*/ ctx[24].var !== void 0) {
-    		vis_1_props.term = /*outcome*/ ctx[24].var;
+    	if (/*outcome*/ ctx[28].var !== void 0) {
+    		vis_1_props.term = /*outcome*/ ctx[28].var;
     	}
 
     	vis_1 = new Vis({ props: vis_1_props, $$inline: true });
@@ -212469,7 +212636,7 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const vis_1_changes = {};
-    			if (dirty & /*m*/ 1) vis_1_changes.i = /*i*/ ctx[26];
+    			if (dirty & /*m*/ 1) vis_1_changes.i = /*i*/ ctx[30];
     			if (dirty & /*m*/ 1) vis_1_changes.allOutcomeVars = /*m*/ ctx[0].allOutcomeVars;
 
     			if (!updating_w && dirty & /*w1*/ 8) {
@@ -212486,7 +212653,7 @@ var app = (function () {
 
     			if (!updating_term && dirty & /*m*/ 1) {
     				updating_term = true;
-    				vis_1_changes.term = /*outcome*/ ctx[24].var;
+    				vis_1_changes.term = /*outcome*/ ctx[28].var;
     				add_flush_callback(() => updating_term = false);
     			}
 
@@ -212511,7 +212678,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(178:3) {#each m.outcomes as outcome, i (outcome.id)}",
+    		source: "(191:3) {#each m.outcomes as outcome, i (outcome.id)}",
     		ctx
     	});
 
@@ -212548,7 +212715,7 @@ var app = (function () {
     	toggle = new Toggle_button({ $$inline: true });
     	let each_value = /*m*/ ctx[0].outcomes;
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*outcome*/ ctx[24].id;
+    	const get_key = ctx => /*outcome*/ ctx[28].id;
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -212587,38 +212754,38 @@ var app = (function () {
     			div7 = element("div");
     			svg_1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 161, 1, 4319);
+    			add_location(div0, file, 174, 1, 4728);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-49eiev");
-    			add_location(h1, file, 165, 4, 4425);
+    			add_location(h1, file, 178, 4, 4834);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 164, 3, 4397);
+    			add_location(div1, file, 177, 3, 4806);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 167, 3, 4510);
+    			add_location(div2, file, 180, 3, 4919);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 163, 2, 4375);
+    			add_location(div3, file, 176, 2, 4784);
     			attr_dev(div4, "class", "container");
-    			add_location(div4, file, 162, 1, 4346);
+    			add_location(div4, file, 175, 1, 4755);
     			attr_dev(button, "class", "svelte-49eiev");
-    			add_location(button, file, 173, 2, 4612);
+    			add_location(button, file, 186, 2, 5021);
     			attr_dev(div5, "class", "button-wrapper svelte-49eiev");
-    			add_location(div5, file, 172, 1, 4580);
+    			add_location(div5, file, 185, 1, 4989);
     			attr_dev(div6, "class", "vis-container svelte-49eiev");
     			set_style(div6, "height", /*windowHeight*/ ctx[5]);
-    			add_location(div6, file, 176, 2, 4710);
+    			add_location(div6, file, 189, 2, 5119);
     			attr_dev(svg_1, "height", /*h*/ ctx[1]);
     			attr_dev(svg_1, "width", /*w2*/ ctx[4]);
     			attr_dev(svg_1, "class", "svelte-49eiev");
-    			add_location(svg_1, file, 192, 4, 5252);
+    			add_location(svg_1, file, 205, 4, 5661);
     			attr_dev(div7, "class", "grid svelte-49eiev");
     			set_style(div7, "height", /*windowHeight*/ ctx[5]);
-    			add_location(div7, file, 191, 3, 5197);
+    			add_location(div7, file, 204, 3, 5606);
     			attr_dev(div8, "class", "grid-container svelte-49eiev");
-    			add_location(div8, file, 190, 2, 5164);
+    			add_location(div8, file, 203, 2, 5573);
     			attr_dev(div9, "class", "main-content svelte-49eiev");
-    			add_location(div9, file, 175, 1, 4680);
+    			add_location(div9, file, 188, 1, 5089);
     			attr_dev(main, "class", "svelte-49eiev");
-    			add_location(main, file, 160, 0, 4310);
+    			add_location(main, file, 173, 0, 4719);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212729,6 +212896,10 @@ var app = (function () {
     	let x_params;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
+    	let options_to_exclude;
+    	let options_to_join;
+    	const e_unsub = exclude_options.subscribe(value => $$invalidate(7, options_to_exclude = value));
+    	const j_unsub = join_options.subscribe(value => $$invalidate(8, options_to_join = value));
     	let m = new multiverseMatrix(data2);
     	let vis = CDF;
     	m.initializeData(vis);
@@ -212757,24 +212928,34 @@ var app = (function () {
 
     	const n_options = accum_options[accum_options.length - 1];
 
-    	// could have done `$:` instead of `let` but `let` is noticeably faster than `$:`, but we might need to do it anyway later
-    	let gridData = m.gridData;
-
     	// maybe move into multiverseMatrix.js
     	// used for specifically changing a single <Vis/> component
     	function drawVis(i) {
     		m.initializeOutcomeData(i);
     		$$invalidate(0, m);
-    		vis(m.outcomes[i].data, select("svg#vis-" + i), m.size, y);
+    		let combine = combineJoinOptions(options_to_join);
+    		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), select("svg#vis-" + i), m.size, y);
     	}
 
+    	function redraw(join, exclude) {
+    		let [gridData, outcomeData] = m.updateData(join, exclude);
+    		let grid = select(".grid");
+    		let visSvgs = selectAll(".vis > svg");
+    		draw(gridData, outcomeData, m.parameters(), m.size, grid, visSvgs, vis, y, x_params);
+    	}
+
+    	onDestroy(() => {
+    		e_unsub();
+    		j_unsub();
+    	});
+
     	onMount(() => {
-    		let grid = select("div.grid");
+    		let grid = select(".grid");
     		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
     		let isSyncingLeftScroll = false;
     		let isSyncingRightScroll = false;
-    		let leftDiv = select("div.vis-container").node();
-    		let rightDiv = select("div.grid").node();
+    		let leftDiv = select(".vis-container").node();
+    		let rightDiv = select(".grid").node();
 
     		leftDiv.onscroll = function () {
     			if (!isSyncingLeftScroll) {
@@ -212813,7 +212994,7 @@ var app = (function () {
 
     	function vis_1_h_binding(value) {
     		h = value;
-    		(($$invalidate(1, h), $$invalidate(7, size)), $$invalidate(0, m));
+    		(($$invalidate(1, h), $$invalidate(9, size)), $$invalidate(0, m));
     	}
 
     	function vis_1_term_binding(value, outcome) {
@@ -212839,6 +213020,7 @@ var app = (function () {
     	}
 
     	$$self.$capture_state = () => ({
+    		onDestroy,
     		onMount,
     		d3,
     		data,
@@ -212847,6 +213029,7 @@ var app = (function () {
     		CI,
     		CDF,
     		drawGrid,
+    		combineJoinOptions,
     		cell,
     		groupPadding,
     		outVisWidth,
@@ -212860,6 +213043,12 @@ var app = (function () {
     		OptionTooltip: Tooltip_option_menu,
     		scrollTop,
     		Vis,
+    		exclude_options,
+    		join_options,
+    		options_to_exclude,
+    		options_to_join,
+    		e_unsub,
+    		j_unsub,
     		m,
     		vis,
     		params,
@@ -212868,8 +213057,8 @@ var app = (function () {
     		cols,
     		accum_options,
     		n_options,
-    		gridData,
     		drawVis,
+    		redraw,
     		size,
     		h,
     		w1,
@@ -212879,16 +213068,17 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
+    		if ("options_to_exclude" in $$props) $$invalidate(7, options_to_exclude = $$props.options_to_exclude);
+    		if ("options_to_join" in $$props) $$invalidate(8, options_to_join = $$props.options_to_join);
     		if ("m" in $$props) $$invalidate(0, m = $$props.m);
     		if ("vis" in $$props) vis = $$props.vis;
     		if ("svg" in $$props) $$invalidate(2, svg = $$props.svg);
-    		if ("gridData" in $$props) $$invalidate(23, gridData = $$props.gridData);
-    		if ("size" in $$props) $$invalidate(7, size = $$props.size);
+    		if ("size" in $$props) $$invalidate(9, size = $$props.size);
     		if ("h" in $$props) $$invalidate(1, h = $$props.h);
     		if ("w1" in $$props) $$invalidate(3, w1 = $$props.w1);
     		if ("w2" in $$props) $$invalidate(4, w2 = $$props.w2);
-    		if ("y" in $$props) $$invalidate(8, y = $$props.y);
-    		if ("x_params" in $$props) $$invalidate(9, x_params = $$props.x_params);
+    		if ("y" in $$props) y = $$props.y;
+    		if ("x_params" in $$props) x_params = $$props.x_params;
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -212897,27 +213087,26 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*m*/ 1) {
-    			$$invalidate(7, size = m.gridData.length); // todo: reactive update
+    			$$invalidate(9, size = m.gridData.length); // todo: reactive update
     		}
 
-    		if ($$self.$$.dirty & /*size*/ 128) {
+    		if ($$self.$$.dirty & /*size*/ 512) {
     			$$invalidate(1, h = size * cell.height);
     		}
 
-    		if ($$self.$$.dirty & /*size, h*/ 130) {
-    			$$invalidate(8, y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1));
+    		if ($$self.$$.dirty & /*size, h*/ 514) {
+    			y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1);
     		}
 
-    		if ($$self.$$.dirty & /*y, x_params*/ 768) {
-    			// below is being called twice when adding vis and once when removing if you put m.gridData in directly. also makes it very slow
-    			drawGrid(gridData, params, select("div.grid"), y, x_params);
+    		if ($$self.$$.dirty & /*options_to_join, options_to_exclude*/ 384) {
+    			redraw(options_to_join, options_to_exclude);
     		}
     	};
 
     	$$invalidate(3, w1 = outVisWidth + margin.left);
     	$$invalidate(4, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
 
-    	$$invalidate(9, x_params = ordinal().domain(Object.keys(params)).range(accum_options.reduce(
+    	x_params = ordinal().domain(Object.keys(params)).range(accum_options.reduce(
     		(a, v, i, arr) => {
     			if (i > 0) {
     				let opts = arr[i] - arr[i - 1];
@@ -212929,7 +213118,7 @@ var app = (function () {
     			return a;
     		},
     		[]
-    	)));
+    	));
 
     	return [
     		m,
@@ -212939,9 +213128,9 @@ var app = (function () {
     		w2,
     		windowHeight,
     		drawVis,
+    		options_to_exclude,
+    		options_to_join,
     		size,
-    		y,
-    		x_params,
     		click_handler,
     		vis_1_w_binding,
     		vis_1_h_binding,
