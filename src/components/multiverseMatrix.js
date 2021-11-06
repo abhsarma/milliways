@@ -133,9 +133,7 @@ export function combineJoinOptions(input_array) {
 	for (let i in params) {
 		let input = arr.filter(d => (d['parameter'] == params[i]))
 						.map(d => d['options']);
-		console.log(input);
 		let output = _combineJoinOptionsHelper(input) // recurseCombine(input);
-		// console.log(output);
 		new_arr[params[i]] = output
 	}
 
@@ -234,12 +232,6 @@ class multiverseMatrix {
 		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
-	// outcome_vars = () => {
-	// 	// get the variables from the results in first row as this is a rectangular dataset
-	// 	// is there a better way to do this?
-	// 	return this.data[0]["results"].map(i => i["term"]);
-	// }
-
 	// creates the data structure for the grid matrix
 	// we will draw this plot as a bar chart
 	// input: JSON multiverse object (this.data), parameters (this.parameters)
@@ -251,7 +243,6 @@ class multiverseMatrix {
 		exclude_options.update(arr => arr=options_to_exclude);
 
 		this.initializeGridData();
-		// this.prepareOutcomeData(vis = "CDF");
 	}
 
 	initializeGridData = () => {
@@ -260,7 +251,7 @@ class multiverseMatrix {
 		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
 	}
 
-	initializeOutcomeData = (i, graph = CDF) => {
+	initializeOutcomeData = (i, graph = CDF) => { // change i here
 		// creating a shallow copy which is fine for here
 		let term = this.outcomes[i].var;
 
@@ -414,41 +405,40 @@ class multiverseMatrix {
 
 export default multiverseMatrix
 
-export function draw (gridData, outcomeData, parameters, size, grid_node, results_nodes, vis_fun, y, x, selected_options = []) {
-	// update only the grid options
-	d3.selectAll(".option-value").remove();
+// export function draw (gridData, outcomeData, parameters, size, grid_node, results_nodes, vis_fun, y, x, selected_options = []) {
+// 	// update only the grid options
+// 	d3.selectAll(".option-value").remove();
 
-	let parameter_list = Object.entries(parameters)
-		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
-	let options = parameter_list.map(d => d.options);
-	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-	let x2 = d3.scaleBand()
-		.domain(d3.range(d3.max(options.map(d => d.length))))
-		.range( [0, colWidth] );
+// 	let parameter_list = Object.entries(parameters)
+// 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
+// 	let options = parameter_list.map(d => d.options);
+// 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
+// 	let x2 = d3.scaleBand()
+// 		.domain(d3.range(d3.max(options.map(d => d.length))))
+// 		.range( [0, colWidth] );
 
-	for (let p of Object.keys(parameters)) {
-		drawColOptions(gridData, parameters, p, grid_node, y, x, x2);
-	}
+// 	for (let p of Object.keys(parameters)) {
+// 		drawColOptions(gridData, parameters, p, grid_node, y, x, x2);
+// 	}
 
-	Object.values(options_to_exclude)
-		.flat()
-		.forEach(d => {
-			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-		});
+// 	Object.values(options_to_exclude)
+// 		.flat()
+// 		.forEach(d => {
+// 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
+// 		});
 	
-	// update results
-	// this.drawCI(outcomeData, results_node, grid_node, y);
-	results_nodes.each((d, i, nodes) => {
-		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-			vis_fun(outcomeData[i], d3.select(nodes[i]), size, y);
-	});
-}
+// 	// update results
+// 	// this.drawCI(outcomeData, results_node, grid_node, y);
+// 	results_nodes.each((d, i, nodes) => {
+// 		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+// 			vis_fun(outcomeData[i], d3.select(nodes[i]), size, y);
+// 	});
+// }
 
 // function from drawing the decision grid
 export function drawGrid (gridData, params, grid_node, yscale, x) {
-
-	d3.selectAll("g.option-value").remove();
-	d3.selectAll("g.option-name").remove();
+	// d3.selectAll("g.option-value").remove();
+	// d3.selectAll("g.option-name").remove();
 
 	drawHeaders(params, grid_node, x);
 	drawCols(gridData, params, grid_node, yscale, x);
@@ -512,52 +502,67 @@ function drawCols(data, params, grid_node, yscale, x1) {
 		.domain(d3.range(d3.max(options.map(d => d.length))))
 		.range( [0, colWidth] );
 
+	// console.log(data);
+
 	Object.keys(params).forEach( 
 		(d, i) => {
-			// drawCols(data, m_obj, i, results_node, grid_node, yscale, x);
 			drawColNames(params, d, x2);
-			drawColOptions(data, params, d, grid_node, yscale, x1, x2);
+			// drawColOptions(data, params, d, grid_node, yscale, x1, x2);
 	});
 
-	let drag = d3.drag();
-	let dragging = {};
+	updateMatrixGrid(data, params, grid_node, yscale, x1, x2)
+}
 
-	// let params = Object.keys(m_obj.parameters());
 
-	// d3.selectAll("g.parameter").call(
-	// 	d3.drag()
-	// 		.subject(function(event, d) { 
-	// 			return {y: xscale(d)}; 
-	// 		})
-	// 		.on("start", function(event, d) {
-	// 			dragging[d] = xscale(d);
-	// 			console.log(dragging);
+export function updateMatrixGrid(data, params, grid_node, yscale, x1, x2) {
+	let ypos;
+	let plot = grid_node.select('svg');
+	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 
-	// 			// Move the row that is moving on the front
-	// 			let sel = d3.select(this);
-	// 			sel.moveToFront();
-	// 		})
-	// 		.on("drag", function(event, d) {
-	// 			// Hide what is in the back
-	// 		  	dragging[d] = Math.min(xscale.range()[xscale.range().length - 1], Math.max(0, event.x));
-	// 		  	params.sort(function(a, b) { return position(a) - position(b); });
-	// 		  	xscale.domain(params);
+	if (state_value == 0) {
+		ypos = 4 * cell.padding;
+	} else {
+		ypos = namingDim + 4 * cell.padding;
+	}
 
-	// 		  	d3.selectAll(".row").attr("transform", function(d, i) { 
-	// 				return "translate(0," + position(d, dragging, xscale) + ")"; 
-	// 			});
-	// 		})
-	// 		.on("end", function(event, d) {
-	// 		  	delete dragging[d];
-	// 		  	console.log(dragging, xscale.domain());
-	// 		  	// dragTransition(d3.select(this)).attr("transform", `translate(${xscale(d)}, 0)`);
+	let parameterCols = plot.selectAll("g.option-cols")
+		.data(param_names)
+		.join("g")
+		.attr("transform",  (d, i) => `translate(${x1(d)}, ${ypos})`)
+		.attr("class", (d, i) => `parameter-col ${d}`)
 
-	// 		  	// d3.selectAll(".column").each(function(d) {
-	// 		   //  	d3.select(this).selectAll(".cellcolumn").attr("x", function(d) { 
-	// 					// return -xscale(d)-90; });
-	// 		  	// });
-	// 		})
-	// );
+	let optionCols = parameterCols.selectAll('g')
+		.data((d, i) => params[d])
+		.join('g')
+		.attr("class", function (d, i) {
+			let parameter = d3.select(this.parentNode).attr('class').split(' ')[1];
+			return `option-value ${parameter} ${d}`
+		})
+		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
+
+	optionCols.each((d, i) => {
+		let optionNodes = d3.select(`g.${d}`)
+			.selectAll(`rect.${d}`)
+			.data(data)
+			.join(
+				enter => enter.append("rect").style('opacity', 1),
+				update => update,
+				exit => exit.remove()
+			)
+			.attr("x", 0)
+			.attr("y", (d, i) => yscale(i) )
+			.attr("width", cell.width)
+			.attr("height", yscale.bandwidth())
+			.attr("class", function(d, i) {
+				let parent_class = d3.select(this.parentNode).attr("class").split(' ');
+				let parameter = parent_class[1];
+				let option = parent_class[2];
+				if (d[parameter].includes(option)) {
+					return `${options_container} ${selected_option} ${option}`
+				}
+				return `${options_container} ${option}`
+			});
+	})
 }
 
 
@@ -579,6 +584,7 @@ function dragTransition(g) {
 function drawColNames(params, param, x2) {
 	let options = params[param]
 
+	// creates option-join icons
 	d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(d => options.slice(0, -1))
@@ -610,6 +616,7 @@ function drawColNames(params, param, x2) {
 			})
 		});
 
+	// creates option-name text and option-exclude icons
 	let optionNames = d3.select(`g.option-name.${param}`)
 		.selectAll("text")
 		.data(options)
@@ -653,6 +660,7 @@ function drawColNames(params, param, x2) {
 		.text(d => d);
 }
 
+
 function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 	let plot = grid_node.select("svg");
 	let options = params[param];
@@ -670,13 +678,7 @@ function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 		.selectAll("g")
 		.data(data)
 		.join("g")
-		.attr("transform", (d, i) => {
-			let whitespace = 0;
-			// if (parameter != Object.keys(data[0])[0] && i > 0) {
-			// 	whitespace = (i % options.length) == 0 ? 10 : 0 
-			// }
-			return `translate(0, ${yscale(i) + whitespace})`
-		})
+		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
 		.attr("class", function (d, i) {
 			return d[param].join(" ")
 		})
@@ -708,8 +710,6 @@ export function CI (data, results_node, size, yscale) {
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
 		.range([margin.left, outVisWidth + margin.left]);
-
-	console.log(data);
 
 	if (state_value == 0) {
 		ypos = 4 * cell.padding;
