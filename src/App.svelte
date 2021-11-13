@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { draw, CI, CDF, drawGrid, combineJoinOptions } from './components/multiverseMatrix.js';
+	import multiverseMatrix, { CI, CDF, updateMatrixGrid, drawGrid, combineJoinOptions } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
 	import Tooltip from './components/tooltip-option-menu.svelte'
@@ -18,7 +18,7 @@
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 
-	let m = new multiverseMatrix(data.default);
+	let m = new multiverseMatrix(data.default); 
 	let vis = CDF;
 	m.initializeData(vis);
 	
@@ -65,6 +65,11 @@
 			}, [])
 		)
 
+	$: colWidth = d3.max(Object.values(params).map(d => d.length)) * (cell.width + cell.padding);
+	$: x_options = d3.scaleBand()
+		.domain(d3.range(d3.max(Object.values(params).map(d => d.length))))
+		.range( [0, colWidth] );
+
 	$: redraw(options_to_join, options_to_exclude);
 
 	// maybe move into multiverseMatrix.js
@@ -73,14 +78,21 @@
 		m.initializeOutcomeData(i);
 		m = m;
 		let combine = combineJoinOptions(options_to_join);
-		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), d3.select('svg#vis-'+i), m.size, y);
+		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), d3.select('svg#vis-'+i), m.size, y, m.outcomes[i].var);
 	}
 
 	function redraw(join, exclude) {
 		let [gridData, outcomeData] = m.updateData(join, exclude);
 		let grid = d3.select('.grid');
 		let visSvgs = d3.selectAll('.vis > svg');
-		draw(gridData, outcomeData, m.parameters(), m.size, grid, visSvgs, vis, y, x_params);
+
+		updateMatrixGrid(gridData, m.parameters(), grid, y, x_params, x_options);
+
+		// update results
+		visSvgs.each((d, i, nodes) => {
+			if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+				vis(outcomeData[i], d3.select(nodes[i]), m.size, y, m.outcomes[i].var);
+		});
 	}
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
@@ -88,6 +100,9 @@
 	onMount(() => {
 		let grid = d3.select(".grid")
 		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
+
+		m.addVis();
+		m = m;
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -130,43 +145,55 @@
 		float: left;
 	}
 
+	.button-wrapper {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
 	.button-wrapper button {
-		position: sticky;
+		/*position: sticky;*/
+		width: 48px;
+		height: 48px;
+		padding: 8px;
+		border:  none;
+		border-radius: 48px;
 		left: 8px; /* page padding */
 	}
-	.button-wrapper button:hover {
+
+	svg.add-vis-icon {
+		/*position: sticky;*/
+		fill: #777777;
+	}
+
+	.button-wrapper button:hover, button:active {
 		background-color: lightgreen;
 	}
-	.button-wrapper button:active {
-		background-color: darkgreen;
-		color: white;
+
+	.button-wrapper button:hover > svg.add-vis-icon {
+		background-color: lightgreen;
 	}
 
 	.main-content {
 		display: inline-block;
+  		vertical-align: middle;
 	}
 	
 	.vis-container {
 		display: inline-block;
 		overflow-x: auto;
+		margin-left: 16px;
 	}
 
 	.grid-container {
 		display: inline-block;
 		position: relative;
-		margin-left: 32px;
+		margin-left: 16px;
 	}
 
 	.grid {
 		display: inline-block;
 		overflow-y: scroll;
 	}
-
-	/*@media (min-width: 640px) {
-		main {
-			max-width: none;scr
-		}
-	}*/
 </style>
 
 <!-- <div bind:this={el} class="chart"></div> -->
@@ -184,7 +211,9 @@
 		</div>
 	</div>
 	<div class="button-wrapper">
-		<button on:click={() => { m.addVis(); m=m; }}>+</button>
+		<button on:click={() => { m.addVis(); m=m; }}>
+			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#777777"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+		</button>
 	</div>
 	<div class="main-content">
 		<div class="vis-container" style="height: {windowHeight};">
