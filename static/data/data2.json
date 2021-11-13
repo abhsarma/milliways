@@ -15,7 +15,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3749,
         "std.error": 0.4044,
         "statistic": 15.7638,
@@ -84,7 +84,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3107,
         "std.error": 0.4704,
         "statistic": 13.4158,
@@ -153,7 +153,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5631,
         "std.error": 0.4498,
         "statistic": 14.5915,
@@ -222,7 +222,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5411,
         "std.error": 0.5195,
         "statistic": 12.592,
@@ -291,7 +291,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.554,
         "std.error": 0.4123,
         "statistic": 15.8942,
@@ -360,7 +360,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4733,
         "std.error": 0.4603,
         "statistic": 14.0641,
@@ -429,7 +429,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8747,
         "std.error": 0.4497,
         "statistic": 15.2857,
@@ -498,7 +498,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9014,
         "std.error": 0.5019,
         "statistic": 13.7508,
@@ -567,7 +567,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1843,
         "std.error": 0.4397,
         "statistic": 14.0661,
@@ -636,7 +636,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9664,
         "std.error": 0.4989,
         "statistic": 11.9595,
@@ -705,7 +705,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2533,
         "std.error": 0.5314,
         "statistic": 11.7667,
@@ -774,7 +774,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4323,
         "std.error": 0.4722,
         "statistic": 13.6226,
@@ -843,7 +843,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2553,
         "std.error": 0.5469,
         "statistic": 11.4388,
@@ -912,7 +912,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6214,
         "std.error": 0.574,
         "statistic": 11.5351,
@@ -981,7 +981,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3954,
         "std.error": 0.3759,
         "statistic": 17.0153,
@@ -1050,7 +1050,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3617,
         "std.error": 0.442,
         "statistic": 14.3921,
@@ -1119,7 +1119,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.56,
         "std.error": 0.4129,
         "statistic": 15.8877,
@@ -1188,7 +1188,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5719,
         "std.error": 0.4851,
         "statistic": 13.5473,
@@ -1257,7 +1257,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5491,
         "std.error": 0.3691,
         "statistic": 17.7429,
@@ -1326,7 +1326,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5726,
         "std.error": 0.4094,
         "statistic": 16.0526,
@@ -1395,7 +1395,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8016,
         "std.error": 0.3968,
         "statistic": 17.1427,
@@ -1464,7 +1464,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9223,
         "std.error": 0.4398,
         "statistic": 15.7389,
@@ -1533,7 +1533,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2265,
         "std.error": 0.3841,
         "statistic": 16.2114,
@@ -1602,7 +1602,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1325,
         "std.error": 0.4434,
         "statistic": 13.8318,
@@ -1671,7 +1671,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2945,
         "std.error": 0.4635,
         "statistic": 13.5807,
@@ -1740,7 +1740,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4291,
         "std.error": 0.4124,
         "statistic": 15.5883,
@@ -1809,7 +1809,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3893,
         "std.error": 0.4892,
         "statistic": 13.0604,
@@ -1878,7 +1878,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5797,
         "std.error": 0.496,
         "statistic": 13.2644,
@@ -1947,7 +1947,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1759,
         "std.error": 0.352,
         "statistic": 17.5443,
@@ -2016,7 +2016,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9503,
         "std.error": 0.4021,
         "statistic": 14.7982,
@@ -2085,7 +2085,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4025,
         "std.error": 0.3951,
         "statistic": 16.203,
@@ -2154,7 +2154,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3063,
         "std.error": 0.4553,
         "statistic": 13.8497,
@@ -2223,7 +2223,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6062,
         "std.error": 0.3842,
         "statistic": 17.1964,
@@ -2292,7 +2292,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.538,
         "std.error": 0.4285,
         "statistic": 15.2594,
@@ -2361,7 +2361,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.739,
         "std.error": 0.4237,
         "statistic": 15.9042,
@@ -2430,7 +2430,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.7305,
         "std.error": 0.4748,
         "statistic": 14.1743,
@@ -2499,7 +2499,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2804,
         "std.error": 0.4049,
         "statistic": 15.5091,
@@ -2568,7 +2568,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1742,
         "std.error": 0.4434,
         "statistic": 13.9243,
@@ -2637,7 +2637,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.35,
         "std.error": 0.4641,
         "statistic": 13.6828,
@@ -2706,7 +2706,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4968,
         "std.error": 0.4523,
         "statistic": 14.3625,
@@ -2775,7 +2775,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4105,
         "std.error": 0.5053,
         "statistic": 12.6854,
@@ -2844,7 +2844,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5375,
         "std.error": 0.5118,
         "statistic": 12.7743,
@@ -2913,7 +2913,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5759,
         "std.error": 0.4254,
         "statistic": 15.4569,
@@ -2982,7 +2982,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4792,
         "std.error": 0.4916,
         "statistic": 13.1806,
@@ -3051,7 +3051,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6984,
         "std.error": 0.4695,
         "statistic": 14.2677,
@@ -3120,7 +3120,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.7682,
         "std.error": 0.5438,
         "statistic": 12.4472,
@@ -3189,7 +3189,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.64,
         "std.error": 0.4264,
         "statistic": 15.5713,
@@ -3258,7 +3258,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5731,
         "std.error": 0.477,
         "statistic": 13.7789,
@@ -3327,7 +3327,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8974,
         "std.error": 0.4667,
         "statistic": 14.7795,
@@ -3396,7 +3396,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9318,
         "std.error": 0.5188,
         "statistic": 13.3611,
@@ -3465,7 +3465,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.243,
         "std.error": 0.4577,
         "statistic": 13.6402,
@@ -3534,7 +3534,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0103,
         "std.error": 0.5259,
         "statistic": 11.4285,
@@ -3603,7 +3603,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2673,
         "std.error": 0.5424,
         "statistic": 11.5555,
@@ -3672,7 +3672,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.392,
         "std.error": 0.4862,
         "statistic": 13.1481,
@@ -3741,7 +3741,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.178,
         "std.error": 0.5707,
         "statistic": 10.8246,
@@ -3810,7 +3810,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4696,
         "std.error": 0.5784,
         "statistic": 11.1851,
@@ -3879,7 +3879,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2282,
         "std.error": 0.336,
         "statistic": 18.536,
@@ -3948,7 +3948,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0106,
         "std.error": 0.3818,
         "statistic": 15.7437,
@@ -4017,7 +4017,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4449,
         "std.error": 0.3709,
         "statistic": 17.3747,
@@ -4086,7 +4086,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3459,
         "std.error": 0.4262,
         "statistic": 14.8881,
@@ -4155,7 +4155,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6218,
         "std.error": 0.3676,
         "statistic": 18.015,
@@ -4224,7 +4224,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5642,
         "std.error": 0.4027,
         "statistic": 16.2984,
@@ -4293,7 +4293,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8457,
         "std.error": 0.4044,
         "statistic": 16.927,
@@ -4362,7 +4362,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8585,
         "std.error": 0.4426,
         "statistic": 15.495,
@@ -4431,7 +4431,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2327,
         "std.error": 0.374,
         "statistic": 16.6668,
@@ -4500,7 +4500,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0896,
         "std.error": 0.4104,
         "statistic": 14.8373,
@@ -4569,7 +4569,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.256,
         "std.error": 0.4353,
         "statistic": 14.372,
@@ -4638,7 +4638,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4037,
         "std.error": 0.4076,
         "statistic": 15.7103,
@@ -4707,7 +4707,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2696,
         "std.error": 0.4569,
         "statistic": 13.7209,
@@ -4776,7 +4776,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4068,
         "std.error": 0.4729,
         "statistic": 13.5466,
@@ -4845,7 +4845,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8376,
         "std.error": 0.323,
         "statistic": 18.0706,
@@ -4914,7 +4914,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6625,
         "std.error": 0.3658,
         "statistic": 15.4785,
@@ -4983,7 +4983,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9216,
         "std.error": 0.3606,
         "statistic": 16.4221,
@@ -5052,7 +5052,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8123,
         "std.error": 0.4043,
         "statistic": 14.3765,
@@ -5121,7 +5121,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8148,
         "std.error": 0.3255,
         "statistic": 17.8664,
@@ -5190,7 +5190,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6899,
         "std.error": 0.3593,
         "statistic": 15.8368,
@@ -5259,7 +5259,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9961,
         "std.error": 0.3539,
         "statistic": 16.9416,
@@ -5328,7 +5328,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9422,
         "std.error": 0.3944,
         "statistic": 15.0666,
@@ -5397,7 +5397,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.5789,
         "std.error": 0.3393,
         "statistic": 16.4435,
@@ -5466,7 +5466,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.3439,
         "std.error": 0.3821,
         "statistic": 13.9862,
@@ -5535,7 +5535,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6329,
         "std.error": 0.4042,
         "statistic": 13.9347,
@@ -5604,7 +5604,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7235,
         "std.error": 0.3743,
         "statistic": 15.2922,
@@ -5673,7 +5673,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.5421,
         "std.error": 0.428,
         "statistic": 12.949,
@@ -5742,7 +5742,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8239,
         "std.error": 0.4485,
         "statistic": 12.9841,
@@ -5811,7 +5811,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6734,
         "std.error": 0.2959,
         "statistic": 19.1724,
@@ -5880,7 +5880,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.4946,
         "std.error": 0.3362,
         "statistic": 16.3415,
@@ -5949,7 +5949,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7173,
         "std.error": 0.3257,
         "statistic": 17.5522,
@@ -6018,7 +6018,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.596,
         "std.error": 0.3685,
         "statistic": 15.1854,
@@ -6087,7 +6087,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9331,
         "std.error": 0.2958,
         "statistic": 20.0567,
@@ -6156,7 +6156,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8893,
         "std.error": 0.3244,
         "statistic": 18.1559,
@@ -6225,7 +6225,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0983,
         "std.error": 0.3177,
         "statistic": 19.1929,
@@ -6294,7 +6294,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1217,
         "std.error": 0.3509,
         "statistic": 17.4475,
@@ -6363,7 +6363,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6741,
         "std.error": 0.3075,
         "statistic": 18.4529,
@@ -6432,7 +6432,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.507,
         "std.error": 0.3512,
         "statistic": 15.6785,
@@ -6501,7 +6501,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7421,
         "std.error": 0.3702,
         "statistic": 15.5111,
@@ -6570,7 +6570,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8061,
         "std.error": 0.3385,
         "statistic": 17.1535,
@@ -6639,7 +6639,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6978,
         "std.error": 0.3948,
         "statistic": 14.4308,
@@ -6708,7 +6708,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9203,
         "std.error": 0.4075,
         "statistic": 14.5279,
@@ -6777,7 +6777,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8337,
         "std.error": 0.29,
         "statistic": 20.1139,
@@ -6846,7 +6846,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6156,
         "std.error": 0.3268,
         "statistic": 17.1819,
@@ -6915,7 +6915,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.946,
         "std.error": 0.3286,
         "statistic": 18.0967,
@@ -6984,7 +6984,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8335,
         "std.error": 0.3715,
         "statistic": 15.7029,
@@ -7053,7 +7053,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1295,
         "std.error": 0.3114,
         "statistic": 19.6823,
@@ -7122,7 +7122,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0046,
         "std.error": 0.343,
         "statistic": 17.5065,
@@ -7191,7 +7191,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2782,
         "std.error": 0.3456,
         "statistic": 18.1637,
@@ -7260,7 +7260,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2003,
         "std.error": 0.3857,
         "statistic": 16.0739,
@@ -7329,7 +7329,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7385,
         "std.error": 0.3075,
         "statistic": 18.6596,
@@ -7398,7 +7398,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6545,
         "std.error": 0.3445,
         "statistic": 16.4134,
@@ -7467,7 +7467,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7875,
         "std.error": 0.3579,
         "statistic": 16.1691,
@@ -7536,7 +7536,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8711,
         "std.error": 0.3489,
         "statistic": 16.8255,
@@ -7605,7 +7605,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8521,
         "std.error": 0.399,
         "statistic": 14.6664,
@@ -7674,7 +7674,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.91,
         "std.error": 0.4057,
         "statistic": 14.5682,
@@ -7743,7 +7743,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0047,
         "std.error": 0.3384,
         "statistic": 17.7444,
@@ -7812,7 +7812,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8158,
         "std.error": 0.3828,
         "statistic": 15.1911,
@@ -7881,7 +7881,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0594,
         "std.error": 0.3745,
         "statistic": 16.1792,
@@ -7950,7 +7950,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0125,
         "std.error": 0.4239,
         "statistic": 14.1828,
@@ -8019,7 +8019,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9697,
         "std.error": 0.3452,
         "statistic": 17.2946,
@@ -8088,7 +8088,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8098,
         "std.error": 0.3793,
         "statistic": 15.3177,
@@ -8157,7 +8157,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1543,
         "std.error": 0.379,
         "statistic": 16.2395,
@@ -8226,7 +8226,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.062,
         "std.error": 0.4178,
         "statistic": 14.5086,
@@ -8295,7 +8295,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6495,
         "std.error": 0.351,
         "statistic": 16.0954,
@@ -8364,7 +8364,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.4017,
         "std.error": 0.4004,
         "statistic": 13.4909,
@@ -8433,7 +8433,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.5685,
         "std.error": 0.4072,
         "statistic": 13.6765,
@@ -8502,7 +8502,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7505,
         "std.error": 0.3851,
         "statistic": 14.9325,
@@ -8571,7 +8571,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.5514,
         "std.error": 0.4478,
         "statistic": 12.3976,
@@ -8640,7 +8640,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.66,
         "std.error": 0.4482,
         "statistic": 12.6286,
@@ -8709,7 +8709,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8392,
         "std.error": 0.2758,
         "statistic": 21.1747,
@@ -8778,7 +8778,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6236,
         "std.error": 0.3089,
         "statistic": 18.2069,
@@ -8847,7 +8847,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9416,
         "std.error": 0.3061,
         "statistic": 19.4103,
@@ -8916,7 +8916,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.8195,
         "std.error": 0.3457,
         "statistic": 16.834,
@@ -8985,7 +8985,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.106,
         "std.error": 0.2991,
         "statistic": 20.4176,
@@ -9054,7 +9054,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9887,
         "std.error": 0.3247,
         "statistic": 18.4437,
@@ -9123,7 +9123,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2985,
         "std.error": 0.3308,
         "statistic": 19.0427,
@@ -9192,7 +9192,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2318,
         "std.error": 0.3617,
         "statistic": 17.2298,
@@ -9261,7 +9261,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6699,
         "std.error": 0.2863,
         "statistic": 19.8069,
@@ -9330,7 +9330,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.5451,
         "std.error": 0.3197,
         "statistic": 17.3451,
@@ -9399,7 +9399,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6794,
         "std.error": 0.3338,
         "statistic": 17.013,
@@ -9468,7 +9468,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.7686,
         "std.error": 0.3167,
         "statistic": 18.2137,
@@ -9537,7 +9537,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.6843,
         "std.error": 0.3612,
         "statistic": 15.7386,
@@ -9606,7 +9606,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.765,
         "std.error": 0.3713,
         "statistic": 15.5276,
@@ -9675,7 +9675,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3749,
         "std.error": 0.4024,
         "statistic": 15.8419,
@@ -9744,7 +9744,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3107,
         "std.error": 0.4722,
         "statistic": 13.3647,
@@ -9813,7 +9813,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5631,
         "std.error": 0.451,
         "statistic": 14.5531,
@@ -9882,7 +9882,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5411,
         "std.error": 0.5231,
         "statistic": 12.5052,
@@ -9951,7 +9951,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.554,
         "std.error": 0.4202,
         "statistic": 15.5982,
@@ -10020,7 +10020,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4733,
         "std.error": 0.4636,
         "statistic": 13.9632,
@@ -10089,7 +10089,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8747,
         "std.error": 0.4623,
         "statistic": 14.8693,
@@ -10158,7 +10158,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9014,
         "std.error": 0.5075,
         "statistic": 13.5988,
@@ -10227,7 +10227,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1843,
         "std.error": 0.4395,
         "statistic": 14.0718,
@@ -10296,7 +10296,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9664,
         "std.error": 0.5033,
         "statistic": 11.8551,
@@ -10365,7 +10365,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2533,
         "std.error": 0.5233,
         "statistic": 11.9508,
@@ -10434,7 +10434,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4323,
         "std.error": 0.4706,
         "statistic": 13.6686,
@@ -10503,7 +10503,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2553,
         "std.error": 0.5486,
         "statistic": 11.4022,
@@ -10572,7 +10572,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6214,
         "std.error": 0.5661,
         "statistic": 11.6974,
@@ -10641,7 +10641,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3954,
         "std.error": 0.3713,
         "statistic": 17.2245,
@@ -10710,7 +10710,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3617,
         "std.error": 0.4402,
         "statistic": 14.4512,
@@ -10779,7 +10779,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.56,
         "std.error": 0.41,
         "statistic": 15.9993,
@@ -10848,7 +10848,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5719,
         "std.error": 0.4839,
         "statistic": 13.5807,
@@ -10917,7 +10917,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5491,
         "std.error": 0.3733,
         "statistic": 17.5418,
@@ -10986,7 +10986,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5726,
         "std.error": 0.4095,
         "statistic": 16.0485,
@@ -11055,7 +11055,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8016,
         "std.error": 0.4039,
         "statistic": 16.8392,
@@ -11124,7 +11124,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9223,
         "std.error": 0.4409,
         "statistic": 15.7021,
@@ -11193,7 +11193,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2265,
         "std.error": 0.3803,
         "statistic": 16.3744,
@@ -11262,7 +11262,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1325,
         "std.error": 0.4448,
         "statistic": 13.7875,
@@ -11331,7 +11331,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2945,
         "std.error": 0.4577,
         "statistic": 13.7533,
@@ -11400,7 +11400,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4291,
         "std.error": 0.4088,
         "statistic": 15.7261,
@@ -11469,7 +11469,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3893,
         "std.error": 0.4893,
         "statistic": 13.0573,
@@ -11538,7 +11538,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5797,
         "std.error": 0.4916,
         "statistic": 13.3831,
@@ -11607,7 +11607,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1759,
         "std.error": 0.3549,
         "statistic": 17.4015,
@@ -11676,7 +11676,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 5.9503,
         "std.error": 0.4096,
         "statistic": 14.5283,
@@ -11745,7 +11745,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4025,
         "std.error": 0.4007,
         "statistic": 15.9799,
@@ -11814,7 +11814,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3063,
         "std.error": 0.4637,
         "statistic": 13.5993,
@@ -11883,7 +11883,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6062,
         "std.error": 0.3905,
         "statistic": 16.9169,
@@ -11952,7 +11952,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.538,
         "std.error": 0.4316,
         "statistic": 15.1481,
@@ -12021,7 +12021,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.739,
         "std.error": 0.4368,
         "statistic": 15.427,
@@ -12090,7 +12090,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.7305,
         "std.error": 0.4831,
         "statistic": 13.9327,
@@ -12159,7 +12159,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2804,
         "std.error": 0.4041,
         "statistic": 15.5409,
@@ -12228,7 +12228,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.1742,
         "std.error": 0.4452,
         "statistic": 13.8679,
@@ -12297,7 +12297,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.35,
         "std.error": 0.4573,
         "statistic": 13.8863,
@@ -12366,7 +12366,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4968,
         "std.error": 0.4517,
         "statistic": 14.3822,
@@ -12435,7 +12435,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4105,
         "std.error": 0.5066,
         "statistic": 12.653,
@@ -12504,7 +12504,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5375,
         "std.error": 0.5076,
         "statistic": 12.8788,
@@ -12573,7 +12573,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5759,
         "std.error": 0.4214,
         "statistic": 15.6055,
@@ -12642,7 +12642,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4792,
         "std.error": 0.4898,
         "statistic": 13.2279,
@@ -12711,7 +12711,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6984,
         "std.error": 0.4636,
         "statistic": 14.4501,
@@ -12780,7 +12780,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.7682,
         "std.error": 0.539,
         "statistic": 12.5568,
@@ -12849,7 +12849,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.64,
         "std.error": 0.4222,
         "statistic": 15.7265,
@@ -12918,7 +12918,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5731,
         "std.error": 0.4705,
         "statistic": 13.9712,
@@ -12987,7 +12987,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8974,
         "std.error": 0.4634,
         "statistic": 14.8849,
@@ -13056,7 +13056,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.9318,
         "std.error": 0.5115,
         "statistic": 13.5516,
@@ -13125,7 +13125,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.243,
         "std.error": 0.4544,
         "statistic": 13.7386,
@@ -13194,7 +13194,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0103,
         "std.error": 0.5261,
         "statistic": 11.4239,
@@ -13263,7 +13263,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2673,
         "std.error": 0.5352,
         "statistic": 11.7113,
@@ -13332,7 +13332,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.392,
         "std.error": 0.4815,
         "statistic": 13.2743,
@@ -13401,7 +13401,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.178,
         "std.error": 0.5675,
         "statistic": 10.8855,
@@ -13470,7 +13470,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4696,
         "std.error": 0.5711,
         "statistic": 11.3292,
@@ -13539,7 +13539,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2282,
         "std.error": 0.3329,
         "statistic": 18.7112,
@@ -13608,7 +13608,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0106,
         "std.error": 0.3806,
         "statistic": 15.7911,
@@ -13677,7 +13677,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4449,
         "std.error": 0.3667,
         "statistic": 17.5761,
@@ -13746,7 +13746,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.3459,
         "std.error": 0.4232,
         "statistic": 14.9937,
@@ -13815,7 +13815,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.6218,
         "std.error": 0.3636,
         "statistic": 18.2123,
@@ -13884,7 +13884,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.5642,
         "std.error": 0.396,
         "statistic": 16.5758,
@@ -13953,7 +13953,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8457,
         "std.error": 0.4013,
         "statistic": 17.0577,
@@ -14022,7 +14022,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.8585,
         "std.error": 0.4354,
         "statistic": 15.7527,
@@ -14091,7 +14091,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2327,
         "std.error": 0.3713,
         "statistic": 16.7876,
@@ -14160,7 +14160,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.0896,
         "std.error": 0.411,
         "statistic": 14.8175,
@@ -14229,7 +14229,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.256,
         "std.error": 0.4298,
         "statistic": 14.5566,
@@ -14298,7 +14298,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4037,
         "std.error": 0.4041,
         "statistic": 15.8468,
@@ -14367,7 +14367,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.2696,
         "std.error": 0.4561,
         "statistic": 13.7467,
@@ -14436,7 +14436,7 @@
     },
     "results": [
       {
-        "term": "(Intercept)",
+        "term": "Intercept",
         "estimate": 6.4068,
         "std.error": 0.468,
         "statistic": 13.6886,

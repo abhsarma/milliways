@@ -78,7 +78,7 @@
 		m.initializeOutcomeData(i);
 		m = m;
 		let combine = combineJoinOptions(options_to_join);
-		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), d3.select('svg#vis-'+i), m.size, y);
+		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), d3.select('svg#vis-'+i), m.size, y, m.outcomes[i].var);
 	}
 
 	function redraw(join, exclude) {
@@ -88,19 +88,11 @@
 
 		updateMatrixGrid(gridData, m.parameters(), grid, y, x_params, x_options);
 
-		// console.log(gridData);
-
-		// if (Object.values(options_to_exclude).flat().length >= 1) {
-		// 	// do something here
-		// 	let x = Object.values(options_to_exclude)
-		// 		.flat()
-		// 		.forEach(d => {
-		// 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-		// 		});
-		// 	console.log(x)
-		// }
-
-		// draw(gridData, outcomeData, m.parameters(), m.size, grid, visSvgs, vis, y, x_params);
+		// update results
+		visSvgs.each((d, i, nodes) => {
+			if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
+				vis(outcomeData[i], d3.select(nodes[i]), m.size, y, m.outcomes[i].var);
+		});
 	}
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
@@ -108,6 +100,9 @@
 	onMount(() => {
 		let grid = d3.select(".grid")
 		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
+
+		m.addVis();
+		m = m;
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;

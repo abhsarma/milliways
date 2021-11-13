@@ -202,7 +202,7 @@ class multiverseMatrix {
 		this.universes = [...new Set(dat.map(d => d['.universe']))];
 		this.size = this.universes.length;
 		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
-		this.outcomes = [];
+		this.outcomes = []; //[this.allOutcomeVars[0]];
 		this.gridData = null;
 	}
 
@@ -404,36 +404,6 @@ class multiverseMatrix {
 }
 
 export default multiverseMatrix
-
-// export function draw (gridData, outcomeData, parameters, size, grid_node, results_nodes, vis_fun, y, x, selected_options = []) {
-// 	// update only the grid options
-// 	d3.selectAll(".option-value").remove();
-
-// 	let parameter_list = Object.entries(parameters)
-// 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
-// 	let options = parameter_list.map(d => d.options);
-// 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-// 	let x2 = d3.scaleBand()
-// 		.domain(d3.range(d3.max(options.map(d => d.length))))
-// 		.range( [0, colWidth] );
-
-// 	for (let p of Object.keys(parameters)) {
-// 		drawColOptions(gridData, parameters, p, grid_node, y, x, x2);
-// 	}
-
-// 	Object.values(options_to_exclude)
-// 		.flat()
-// 		.forEach(d => {
-// 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-// 		});
-	
-// 	// update results
-// 	// this.drawCI(outcomeData, results_node, grid_node, y);
-// 	results_nodes.each((d, i, nodes) => {
-// 		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-// 			vis_fun(outcomeData[i], d3.select(nodes[i]), size, y);
-// 	});
-// }
 
 // function from drawing the decision grid
 export function drawGrid (gridData, params, grid_node, yscale, x) {
@@ -699,13 +669,98 @@ function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 }
 
 
+export function CDF (data, results_node, size, yscale, term) {
+	let results_plot = results_node //.select('svg);
+	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
+	let ypos;
+
+	// console.log(term)
+
+	// results_plot.select("g.outcomePanel").remove();
+
+	let xscale = d3.scaleLinear()
+		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))
+		.range([margin.left, outVisWidth]);
+	
+	let y = d3.scaleLinear()
+		.domain(d3.extent( data.map(d => d.map(x => x[1])).flat() ))
+		.range([(yscale.step() - cell.padding), 0]);
+
+	if (state_value == 0) {
+		ypos = 4 * cell.padding;
+	} else {
+		ypos = namingDim + 4 * cell.padding;
+	}
+
+	let outcomePlot = results_plot.append("g")
+		.attr("class", `outcomePanel ${term}`)
+		.attr( "transform",
+			`translate(0,  ${ypos})`)
+
+	outcomePlot.append("line")
+		.attr("class", "zero-line")
+		.attr("x1", xscale(0) )
+		.attr("y1", margin.top)
+		.attr("x2", xscale(0) )
+		.attr("y2", height - margin.bottom)
+		.attr("stroke", "#d0d0d0")
+		.attr("stroke-width", 2);
+
+	let xAxis = d3.axisTop(xscale)
+		.ticks(5);
+		
+	let area = d3.area()
+		.curve(d3.curveLinear)
+		.x(d => xscale(d[0]))
+		.y0(d => y(d[1]))
+		.y1(d => y(d[2]))
+
+	// add a group for each universe
+	let panelPlot = d3.select(`g.${term}`)
+		.selectAll(".universe")
+		.data(data)
+		.join(
+			enter => enterCDF(enter, yscale, area),
+			update => updateCDF(update, area),
+			exit => exitCDF(exit)
+		)
+}
+
+function enterCDF(enter, yscale, area) {
+	enter.append('g')
+		.attr("class", (d, i) => `universe universe-${i}`)
+		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
+		.call( g => 
+			g.append("path")
+				.datum(d => d)
+				.attr("fill", "steelblue")
+				.attr("stroke", "steelblue")
+				.attr("stroke-width", 1.5)
+				.attr("d", area)
+		)
+		
+}
+
+function updateCDF(update, area) {
+	update
+		.call(g => 
+			g.select('path')
+				.datum(d => d)
+				.attr("d", area)
+	)
+}
+
+function exitCDF(exit) {
+	exit.call(g => g.remove())
+}
+
 export function CI (data, results_node, size, yscale) {
 	let results_plot = results_node.select("svg")
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	const width = parameters.length * (cell.width + cell.padding); // to fix
 	let ypos;
 
-	d3.select("g.outcomePanel").remove();
+	// d3.select("g.outcomePanel").remove();
 
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
@@ -718,7 +773,7 @@ export function CI (data, results_node, size, yscale) {
 	}
 
 	let outcomePlot = results_plot.append("g")
-		.attr("class", "outcomePanel")
+		.attr("class", `outcomePanel`)
 		.attr( "transform",
 			`translate(0,  ${ypos})`)
 
@@ -742,8 +797,11 @@ export function CI (data, results_node, size, yscale) {
 	// add a group for each universe
 	let panelPlot = outcomePlot.selectAll("g")
 		.data(data)
-		.enter()
-		.append("g")
+		.join(
+			enter => enter.append('g'),
+			update => update,
+			exit => exit.remove()
+		)
 		.attr("class", "universe");
 
 	// Add reference lines
@@ -774,96 +832,4 @@ export function CI (data, results_node, size, yscale) {
 		.attr("r", 4)
 		.attr("fill", "#333333");
 }
-
-export function CDF (data, results_node, size, yscale) {
-	let results_plot = results_node //.select('svg);
-	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	// const width = parameters.length * (cell.width + cell.padding); // to fix
-	let ypos;
-
-	results_plot.select("g.outcomePanel").remove();
-
-	let xscale = d3.scaleLinear()
-		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))
-		.range([margin.left, outVisWidth]);
-	
-	let y = d3.scaleLinear()
-		.domain(d3.extent( data.map(d => d.map(x => x[1])).flat() ))
-		.range([(yscale.step() - cell.padding), 0]);
-
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
-
-	let outcomePlot = results_plot.append("g")
-		.attr("class", "outcomePanel")
-		.attr( "transform",
-			`translate(0,  ${ypos})`)
-
-	outcomePlot.append("line")
-		.attr("class", "zero-line")
-		.attr("x1", xscale(0) )
-		.attr("y1", margin.top)
-		.attr("x2", xscale(0) )
-		.attr("y2", height - margin.bottom)
-		.attr("stroke", "#d0d0d0")
-		.attr("stroke-width", 2);
-
-	// outcomePlot.append("line")
-	// 	.attr("class", "x-axis-line")
-	// 	.attr("x1", xscale.range()[0] )
-	// 	.attr("y1", yscale(0) - cell.padding)
-	// 	.attr("x2", xscale.range()[1] )
-	// 	.attr("y2", yscale(0) - cell.padding)
-	// 	.attr("stroke", "#666666")
-	// 	.attr("stroke-width", 2);
-
-	let xAxis = d3.axisTop(xscale)
-		.ticks(5);
-
-	outcomePlot.append("g")
-		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
-		.call(xAxis)
-		.style("font-size", "12px");
-
-	// add a group for each universe
-	let panelPlot = outcomePlot.selectAll(".universe")
-		.data(data)
-		.enter()
-		.append("g")
-		.attr("class", (d, i) => `universe universe-${i}`)
-		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`);
-
-	// Add reference line
-	panelPlot.append("line")
-		.attr("class", "x-axis")
-		.attr("x1", xscale.range()[0] )
-		.attr("y1", y(0))
-		.attr("x2", xscale.range()[1] )
-		.attr("y2", y(0))
-		.attr("stroke", "#e0e0e0")
-		.attr("stroke-width", 1);
-
-	let area = d3.area()
-		.curve(d3.curveLinear)
-		.x(d => xscale(d[0]))
-		.y0(d => y(d[1]))
-		.y1(d => y(d[2]))
-
-	panelPlot.append("path")
-	.datum(d => d)
-	.attr("fill", "steelblue")
-	.attr("stroke", "steelblue")
-	.attr("stroke-width", 1.5)
-	.attr("d", area);
-}
-
-
-// function dragOptions() {
-// 	let drag = d3.drag();
-// }
-
-
 
