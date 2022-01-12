@@ -212004,7 +212004,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (200:3) {#each m.outcomes as outcome, i (outcome.id)}
+    // (202:3) {#each m.outcomes as outcome, i (outcome.id)}
     function create_each_block(key_1, ctx) {
     	let first;
     	let vis_1;
@@ -212110,7 +212110,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(200:3) {#each m.outcomes as outcome, i (outcome.id)}",
+    		source: "(202:3) {#each m.outcomes as outcome, i (outcome.id)}",
     		ctx
     	});
 
@@ -212191,50 +212191,50 @@ var app = (function () {
     			div7 = element("div");
     			svg1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 181, 1, 4826);
+    			add_location(div0, file, 183, 1, 4863);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-1i9h9ss");
-    			add_location(h1, file, 185, 4, 4928);
+    			add_location(h1, file, 187, 4, 4965);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 184, 3, 4901);
+    			add_location(div1, file, 186, 3, 4938);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 187, 3, 5011);
+    			add_location(div2, file, 189, 3, 5048);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 183, 2, 4880);
+    			add_location(div3, file, 185, 2, 4917);
     			attr_dev(div4, "class", "container");
-    			add_location(div4, file, 182, 1, 4852);
+    			add_location(div4, file, 184, 1, 4889);
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file, 194, 126, 5330);
+    			add_location(path0, file, 196, 126, 5367);
     			attr_dev(path1, "d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
-    			add_location(path1, file, 194, 165, 5369);
+    			add_location(path1, file, 196, 165, 5406);
     			attr_dev(svg0, "class", "add-vis-icon svelte-1i9h9ss");
     			attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg0, "height", "32px");
     			attr_dev(svg0, "viewBox", "0 0 24 24");
     			attr_dev(svg0, "width", "32px");
     			attr_dev(svg0, "fill", "#777777");
-    			add_location(svg0, file, 194, 3, 5207);
+    			add_location(svg0, file, 196, 3, 5244);
     			attr_dev(button, "class", "svelte-1i9h9ss");
-    			add_location(button, file, 193, 2, 5107);
+    			add_location(button, file, 195, 2, 5144);
     			attr_dev(div5, "class", "button-wrapper svelte-1i9h9ss");
-    			add_location(div5, file, 192, 1, 5076);
+    			add_location(div5, file, 194, 1, 5113);
     			attr_dev(div6, "class", "vis-container svelte-1i9h9ss");
     			set_style(div6, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div6, file, 198, 2, 5473);
+    			add_location(div6, file, 200, 2, 5510);
     			attr_dev(svg1, "height", /*h*/ ctx[3]);
     			attr_dev(svg1, "width", /*w2*/ ctx[6]);
     			attr_dev(svg1, "class", "svelte-1i9h9ss");
-    			add_location(svg1, file, 212, 4, 5976);
+    			add_location(svg1, file, 214, 4, 6013);
     			attr_dev(div7, "class", "grid svelte-1i9h9ss");
     			set_style(div7, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div7, file, 211, 3, 5922);
+    			add_location(div7, file, 213, 3, 5959);
     			attr_dev(div8, "class", "grid-container svelte-1i9h9ss");
-    			add_location(div8, file, 210, 2, 5890);
+    			add_location(div8, file, 212, 2, 5927);
     			attr_dev(div9, "class", "main-content svelte-1i9h9ss");
-    			add_location(div9, file, 197, 1, 5444);
+    			add_location(div9, file, 199, 1, 5481);
     			attr_dev(main, "class", "svelte-1i9h9ss");
-    			add_location(main, file, 180, 0, 4818);
+    			add_location(main, file, 182, 0, 4855);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212420,7 +212420,11 @@ var app = (function () {
     	function update(join, exclude) {
     		let gridData = m.updateGridData(join, exclude);
     		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
-    		m.updateOutcomeData(0, m.allOutcomeVars[0], join, exclude);
+
+    		for (let i in m.outcomes) {
+    			m.updateOutcomeData(i, m.allOutcomeVars[i], join, exclude);
+    		}
+
     		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
     	}
 
