@@ -3,12 +3,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { CI, CDF, updateMatrixGrid, drawGrid, combineJoinOptions } from './components/multiverseMatrix.js';
+	import multiverseMatrix, { CI, CDF, drawMatrixGrid, drawGridNames, drawOutcomes, combineJoinOptions } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
-	import Tooltip from './components/tooltip-option-menu.svelte'
-	import Dropdown from './components/dropdown-menu.svelte'
-	import OptionTooltip from './components/tooltip-option-menu.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 	import { exclude_options, join_options } from './components/stores.js';
@@ -43,7 +40,7 @@
 	const n_options = accum_options[accum_options.length - 1];
 
 	$: size = m.gridData.length; // todo: reactive update
-	$: h = size * cell.height;
+	$: h = size * cell.height + namingDim + margin.top + 4 * cell.padding;
 	$: w1 = outVisWidth + margin.left; 
 	$: w2 = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
 	$: y = d3.scaleBand()
@@ -70,39 +67,15 @@
 		.domain(d3.range(d3.max(Object.values(params).map(d => d.length))))
 		.range( [0, colWidth] );
 
-	$: redraw(options_to_join, options_to_exclude);
-
-	// maybe move into multiverseMatrix.js
-	// used for specifically changing a single <Vis/> component
-	function drawVis(i) {
-		m.initializeOutcomeData(i);
-		m = m;
-		let combine = combineJoinOptions(options_to_join);
-		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), d3.select('svg#vis-'+i), m.size, y, m.outcomes[i].var);
-	}
-
-	function redraw(join, exclude) {
-		let [gridData, outcomeData] = m.updateData(join, exclude);
-		let grid = d3.select('.grid');
-		let visSvgs = d3.selectAll('.vis > svg');
-
-		updateMatrixGrid(gridData, m.parameters(), grid, y, x_params, x_options);
-
-		// update results
-		visSvgs.each((d, i, nodes) => {
-			if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-				vis(outcomeData[i], d3.select(nodes[i]), m.size, y, m.outcomes[i].var);
-		});
-	}
+	$: drawOutcomes(m.outcomes, m.size, y);
+	$: update(options_to_join, options_to_exclude);
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
-		let grid = d3.select(".grid")
-		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
-
-		m.addVis();
-		m = m;
+		drawGridNames(m.gridData, m.parameters(), y, x_params);
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options)
+		// drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x2)
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -123,6 +96,13 @@
 			isSyncingRightScroll = false;
 		}
 	});
+
+	function update(join, exclude) {
+		let gridData = m.updateGridData(join, exclude);
+		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
+		m.updateOutcomeData(0, m.allOutcomeVars[0], join, exclude);
+		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
+	}
 </script>
 
 <style>
@@ -211,7 +191,7 @@
 		</div>
 	</div>
 	<div class="button-wrapper">
-		<button on:click={() => { m.addVis(); m=m; }}>
+		<button on:click={() => { m.initializeOutcomeData(options_to_join, options_to_exclude); m=m; }}>
 			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#777777"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>
 	</div>
@@ -224,9 +204,7 @@
 					bind:w         = {w1}
 					bind:h         = {h}
 					bind:term      = {outcome.var}
-					on:change      = {() => drawVis(i)}
-					on:mount       = {() => drawVis(i)}
-					on:remove      = {() => { m.removeVis(i); m=m; }}
+					on:change	   = {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
 				/>
 			{/each}
 		</div>

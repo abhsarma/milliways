@@ -20300,7 +20300,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3749,
     				"std.error": 0.4044,
     				statistic: 15.7638,
@@ -21195,7 +21195,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3107,
     				"std.error": 0.4704,
     				statistic: 13.4158,
@@ -22090,7 +22090,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5631,
     				"std.error": 0.4498,
     				statistic: 14.5915,
@@ -22985,7 +22985,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5411,
     				"std.error": 0.5195,
     				statistic: 12.592,
@@ -23880,7 +23880,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.554,
     				"std.error": 0.4123,
     				statistic: 15.8942,
@@ -24775,7 +24775,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4733,
     				"std.error": 0.4603,
     				statistic: 14.0641,
@@ -25670,7 +25670,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8747,
     				"std.error": 0.4497,
     				statistic: 15.2857,
@@ -26565,7 +26565,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9014,
     				"std.error": 0.5019,
     				statistic: 13.7508,
@@ -27460,7 +27460,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1843,
     				"std.error": 0.4397,
     				statistic: 14.0661,
@@ -28355,7 +28355,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9664,
     				"std.error": 0.4989,
     				statistic: 11.9595,
@@ -29250,7 +29250,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2533,
     				"std.error": 0.5314,
     				statistic: 11.7667,
@@ -30145,7 +30145,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4323,
     				"std.error": 0.4722,
     				statistic: 13.6226,
@@ -31040,7 +31040,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2553,
     				"std.error": 0.5469,
     				statistic: 11.4388,
@@ -31935,7 +31935,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6214,
     				"std.error": 0.574,
     				statistic: 11.5351,
@@ -32830,7 +32830,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3954,
     				"std.error": 0.3759,
     				statistic: 17.0153,
@@ -33725,7 +33725,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3617,
     				"std.error": 0.442,
     				statistic: 14.3921,
@@ -34620,7 +34620,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.56,
     				"std.error": 0.4129,
     				statistic: 15.8877,
@@ -35515,7 +35515,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5719,
     				"std.error": 0.4851,
     				statistic: 13.5473,
@@ -36410,7 +36410,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5491,
     				"std.error": 0.3691,
     				statistic: 17.7429,
@@ -37305,7 +37305,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5726,
     				"std.error": 0.4094,
     				statistic: 16.0526,
@@ -38200,7 +38200,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8016,
     				"std.error": 0.3968,
     				statistic: 17.1427,
@@ -39095,7 +39095,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9223,
     				"std.error": 0.4398,
     				statistic: 15.7389,
@@ -39990,7 +39990,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2265,
     				"std.error": 0.3841,
     				statistic: 16.2114,
@@ -40885,7 +40885,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1325,
     				"std.error": 0.4434,
     				statistic: 13.8318,
@@ -41780,7 +41780,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2945,
     				"std.error": 0.4635,
     				statistic: 13.5807,
@@ -42675,7 +42675,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4291,
     				"std.error": 0.4124,
     				statistic: 15.5883,
@@ -43570,7 +43570,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3893,
     				"std.error": 0.4892,
     				statistic: 13.0604,
@@ -44465,7 +44465,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5797,
     				"std.error": 0.496,
     				statistic: 13.2644,
@@ -45360,7 +45360,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1759,
     				"std.error": 0.352,
     				statistic: 17.5443,
@@ -46255,7 +46255,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9503,
     				"std.error": 0.4021,
     				statistic: 14.7982,
@@ -47150,7 +47150,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4025,
     				"std.error": 0.3951,
     				statistic: 16.203,
@@ -48045,7 +48045,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3063,
     				"std.error": 0.4553,
     				statistic: 13.8497,
@@ -48940,7 +48940,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6062,
     				"std.error": 0.3842,
     				statistic: 17.1964,
@@ -49835,7 +49835,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.538,
     				"std.error": 0.4285,
     				statistic: 15.2594,
@@ -50730,7 +50730,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.739,
     				"std.error": 0.4237,
     				statistic: 15.9042,
@@ -51625,7 +51625,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.7305,
     				"std.error": 0.4748,
     				statistic: 14.1743,
@@ -52520,7 +52520,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2804,
     				"std.error": 0.4049,
     				statistic: 15.5091,
@@ -53415,7 +53415,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1742,
     				"std.error": 0.4434,
     				statistic: 13.9243,
@@ -54310,7 +54310,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.35,
     				"std.error": 0.4641,
     				statistic: 13.6828,
@@ -55205,7 +55205,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4968,
     				"std.error": 0.4523,
     				statistic: 14.3625,
@@ -56100,7 +56100,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4105,
     				"std.error": 0.5053,
     				statistic: 12.6854,
@@ -56995,7 +56995,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5375,
     				"std.error": 0.5118,
     				statistic: 12.7743,
@@ -57890,7 +57890,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5759,
     				"std.error": 0.4254,
     				statistic: 15.4569,
@@ -58785,7 +58785,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4792,
     				"std.error": 0.4916,
     				statistic: 13.1806,
@@ -59680,7 +59680,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6984,
     				"std.error": 0.4695,
     				statistic: 14.2677,
@@ -60575,7 +60575,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.7682,
     				"std.error": 0.5438,
     				statistic: 12.4472,
@@ -61470,7 +61470,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.64,
     				"std.error": 0.4264,
     				statistic: 15.5713,
@@ -62365,7 +62365,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5731,
     				"std.error": 0.477,
     				statistic: 13.7789,
@@ -63260,7 +63260,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8974,
     				"std.error": 0.4667,
     				statistic: 14.7795,
@@ -64155,7 +64155,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9318,
     				"std.error": 0.5188,
     				statistic: 13.3611,
@@ -65050,7 +65050,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.243,
     				"std.error": 0.4577,
     				statistic: 13.6402,
@@ -65945,7 +65945,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0103,
     				"std.error": 0.5259,
     				statistic: 11.4285,
@@ -66840,7 +66840,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2673,
     				"std.error": 0.5424,
     				statistic: 11.5555,
@@ -67735,7 +67735,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.392,
     				"std.error": 0.4862,
     				statistic: 13.1481,
@@ -68630,7 +68630,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.178,
     				"std.error": 0.5707,
     				statistic: 10.8246,
@@ -69525,7 +69525,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4696,
     				"std.error": 0.5784,
     				statistic: 11.1851,
@@ -70420,7 +70420,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2282,
     				"std.error": 0.336,
     				statistic: 18.536,
@@ -71315,7 +71315,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0106,
     				"std.error": 0.3818,
     				statistic: 15.7437,
@@ -72210,7 +72210,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4449,
     				"std.error": 0.3709,
     				statistic: 17.3747,
@@ -73105,7 +73105,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3459,
     				"std.error": 0.4262,
     				statistic: 14.8881,
@@ -74000,7 +74000,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6218,
     				"std.error": 0.3676,
     				statistic: 18.015,
@@ -74895,7 +74895,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5642,
     				"std.error": 0.4027,
     				statistic: 16.2984,
@@ -75790,7 +75790,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8457,
     				"std.error": 0.4044,
     				statistic: 16.927,
@@ -76685,7 +76685,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8585,
     				"std.error": 0.4426,
     				statistic: 15.495,
@@ -77580,7 +77580,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2327,
     				"std.error": 0.374,
     				statistic: 16.6668,
@@ -78475,7 +78475,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0896,
     				"std.error": 0.4104,
     				statistic: 14.8373,
@@ -79370,7 +79370,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.256,
     				"std.error": 0.4353,
     				statistic: 14.372,
@@ -80265,7 +80265,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4037,
     				"std.error": 0.4076,
     				statistic: 15.7103,
@@ -81160,7 +81160,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2696,
     				"std.error": 0.4569,
     				statistic: 13.7209,
@@ -82055,7 +82055,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4068,
     				"std.error": 0.4729,
     				statistic: 13.5466,
@@ -82950,7 +82950,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8376,
     				"std.error": 0.323,
     				statistic: 18.0706,
@@ -83845,7 +83845,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6625,
     				"std.error": 0.3658,
     				statistic: 15.4785,
@@ -84740,7 +84740,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9216,
     				"std.error": 0.3606,
     				statistic: 16.4221,
@@ -85635,7 +85635,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8123,
     				"std.error": 0.4043,
     				statistic: 14.3765,
@@ -86530,7 +86530,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8148,
     				"std.error": 0.3255,
     				statistic: 17.8664,
@@ -87425,7 +87425,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6899,
     				"std.error": 0.3593,
     				statistic: 15.8368,
@@ -88320,7 +88320,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9961,
     				"std.error": 0.3539,
     				statistic: 16.9416,
@@ -89215,7 +89215,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9422,
     				"std.error": 0.3944,
     				statistic: 15.0666,
@@ -90110,7 +90110,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.5789,
     				"std.error": 0.3393,
     				statistic: 16.4435,
@@ -91005,7 +91005,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.3439,
     				"std.error": 0.3821,
     				statistic: 13.9862,
@@ -91900,7 +91900,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6329,
     				"std.error": 0.4042,
     				statistic: 13.9347,
@@ -92795,7 +92795,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7235,
     				"std.error": 0.3743,
     				statistic: 15.2922,
@@ -93690,7 +93690,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.5421,
     				"std.error": 0.428,
     				statistic: 12.949,
@@ -94585,7 +94585,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8239,
     				"std.error": 0.4485,
     				statistic: 12.9841,
@@ -95480,7 +95480,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6734,
     				"std.error": 0.2959,
     				statistic: 19.1724,
@@ -96375,7 +96375,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.4946,
     				"std.error": 0.3362,
     				statistic: 16.3415,
@@ -97270,7 +97270,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7173,
     				"std.error": 0.3257,
     				statistic: 17.5522,
@@ -98165,7 +98165,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.596,
     				"std.error": 0.3685,
     				statistic: 15.1854,
@@ -99060,7 +99060,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9331,
     				"std.error": 0.2958,
     				statistic: 20.0567,
@@ -99955,7 +99955,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8893,
     				"std.error": 0.3244,
     				statistic: 18.1559,
@@ -100850,7 +100850,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0983,
     				"std.error": 0.3177,
     				statistic: 19.1929,
@@ -101745,7 +101745,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1217,
     				"std.error": 0.3509,
     				statistic: 17.4475,
@@ -102640,7 +102640,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6741,
     				"std.error": 0.3075,
     				statistic: 18.4529,
@@ -103535,7 +103535,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.507,
     				"std.error": 0.3512,
     				statistic: 15.6785,
@@ -104430,7 +104430,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7421,
     				"std.error": 0.3702,
     				statistic: 15.5111,
@@ -105325,7 +105325,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8061,
     				"std.error": 0.3385,
     				statistic: 17.1535,
@@ -106220,7 +106220,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6978,
     				"std.error": 0.3948,
     				statistic: 14.4308,
@@ -107115,7 +107115,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9203,
     				"std.error": 0.4075,
     				statistic: 14.5279,
@@ -108010,7 +108010,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8337,
     				"std.error": 0.29,
     				statistic: 20.1139,
@@ -108905,7 +108905,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6156,
     				"std.error": 0.3268,
     				statistic: 17.1819,
@@ -109800,7 +109800,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.946,
     				"std.error": 0.3286,
     				statistic: 18.0967,
@@ -110695,7 +110695,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8335,
     				"std.error": 0.3715,
     				statistic: 15.7029,
@@ -111590,7 +111590,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1295,
     				"std.error": 0.3114,
     				statistic: 19.6823,
@@ -112485,7 +112485,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0046,
     				"std.error": 0.343,
     				statistic: 17.5065,
@@ -113380,7 +113380,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2782,
     				"std.error": 0.3456,
     				statistic: 18.1637,
@@ -114275,7 +114275,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2003,
     				"std.error": 0.3857,
     				statistic: 16.0739,
@@ -115170,7 +115170,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7385,
     				"std.error": 0.3075,
     				statistic: 18.6596,
@@ -116065,7 +116065,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6545,
     				"std.error": 0.3445,
     				statistic: 16.4134,
@@ -116960,7 +116960,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7875,
     				"std.error": 0.3579,
     				statistic: 16.1691,
@@ -117855,7 +117855,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8711,
     				"std.error": 0.3489,
     				statistic: 16.8255,
@@ -118750,7 +118750,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8521,
     				"std.error": 0.399,
     				statistic: 14.6664,
@@ -119645,7 +119645,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.91,
     				"std.error": 0.4057,
     				statistic: 14.5682,
@@ -120540,7 +120540,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0047,
     				"std.error": 0.3384,
     				statistic: 17.7444,
@@ -121435,7 +121435,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8158,
     				"std.error": 0.3828,
     				statistic: 15.1911,
@@ -122330,7 +122330,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0594,
     				"std.error": 0.3745,
     				statistic: 16.1792,
@@ -123225,7 +123225,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0125,
     				"std.error": 0.4239,
     				statistic: 14.1828,
@@ -124120,7 +124120,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9697,
     				"std.error": 0.3452,
     				statistic: 17.2946,
@@ -125015,7 +125015,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8098,
     				"std.error": 0.3793,
     				statistic: 15.3177,
@@ -125910,7 +125910,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1543,
     				"std.error": 0.379,
     				statistic: 16.2395,
@@ -126805,7 +126805,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.062,
     				"std.error": 0.4178,
     				statistic: 14.5086,
@@ -127700,7 +127700,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6495,
     				"std.error": 0.351,
     				statistic: 16.0954,
@@ -128595,7 +128595,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.4017,
     				"std.error": 0.4004,
     				statistic: 13.4909,
@@ -129490,7 +129490,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.5685,
     				"std.error": 0.4072,
     				statistic: 13.6765,
@@ -130385,7 +130385,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7505,
     				"std.error": 0.3851,
     				statistic: 14.9325,
@@ -131280,7 +131280,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.5514,
     				"std.error": 0.4478,
     				statistic: 12.3976,
@@ -132175,7 +132175,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.66,
     				"std.error": 0.4482,
     				statistic: 12.6286,
@@ -133070,7 +133070,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8392,
     				"std.error": 0.2758,
     				statistic: 21.1747,
@@ -133965,7 +133965,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6236,
     				"std.error": 0.3089,
     				statistic: 18.2069,
@@ -134860,7 +134860,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9416,
     				"std.error": 0.3061,
     				statistic: 19.4103,
@@ -135755,7 +135755,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.8195,
     				"std.error": 0.3457,
     				statistic: 16.834,
@@ -136650,7 +136650,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.106,
     				"std.error": 0.2991,
     				statistic: 20.4176,
@@ -137545,7 +137545,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9887,
     				"std.error": 0.3247,
     				statistic: 18.4437,
@@ -138440,7 +138440,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2985,
     				"std.error": 0.3308,
     				statistic: 19.0427,
@@ -139335,7 +139335,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2318,
     				"std.error": 0.3617,
     				statistic: 17.2298,
@@ -140230,7 +140230,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6699,
     				"std.error": 0.2863,
     				statistic: 19.8069,
@@ -141125,7 +141125,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.5451,
     				"std.error": 0.3197,
     				statistic: 17.3451,
@@ -142020,7 +142020,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6794,
     				"std.error": 0.3338,
     				statistic: 17.013,
@@ -142915,7 +142915,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.7686,
     				"std.error": 0.3167,
     				statistic: 18.2137,
@@ -143810,7 +143810,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.6843,
     				"std.error": 0.3612,
     				statistic: 15.7386,
@@ -144705,7 +144705,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.765,
     				"std.error": 0.3713,
     				statistic: 15.5276,
@@ -145600,7 +145600,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3749,
     				"std.error": 0.4024,
     				statistic: 15.8419,
@@ -146495,7 +146495,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3107,
     				"std.error": 0.4722,
     				statistic: 13.3647,
@@ -147390,7 +147390,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5631,
     				"std.error": 0.451,
     				statistic: 14.5531,
@@ -148285,7 +148285,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5411,
     				"std.error": 0.5231,
     				statistic: 12.5052,
@@ -149180,7 +149180,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.554,
     				"std.error": 0.4202,
     				statistic: 15.5982,
@@ -150075,7 +150075,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4733,
     				"std.error": 0.4636,
     				statistic: 13.9632,
@@ -150970,7 +150970,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8747,
     				"std.error": 0.4623,
     				statistic: 14.8693,
@@ -151865,7 +151865,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9014,
     				"std.error": 0.5075,
     				statistic: 13.5988,
@@ -152760,7 +152760,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1843,
     				"std.error": 0.4395,
     				statistic: 14.0718,
@@ -153655,7 +153655,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9664,
     				"std.error": 0.5033,
     				statistic: 11.8551,
@@ -154550,7 +154550,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2533,
     				"std.error": 0.5233,
     				statistic: 11.9508,
@@ -155445,7 +155445,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4323,
     				"std.error": 0.4706,
     				statistic: 13.6686,
@@ -156340,7 +156340,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2553,
     				"std.error": 0.5486,
     				statistic: 11.4022,
@@ -157235,7 +157235,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6214,
     				"std.error": 0.5661,
     				statistic: 11.6974,
@@ -158130,7 +158130,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3954,
     				"std.error": 0.3713,
     				statistic: 17.2245,
@@ -159025,7 +159025,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3617,
     				"std.error": 0.4402,
     				statistic: 14.4512,
@@ -159920,7 +159920,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.56,
     				"std.error": 0.41,
     				statistic: 15.9993,
@@ -160815,7 +160815,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5719,
     				"std.error": 0.4839,
     				statistic: 13.5807,
@@ -161710,7 +161710,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5491,
     				"std.error": 0.3733,
     				statistic: 17.5418,
@@ -162605,7 +162605,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5726,
     				"std.error": 0.4095,
     				statistic: 16.0485,
@@ -163500,7 +163500,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8016,
     				"std.error": 0.4039,
     				statistic: 16.8392,
@@ -164395,7 +164395,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9223,
     				"std.error": 0.4409,
     				statistic: 15.7021,
@@ -165290,7 +165290,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2265,
     				"std.error": 0.3803,
     				statistic: 16.3744,
@@ -166185,7 +166185,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1325,
     				"std.error": 0.4448,
     				statistic: 13.7875,
@@ -167080,7 +167080,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2945,
     				"std.error": 0.4577,
     				statistic: 13.7533,
@@ -167975,7 +167975,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4291,
     				"std.error": 0.4088,
     				statistic: 15.7261,
@@ -168870,7 +168870,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3893,
     				"std.error": 0.4893,
     				statistic: 13.0573,
@@ -169765,7 +169765,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5797,
     				"std.error": 0.4916,
     				statistic: 13.3831,
@@ -170660,7 +170660,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1759,
     				"std.error": 0.3549,
     				statistic: 17.4015,
@@ -171555,7 +171555,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 5.9503,
     				"std.error": 0.4096,
     				statistic: 14.5283,
@@ -172450,7 +172450,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4025,
     				"std.error": 0.4007,
     				statistic: 15.9799,
@@ -173345,7 +173345,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3063,
     				"std.error": 0.4637,
     				statistic: 13.5993,
@@ -174240,7 +174240,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6062,
     				"std.error": 0.3905,
     				statistic: 16.9169,
@@ -175135,7 +175135,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.538,
     				"std.error": 0.4316,
     				statistic: 15.1481,
@@ -176030,7 +176030,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.739,
     				"std.error": 0.4368,
     				statistic: 15.427,
@@ -176925,7 +176925,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.7305,
     				"std.error": 0.4831,
     				statistic: 13.9327,
@@ -177820,7 +177820,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2804,
     				"std.error": 0.4041,
     				statistic: 15.5409,
@@ -178715,7 +178715,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.1742,
     				"std.error": 0.4452,
     				statistic: 13.8679,
@@ -179610,7 +179610,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.35,
     				"std.error": 0.4573,
     				statistic: 13.8863,
@@ -180505,7 +180505,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4968,
     				"std.error": 0.4517,
     				statistic: 14.3822,
@@ -181400,7 +181400,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4105,
     				"std.error": 0.5066,
     				statistic: 12.653,
@@ -182295,7 +182295,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5375,
     				"std.error": 0.5076,
     				statistic: 12.8788,
@@ -183190,7 +183190,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5759,
     				"std.error": 0.4214,
     				statistic: 15.6055,
@@ -184085,7 +184085,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4792,
     				"std.error": 0.4898,
     				statistic: 13.2279,
@@ -184980,7 +184980,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6984,
     				"std.error": 0.4636,
     				statistic: 14.4501,
@@ -185875,7 +185875,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.7682,
     				"std.error": 0.539,
     				statistic: 12.5568,
@@ -186770,7 +186770,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.64,
     				"std.error": 0.4222,
     				statistic: 15.7265,
@@ -187665,7 +187665,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5731,
     				"std.error": 0.4705,
     				statistic: 13.9712,
@@ -188560,7 +188560,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8974,
     				"std.error": 0.4634,
     				statistic: 14.8849,
@@ -189455,7 +189455,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.9318,
     				"std.error": 0.5115,
     				statistic: 13.5516,
@@ -190350,7 +190350,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.243,
     				"std.error": 0.4544,
     				statistic: 13.7386,
@@ -191245,7 +191245,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0103,
     				"std.error": 0.5261,
     				statistic: 11.4239,
@@ -192140,7 +192140,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2673,
     				"std.error": 0.5352,
     				statistic: 11.7113,
@@ -193035,7 +193035,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.392,
     				"std.error": 0.4815,
     				statistic: 13.2743,
@@ -193930,7 +193930,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.178,
     				"std.error": 0.5675,
     				statistic: 10.8855,
@@ -194825,7 +194825,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4696,
     				"std.error": 0.5711,
     				statistic: 11.3292,
@@ -195720,7 +195720,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2282,
     				"std.error": 0.3329,
     				statistic: 18.7112,
@@ -196615,7 +196615,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0106,
     				"std.error": 0.3806,
     				statistic: 15.7911,
@@ -197510,7 +197510,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4449,
     				"std.error": 0.3667,
     				statistic: 17.5761,
@@ -198405,7 +198405,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.3459,
     				"std.error": 0.4232,
     				statistic: 14.9937,
@@ -199300,7 +199300,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.6218,
     				"std.error": 0.3636,
     				statistic: 18.2123,
@@ -200195,7 +200195,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.5642,
     				"std.error": 0.396,
     				statistic: 16.5758,
@@ -201090,7 +201090,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8457,
     				"std.error": 0.4013,
     				statistic: 17.0577,
@@ -201985,7 +201985,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.8585,
     				"std.error": 0.4354,
     				statistic: 15.7527,
@@ -202880,7 +202880,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2327,
     				"std.error": 0.3713,
     				statistic: 16.7876,
@@ -203775,7 +203775,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.0896,
     				"std.error": 0.411,
     				statistic: 14.8175,
@@ -204670,7 +204670,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.256,
     				"std.error": 0.4298,
     				statistic: 14.5566,
@@ -205565,7 +205565,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4037,
     				"std.error": 0.4041,
     				statistic: 15.8468,
@@ -206460,7 +206460,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.2696,
     				"std.error": 0.4561,
     				statistic: 13.7467,
@@ -207355,7 +207355,7 @@ var app = (function () {
     		},
     		results: [
     			{
-    				term: "(Intercept)",
+    				term: "Intercept",
     				estimate: 6.4068,
     				"std.error": 0.468,
     				statistic: 13.6886,
@@ -209996,245 +209996,10 @@ var app = (function () {
     const iconSize = 24;
     const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;
 
-    const file$6 = "src/components/dropdown-menu.svelte";
-
-    function get_each_context$2(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
-    	return child_ctx;
-    }
-
-    // (34:2) {#each items as outcome}
-    function create_each_block$2(ctx) {
-    	let option;
-    	let t0_value = /*outcome*/ ctx[5] + "";
-    	let t0;
-    	let t1;
-    	let option_value_value;
-
-    	const block = {
-    		c: function create() {
-    			option = element("option");
-    			t0 = text$2(t0_value);
-    			t1 = space();
-    			option.__value = option_value_value = /*outcome*/ ctx[5];
-    			option.value = option.__value;
-    			add_location(option, file$6, 34, 3, 702);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, option, anchor);
-    			append_dev(option, t0);
-    			append_dev(option, t1);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*items*/ 1 && t0_value !== (t0_value = /*outcome*/ ctx[5] + "")) set_data_dev(t0, t0_value);
-
-    			if (dirty & /*items*/ 1 && option_value_value !== (option_value_value = /*outcome*/ ctx[5])) {
-    				prop_dev(option, "__value", option_value_value);
-    				option.value = option.__value;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(option);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$2.name,
-    		type: "each",
-    		source: "(34:2) {#each items as outcome}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$6(ctx) {
-    	let div;
-    	let select;
-    	let mounted;
-    	let dispose;
-    	let each_value = /*items*/ ctx[0];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			select = element("select");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			set_style(select, "width", outVisWidth - 16 + "px");
-    			attr_dev(select, "class", "svelte-1ng3pzf");
-    			if (/*selected*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[3].call(select));
-    			add_location(select, file$6, 32, 1, 580);
-    			set_style(div, "width", outVisWidth + margin.left + "px");
-    			attr_dev(div, "class", "svelte-1ng3pzf");
-    			add_location(div, file$6, 31, 0, 529);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, select);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(select, null);
-    			}
-
-    			select_option(select, /*selected*/ ctx[1]);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[3]),
-    					listen_dev(select, "change", /*updateOutcome*/ ctx[2], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*items*/ 1) {
-    				each_value = /*items*/ ctx[0];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$2(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$2(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(select, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
-    			}
-
-    			if (dirty & /*selected, items*/ 3) {
-    				select_option(select, /*selected*/ ctx[1]);
-    			}
-    		},
-    		i: noop$4,
-    		o: noop$4,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_each(each_blocks, detaching);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$6.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$6($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("Dropdown_menu", slots, []);
-    	const dispatch = createEventDispatcher();
-    	let { items } = $$props;
-    	let selected;
-
-    	function updateOutcome() {
-    		dispatch("message", { text: selected });
-    	}
-
-    	const writable_props = ["items"];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Dropdown_menu> was created with unknown prop '${key}'`);
-    	});
-
-    	function select_change_handler() {
-    		selected = select_value(this);
-    		$$invalidate(1, selected);
-    		$$invalidate(0, items);
-    	}
-
-    	$$self.$$set = $$props => {
-    		if ("items" in $$props) $$invalidate(0, items = $$props.items);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		d3,
-    		createEventDispatcher,
-    		outVisWidth,
-    		margin,
-    		dispatch,
-    		items,
-    		selected,
-    		updateOutcome
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ("items" in $$props) $$invalidate(0, items = $$props.items);
-    		if ("selected" in $$props) $$invalidate(1, selected = $$props.selected);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [items, selected, updateOutcome, select_change_handler];
-    }
-
-    class Dropdown_menu extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init$1(this, options, instance$6, create_fragment$6, safe_not_equal, { items: 0 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "Dropdown_menu",
-    			options,
-    			id: create_fragment$6.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*items*/ ctx[0] === undefined && !("items" in props)) {
-    			console.warn("<Dropdown_menu> was created without expected prop 'items'");
-    		}
-    	}
-
-    	get items() {
-    		throw new Error("<Dropdown_menu>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set items(value) {
-    		throw new Error("<Dropdown_menu>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    const file$5 = "src/components/toggle-hide-option.svelte";
+    const file$4 = "src/components/toggle-hide-option.svelte";
 
     // (43:0) {:else}
-    function create_else_block$2(ctx) {
+    function create_else_block$1(ctx) {
     	let svg;
     	let path0;
     	let path1;
@@ -210249,16 +210014,16 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$5, 44, 174, 1392);
+    			add_location(path0, file$4, 44, 174, 1392);
     			attr_dev(path1, "d", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z");
-    			add_location(path1, file$5, 44, 213, 1431);
+    			add_location(path1, file$4, 44, 213, 1431);
     			attr_dev(svg, "class", svg_class_value = "icon include-icon " + /*option*/ ctx[0] + " " + /*iconStyle*/ ctx[1] + " svelte-8jc5b3");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$5, 44, 1, 1219);
+    			add_location(svg, file$4, 44, 1, 1219);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, svg, anchor);
@@ -210284,7 +210049,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$2.name,
+    		id: create_else_block$1.name,
     		type: "else",
     		source: "(43:0) {:else}",
     		ctx
@@ -210294,7 +210059,7 @@ var app = (function () {
     }
 
     // (40:0) {#if selected}
-    function create_if_block$2(ctx) {
+    function create_if_block$1(ctx) {
     	let svg;
     	let path0;
     	let path1;
@@ -210309,16 +210074,16 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$5, 41, 174, 992);
+    			add_location(path0, file$4, 41, 174, 992);
     			attr_dev(path1, "d", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z");
-    			add_location(path1, file$5, 41, 213, 1031);
+    			add_location(path1, file$4, 41, 213, 1031);
     			attr_dev(svg, "class", svg_class_value = "icon exclude-icon " + /*option*/ ctx[0] + " " + /*iconStyle*/ ctx[1] + " svelte-8jc5b3");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$5, 41, 1, 819);
+    			add_location(svg, file$4, 41, 1, 819);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, svg, anchor);
@@ -210344,7 +210109,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
+    		id: create_if_block$1.name,
     		type: "if",
     		source: "(40:0) {#if selected}",
     		ctx
@@ -210353,12 +210118,12 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$5(ctx) {
+    function create_fragment$4(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*selected*/ ctx[2]) return create_if_block$2;
-    		return create_else_block$2;
+    		if (/*selected*/ ctx[2]) return create_if_block$1;
+    		return create_else_block$1;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -210399,7 +210164,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$5.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -210408,7 +210173,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$5($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_hide_option", slots, []);
     	let { option } = $$props;
@@ -210476,13 +210241,13 @@ var app = (function () {
     class Toggle_hide_option extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, { option: 0, iconStyle: 1 });
+    		init$1(this, options, instance$4, create_fragment$4, safe_not_equal, { option: 0, iconStyle: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Toggle_hide_option",
     			options,
-    			id: create_fragment$5.name
+    			id: create_fragment$4.name
     		});
 
     		const { ctx } = this.$$;
@@ -210510,10 +210275,10 @@ var app = (function () {
     	}
     }
 
-    const file$4 = "src/components/toggle-join-option.svelte";
+    const file$3 = "src/components/toggle-join-option.svelte";
 
     // (51:0) {:else}
-    function create_else_block$1(ctx) {
+    function create_else_block(ctx) {
     	let button;
     	let svg;
     	let path0;
@@ -210530,18 +210295,18 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$4, 53, 141, 1772);
+    			add_location(path0, file$3, 53, 141, 1772);
     			attr_dev(path1, "d", "M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z");
-    			add_location(path1, file$4, 53, 180, 1811);
+    			add_location(path1, file$3, 53, 180, 1811);
     			attr_dev(svg, "class", "icon unlink-icon " + /*iconStyle*/ ctx[2] + " svelte-vp1pj6");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$4, 53, 2, 1633);
+    			add_location(svg, file$3, 53, 2, 1633);
     			attr_dev(button, "class", button_class_value = "join unlink-button " + /*buttonStyle*/ ctx[3] + " " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " svelte-vp1pj6");
-    			add_location(button, file$4, 52, 1, 1531);
+    			add_location(button, file$3, 52, 1, 1531);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -210568,7 +210333,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$1.name,
+    		id: create_else_block.name,
     		type: "else",
     		source: "(51:0) {:else}",
     		ctx
@@ -210578,7 +210343,7 @@ var app = (function () {
     }
 
     // (47:0) {#if !selected}
-    function create_if_block$1(ctx) {
+    function create_if_block(ctx) {
     	let button;
     	let svg;
     	let path0;
@@ -210596,18 +210361,18 @@ var app = (function () {
     			path1 = svg_element("path");
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file$4, 48, 159, 1064);
+    			add_location(path0, file$3, 48, 159, 1064);
     			attr_dev(path1, "d", "M14.39 11L16 12.61V11zM17 7h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1 0 1.27-.77 2.37-1.87 2.84l1.4 1.4C21.05 15.36 22 13.79 22 12c0-2.76-2.24-5-5-5zM2 4.27l3.11 3.11C3.29 8.12 2 9.91 2 12c0 2.76 2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1 0-1.59 1.21-2.9 2.76-3.07L8.73 11H8v2h2.73L13 15.27V17h1.73l4.01 4.01 1.41-1.41L3.41 2.86 2 4.27z");
-    			add_location(path1, file$4, 48, 198, 1103);
+    			add_location(path1, file$3, 48, 198, 1103);
     			attr_dev(svg, "class", svg_class_value = "icon link-icon " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " " + /*iconStyle*/ ctx[2] + " svelte-vp1pj6");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "height", "24px");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "width", "24px");
     			attr_dev(svg, "fill", "#000000");
-    			add_location(svg, file$4, 48, 2, 907);
+    			add_location(svg, file$3, 48, 2, 907);
     			attr_dev(button, "class", button_class_value = "join unlink-button " + /*buttonStyle*/ ctx[3] + " " + /*option1*/ ctx[0] + " " + /*option2*/ ctx[1] + " svelte-vp1pj6");
-    			add_location(button, file$4, 47, 1, 807);
+    			add_location(button, file$3, 47, 1, 807);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -210638,7 +210403,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block.name,
     		type: "if",
     		source: "(47:0) {#if !selected}",
     		ctx
@@ -210647,12 +210412,12 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$4(ctx) {
+    function create_fragment$3(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (!/*selected*/ ctx[4]) return create_if_block$1;
-    		return create_else_block$1;
+    		if (!/*selected*/ ctx[4]) return create_if_block;
+    		return create_else_block;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -210693,7 +210458,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$4.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -210702,7 +210467,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$4($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_join_option", slots, []);
     	let { option1 } = $$props;
@@ -210777,7 +210542,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init$1(this, options, instance$4, create_fragment$4, safe_not_equal, {
+    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {
     			option1: 0,
     			option2: 1,
     			iconStyle: 2,
@@ -210788,7 +210553,7 @@ var app = (function () {
     			component: this,
     			tagName: "Toggle_join_option",
     			options,
-    			id: create_fragment$4.name
+    			id: create_fragment$3.name
     		});
 
     		const { ctx } = this.$$;
@@ -211013,25 +210778,20 @@ var app = (function () {
     		this.universes = [...new Set(dat.map(d => d['.universe']))];
     		this.size = this.universes.length;
     		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
-    		this.outcomes = [];
+    		this.outcomes = []; //[this.allOutcomeVars[0]];
     		this.gridData = null;
     	}
 
-    	addVis = () => {
-    		this.outcomes.push({
-    			var: this.allOutcomeVars[0],
-    			data: null,
-    			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
-    		});
-    		this.initializeOutcomeData(this.outcomes.length-1);
-    		// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
-    		// this.outcomeData = this.outcomeData.concat(null);
-    		// this.initializeOutcomeData(this.outcomeData.length-1);
-    	}
+    	// addVis = () => {
+    	// 	this.initializeOutcomeData(this.outcomes.length)
+    	// 	// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
+    	// 	// this.outcomeData = this.outcomeData.concat(null);
+    	// 	// this.initializeOutcomeData(this.outcomeData.length-1);
+    	// }
 
-    	removeVis = (i) => {
-    		this.outcomes.splice(i, 1);
-    	} 
+    	// removeVis = (i) => {
+    	// 	this.outcomes.splice(i, 1);
+    	// } 
 
     	parameters = () => {
     		// get the parameters from the first row as this is a rectangular dataset
@@ -211054,6 +210814,7 @@ var app = (function () {
     		exclude_options.update(arr => options_to_exclude);
 
     		this.initializeGridData();
+    		this.initializeOutcomeData();
     	}
 
     	initializeGridData = () => {
@@ -211062,9 +210823,23 @@ var app = (function () {
     		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
     	}
 
-    	initializeOutcomeData = (i, graph = CDF) => { // change i here
-    		// creating a shallow copy which is fine for here
-    		let term = this.outcomes[i].var;
+    	initializeOutcomeData = (join_data = [], exclude_data = [], graph = CDF) => { // change i here
+    		let i = this.outcomes.length;
+    		let term = this.allOutcomeVars[0];
+    		let toJoin = JSON.parse(JSON.stringify(join_data));
+    		let toExclude = JSON.parse(JSON.stringify(exclude_data));
+    		let combine = combineJoinOptions(toJoin);
+    		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
+    					.map( d => d[1].map( j => [d[0], j]) )
+    					.flat(1)
+    					.map( i => ({"parameter": i[0], "option": i[1]}) );
+    		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+
+    		this.outcomes.push({
+    			var: term,
+    			data: null,
+    			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
+    		});
 
     		if (graph == CI) {
     			this.outcomes[i].data = this.data.map(function(d) { 
@@ -211081,29 +210856,21 @@ var app = (function () {
 
     			temp[0]['cdf.x'].map((d, i) => i);
 
-    			this.outcomes[i].data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			this.outcomes[i].data = excludeAndCombineOutcomes(
+    				this.gridData, 
+    				temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y'])), 
+    				option_list, 
+    				exclude,
+    				combine
+    			);
     		}
     	}
-
-    	updateData = (join_data = [], exclude_data = []) => {
-    		// deep copy data structures
+    	
+    	updateGridData = (join_data = [], exclude_data = []) => {
     		let toJoin = JSON.parse(JSON.stringify(join_data));
     		let toExclude = JSON.parse(JSON.stringify(exclude_data));
-    		JSON.parse(JSON.stringify(this.parameters()));
-    	
-    		// console.log(toJoin);
     		let combine = combineJoinOptions(toJoin);
-    	
-    		let dat1 = this.updateGridData(combine, toJoin, toExclude);
-    		let dat2 = this.outcomes.map((_, i) => this.updateOutcomeData(i, combine, [], toExclude));
-    	
-    		// sortByOutcome(dat1, dat2);
-    		// sortInGroups(dat1, dat2);
-    	
-    		return [dat1, dat2]
-    	}
-    	
-    	updateGridData = (combine, toJoin = [], toExclude = []) => {
+
     		// deep copy data structures
     		let g_data = JSON.parse(JSON.stringify(this.gridData));
     	
@@ -211150,104 +210917,108 @@ var app = (function () {
     		return g_data;
     	}
     	
-    	updateOutcomeData = (index, combine, toJoin = [], toExclude = []) => {
+    	updateOutcomeData = (index, term, join_data = [], exclude_data = [], graph = CDF) => {
     		// deep copy data structures
     		let g_data = JSON.parse(JSON.stringify(this.gridData));
     		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].data));
-    		let size = g_data.length;
-    		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+    		let toJoin = JSON.parse(JSON.stringify(join_data));
+    		let toExclude = JSON.parse(JSON.stringify(exclude_data));
 
     		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
     					.map( d => d[1].map( j => [d[0], j]) )
     					.flat(1)
     					.map( i => ({"parameter": i[0], "option": i[1]}) );
-    	
-    		if (exclude.length > 0) {
-    			let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-    	
-    			g_data = g_data.filter( (i, n) => toFilter[n] );
-    			o_data = o_data.filter( (i, n) => toFilter[n] );
-    		}
-    	
-    		if (combine.length > 0) {
-    			let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
-    							.flat()
-    							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-    	
-    			let grouping_vector = g_data.map((d, i) => {
-    				let options = Object.values(d).flat();
-    				let idx = option_list.map(x => which_idx(x, options)).flat();
-    				let g = groups$1
-    					.map(x => {
-    						let includes = options.map(d => x['group'].includes(d)); // .reduce((a, b) => (a || b));
-    						return [includes.indexOf(true), x['id']];
-    					});
-    	
-    				g.forEach(x => {
-    					if (x[0] > -1) {
-    						idx[x[0]] = size + x[1];
-    					}
-    				});
-    	
-    				return JSON.stringify(idx);
+    		let combine = combineJoinOptions(toJoin);
+
+
+    		g_data.length;
+
+    		// we need to update the term and the associated data for creating CDFs
+    		if (graph == CI) {
+    			o_data = this.data.map(function(d) { 
+    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+    					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+    				))
     			});
-    	
-    			// console.log(grouping_vector);
-    	
-    			o_data = groups(
-    					o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
-    					d => d.group
-    				).map(d => d[1].map(x => {
-    					delete x.group;
-    					return Object.values(x).flat();
-    				}))
-    				.map(x => {
-    					let mod = rollups(x.flat(), v => {
-    						return [min$2(v, d => d[1]), max$3(v, d => d[1])]
-    					}, d => d[0]);
-    					return mod
-    				})
-    				.map(x => x.map(p => p.flat()));
+    		} else {
+    			let temp = this.data.map(function(d) { 
+    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+    					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
+    				))
+    			});
+
+    			temp[0]['cdf.x'].map((d, i) => i);
+
+    			o_data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
     		}
-    	
-    		return o_data
+
+    		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+
+    		o_data = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine);	
+
+    		this.outcomes[index].data = o_data;
     	}
     }
 
-    // export function draw (gridData, outcomeData, parameters, size, grid_node, results_nodes, vis_fun, y, x, selected_options = []) {
-    // 	// update only the grid options
-    // 	d3.selectAll(".option-value").remove();
-
-    // 	let parameter_list = Object.entries(parameters)
-    // 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
-    // 	let options = parameter_list.map(d => d.options);
-    // 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-    // 	let x2 = d3.scaleBand()
-    // 		.domain(d3.range(d3.max(options.map(d => d.length))))
-    // 		.range( [0, colWidth] );
-
-    // 	for (let p of Object.keys(parameters)) {
-    // 		drawColOptions(gridData, parameters, p, grid_node, y, x, x2);
-    // 	}
-
-    // 	Object.values(options_to_exclude)
-    // 		.flat()
-    // 		.forEach(d => {
-    // 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-    // 		});
+    function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine) {
+    	let size = g_data.length;
+    	combine.map(d => d[1].map(x => ([d[0], x])))
+    							.flat()
+    							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
     	
-    // 	// update results
-    // 	// this.drawCI(outcomeData, results_node, grid_node, y);
-    // 	results_nodes.each((d, i, nodes) => {
-    // 		if (i < outcomeData.length) // since $:draw(...) runs before the {#each ...} is updated in App.svelte
-    // 			vis_fun(outcomeData[i], d3.select(nodes[i]), size, y);
-    // 	});
-    // }
+    	if (exclude.length > 0) {
+    		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
+
+    		g_data = g_data.filter( (i, n) => toFilter[n] );
+    		o_data = o_data.filter( (i, n) => toFilter[n] );
+    	}
+
+    	if (combine.length > 0) {
+    		let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
+    							.flat()
+    							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
+    	
+    		let grouping_vector = g_data.map((d, i) => {
+    			let options = Object.values(d).flat();
+    			let idx = option_list.map(x => which_idx(x, options)).flat();
+    			let g = groups$1
+    				.map(x => {
+    					let includes = options.map(d => x['group'].includes(d)); // .reduce((a, b) => (a || b));
+    					return [includes.indexOf(true), x['id']];
+    				});
+
+    			g.forEach(x => {
+    				if (x[0] > -1) {
+    					idx[x[0]] = size + x[1];
+    				}
+    			});
+
+    			return JSON.stringify(idx);
+    		});
+
+    		o_data = groups(
+    				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
+    				d => d.group
+    			).map(d => d[1].map(x => {
+    				delete x.group;
+    				return Object.values(x).flat();
+    			}))
+    			.map(x => {
+    				let mod = rollups(x.flat(), v => {
+    					return [min$2(v, d => d[1]), max$3(v, d => d[1])]
+    				}, d => d[0]);
+    				return mod
+    			})
+    			.map(x => x.map(p => p.flat()));
+    	}
+
+    	return o_data;
+    }
+
 
     // function from drawing the decision grid
-    function drawGrid (gridData, params, grid_node, yscale, x) {
-    	// d3.selectAll("g.option-value").remove();
-    	// d3.selectAll("g.option-name").remove();
+    function drawGridNames (gridData, params, yscale, x) {
+    	let grid_node = select(".grid");
 
     	drawHeaders(params, grid_node, x);
     	drawCols(gridData, params, grid_node, yscale, x);
@@ -211303,21 +211074,17 @@ var app = (function () {
     		.domain(sequence(max$3(options.map(d => d.length))))
     		.range( [0, colWidth] );
 
-    	// console.log(data);
 
     	Object.keys(params).forEach( 
     		(d, i) => {
     			drawColNames(params, d, x2);
     			// drawColOptions(data, params, d, grid_node, yscale, x1, x2);
     	});
-
-    	updateMatrixGrid(data, params, grid_node, yscale, x1, x2);
     }
 
-
-    function updateMatrixGrid(data, params, grid_node, yscale, x1, x2) {
+    function drawMatrixGrid(data, params, yscale, x1, x2) {
     	let ypos;
-    	let plot = grid_node.select('svg');
+    	let plot = select('.grid').select('svg');
     	let param_names = Object.keys(params); //[ Object.keys(params)[0] ]
 
     	if (state_value == 0) {
@@ -211366,12 +211133,20 @@ var app = (function () {
     	});
     }
 
+    // d3.selection.prototype.moveToFront = function() {
+    // 	return this.each(function(){
+    // 		this.parentNode.appendChild(this);
+    // 	});
+    // }
 
-    selection.prototype.moveToFront = function() {
-    	return this.each(function(){
-    		this.parentNode.appendChild(this);
-    	});
-    };
+    // function position(d, dragging, xscale) {
+    // 	var v = dragging[d];
+    // 	return v == null ? xscale(d) : v;
+    // }
+
+    // function dragTransition(g) {
+    // 	return g.transition().duration(500);
+    // }
 
     function drawColNames(params, param, x2) {
     	let options = params[param];
@@ -211452,6 +211227,114 @@ var app = (function () {
     		.text(d => d);
     }
 
+    // function from drawing the outcome panel grid
+    function drawOutcomes (outcomes, size, yscale) {
+    	// console.log(outcomes);
+    	for (let i in outcomes) {
+    		let data = outcomes[i].data;
+    		outcomes[i].var;
+
+    		CDF(data, i, size, yscale);
+    	}
+    }
+
+    // export function drawOutcomes (outcomes, index, size, yscale) {
+    // 	let data = outcomes.data;
+    // 	let term = outcomes.var;
+
+    // 	CDF(data, d3.select('svg#vis-'+index), size, yscale, term);
+    // }
+
+    function CDF (data, i, size, yscale, term) {
+    	// console.trace();
+    	let results_plot = select('svg#vis-' + i);
+    	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
+    	let ypos;
+
+    	extent$1(data.map(d => d.map(x => x[0])).flat());
+
+    	let xscale = linear()
+    		.domain(extent$1(data.map(d => d.map(x => x[0])).flat()))
+    		.range([margin.left, outVisWidth]);
+    	
+    	let y = linear()
+    		.domain(extent$1( data.map(d => d.map(x => x[1])).flat() ))
+    		.range([(yscale.step() - cell.padding), 0]);
+
+    	if (state_value == 0) {
+    		ypos = 4 * cell.padding;
+    	} else {
+    		ypos = namingDim + 4 * cell.padding;
+    	}
+
+    	results_plot.append("g")
+    		.attr("class", `outcomePanel plot-${i}`)
+    		.attr( "transform", `translate(0,  ${ypos})`);
+
+    	select(`g.outcomePanel.plot-${i}`)
+    		.selectAll('.zero-line')
+    		.data([data])
+    		.join(
+    			enter => enter.append("line")
+    					.attr('class', 'zero-line')
+    					.attr("x1", xscale(0))
+    					.attr("x2", xscale(0)),
+    			update => update
+    					.attr("x1", xscale(0))
+    					.attr("x2", xscale(0)),
+    			exit => exit.remove()
+    		)
+    		.attr("y1", margin.top)
+    		.attr("y2", height - margin.bottom)
+    		.attr("stroke", "#d0d0d0")
+    		.attr("stroke-width", 2);
+
+    	axisTop(xscale)
+    		.ticks(5);
+    		
+    	let area$1 = area()
+    		.curve(curveLinear)
+    		.x(d => xscale(d[0]))
+    		.y0(d => y(d[1]))
+    		.y1(d => y(d[2]));
+
+    	// add a group for each universe
+    	select(`g.outcomePanel.plot-${i}`)
+    		.selectAll(".universe")
+    		.data(data)
+    		.join(
+    			enter => enterCDF(enter, yscale, area$1),
+    			update => updateCDF(update, area$1),
+    			exit => exitCDF(exit)
+    		);
+    }
+
+    function enterCDF(enter, yscale, area) {
+    	enter.append('g')
+    		.attr("class", (d, i) => `universe universe-${i}`)
+    		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
+    		.call( g => 
+    			g.append("path")
+    				.datum(d => d)
+    				.attr("fill", "steelblue")
+    				.attr("stroke", "steelblue")
+    				.attr("stroke-width", 1.5)
+    				.attr("d", area)
+    		);
+    }
+
+    function updateCDF(update, area) {
+    	update
+    		.call(g => 
+    			g.select('path')
+    				.datum(d => d)
+    				.attr("d", area)
+    	);
+    }
+
+    function exitCDF(exit) {
+    	exit.call(g => g.remove());
+    }
 
     function CI (data, results_node, size, yscale) {
     	let results_plot = results_node.select("svg");
@@ -211459,7 +211342,7 @@ var app = (function () {
     	parameters.length * (cell.width + cell.padding); // to fix
     	let ypos;
 
-    	select("g.outcomePanel").remove();
+    	// d3.select("g.outcomePanel").remove();
 
     	let xscale = linear()
     		.domain(extent$1(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
@@ -211472,7 +211355,7 @@ var app = (function () {
     	}
 
     	let outcomePlot = results_plot.append("g")
-    		.attr("class", "outcomePanel")
+    		.attr("class", `outcomePanel`)
     		.attr( "transform",
     			`translate(0,  ${ypos})`);
 
@@ -211496,8 +211379,11 @@ var app = (function () {
     	// add a group for each universe
     	let panelPlot = outcomePlot.selectAll("g")
     		.data(data)
-    		.enter()
-    		.append("g")
+    		.join(
+    			enter => enter.append('g'),
+    			update => update,
+    			exit => exit.remove()
+    		)
     		.attr("class", "universe");
 
     	// Add reference lines
@@ -211529,99 +211415,9 @@ var app = (function () {
     		.attr("fill", "#333333");
     }
 
-    function CDF (data, results_node, size, yscale) {
-    	let results_plot = results_node; //.select('svg);
-    	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-    	// const width = parameters.length * (cell.width + cell.padding); // to fix
-    	let ypos;
+    const file$2 = "src/components/toggle-button.svelte";
 
-    	results_plot.select("g.outcomePanel").remove();
-
-    	let xscale = linear()
-    		.domain(extent$1(data.map(d => d.map(x => x[0])).flat()))
-    		.range([margin.left, outVisWidth]);
-    	
-    	let y = linear()
-    		.domain(extent$1( data.map(d => d.map(x => x[1])).flat() ))
-    		.range([(yscale.step() - cell.padding), 0]);
-
-    	if (state_value == 0) {
-    		ypos = 4 * cell.padding;
-    	} else {
-    		ypos = namingDim + 4 * cell.padding;
-    	}
-
-    	let outcomePlot = results_plot.append("g")
-    		.attr("class", "outcomePanel")
-    		.attr( "transform",
-    			`translate(0,  ${ypos})`);
-
-    	outcomePlot.append("line")
-    		.attr("class", "zero-line")
-    		.attr("x1", xscale(0) )
-    		.attr("y1", margin.top)
-    		.attr("x2", xscale(0) )
-    		.attr("y2", height - margin.bottom)
-    		.attr("stroke", "#d0d0d0")
-    		.attr("stroke-width", 2);
-
-    	// outcomePlot.append("line")
-    	// 	.attr("class", "x-axis-line")
-    	// 	.attr("x1", xscale.range()[0] )
-    	// 	.attr("y1", yscale(0) - cell.padding)
-    	// 	.attr("x2", xscale.range()[1] )
-    	// 	.attr("y2", yscale(0) - cell.padding)
-    	// 	.attr("stroke", "#666666")
-    	// 	.attr("stroke-width", 2);
-
-    	let xAxis = axisTop(xscale)
-    		.ticks(5);
-
-    	outcomePlot.append("g")
-    		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
-    		.call(xAxis)
-    		.style("font-size", "12px");
-
-    	// add a group for each universe
-    	let panelPlot = outcomePlot.selectAll(".universe")
-    		.data(data)
-    		.enter()
-    		.append("g")
-    		.attr("class", (d, i) => `universe universe-${i}`)
-    		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`);
-
-    	// Add reference line
-    	panelPlot.append("line")
-    		.attr("class", "x-axis")
-    		.attr("x1", xscale.range()[0] )
-    		.attr("y1", y(0))
-    		.attr("x2", xscale.range()[1] )
-    		.attr("y2", y(0))
-    		.attr("stroke", "#e0e0e0")
-    		.attr("stroke-width", 1);
-
-    	let area$1 = area()
-    		.curve(curveLinear)
-    		.x(d => xscale(d[0]))
-    		.y0(d => y(d[1]))
-    		.y1(d => y(d[2]));
-
-    	panelPlot.append("path")
-    	.datum(d => d)
-    	.attr("fill", "steelblue")
-    	.attr("stroke", "steelblue")
-    	.attr("stroke-width", 1.5)
-    	.attr("d", area$1);
-    }
-
-
-    // function dragOptions() {
-    // 	let drag = d3.drag();
-    // }
-
-    const file$3 = "src/components/toggle-button.svelte";
-
-    function create_fragment$3(ctx) {
+    function create_fragment$2(ctx) {
     	let div2;
     	let p;
     	let t1;
@@ -211639,19 +211435,19 @@ var app = (function () {
     			div1 = element("div");
     			div0 = element("div");
     			attr_dev(p, "class", "svelte-1pkk3b3");
-    			add_location(p, file$3, 132, 1, 2872);
+    			add_location(p, file$2, 132, 1, 2872);
     			attr_dev(div0, "class", "state-indicator svelte-1pkk3b3");
     			set_style(div0, "width", /*r*/ ctx[1] + "px");
     			set_style(div0, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div0, "active", /*active*/ ctx[0]);
-    			add_location(div0, file$3, 134, 2, 2997);
+    			add_location(div0, file$2, 134, 2, 2997);
     			attr_dev(div1, "class", "toggle-button svelte-1pkk3b3");
     			set_style(div1, "height", /*r*/ ctx[1] + "px");
     			toggle_class(div1, "active", /*active*/ ctx[0]);
-    			add_location(div1, file$3, 133, 1, 2898);
+    			add_location(div1, file$2, 133, 1, 2898);
     			attr_dev(div2, "class", "toggle svelte-1pkk3b3");
     			set_style(div2, "margin", header1.top + "px 0px");
-    			add_location(div2, file$3, 126, 0, 2717);
+    			add_location(div2, file$2, 126, 0, 2717);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -211688,7 +211484,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -211697,7 +211493,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Toggle_button", slots, []);
     	let active = false;
@@ -211767,352 +211563,11 @@ var app = (function () {
     class Toggle_button extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "Toggle_button",
-    			options,
-    			id: create_fragment$3.name
-    		});
-    	}
-    }
-
-    const file$2 = "src/components/tooltip-option-menu.svelte";
-
-    // (95:1) {:else}
-    function create_else_block_1(ctx) {
-    	let ul;
-    	let li;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			ul = element("ul");
-    			li = element("li");
-    			li.textContent = "Exclude option";
-    			attr_dev(li, "class", "svelte-3jen13");
-    			add_location(li, file$2, 96, 3, 1805);
-    			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$2, 95, 2, 1797);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, ul, anchor);
-    			append_dev(ul, li);
-
-    			if (!mounted) {
-    				dispose = listen_dev(li, "click", /*excludeOptions*/ ctx[2], false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: noop$4,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block_1.name,
-    		type: "else",
-    		source: "(95:1) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (84:1) {#if selected_value > 1}
-    function create_if_block(ctx) {
-    	let if_block_anchor;
-
-    	function select_block_type_1(ctx, dirty) {
-    		if (/*selected_parameters*/ ctx[1] === 1) return create_if_block_1;
-    		return create_else_block;
-    	}
-
-    	let current_block_type = select_block_type_1(ctx);
-    	let if_block = current_block_type(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if_block.c();
-    			if_block_anchor = empty$3();
-    		},
-    		m: function mount(target, anchor) {
-    			if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block.name,
-    		type: "if",
-    		source: "(84:1) {#if selected_value > 1}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (90:2) {:else}
-    function create_else_block(ctx) {
-    	let ul;
-    	let li;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			ul = element("ul");
-    			li = element("li");
-    			li.textContent = "Exclude options";
-    			attr_dev(li, "class", "svelte-3jen13");
-    			add_location(li, file$2, 91, 4, 1718);
-    			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$2, 90, 3, 1709);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, ul, anchor);
-    			append_dev(ul, li);
-
-    			if (!mounted) {
-    				dispose = listen_dev(li, "click", /*excludeOptions*/ ctx[2], false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: noop$4,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(90:2) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (85:2) {#if selected_parameters === 1}
-    function create_if_block_1(ctx) {
-    	let ul;
-    	let li0;
-    	let t1;
-    	let li1;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			ul = element("ul");
-    			li0 = element("li");
-    			li0.textContent = "Exclude options";
-    			t1 = space();
-    			li1 = element("li");
-    			li1.textContent = "Join options";
-    			attr_dev(li0, "class", "svelte-3jen13");
-    			add_location(li0, file$2, 86, 4, 1587);
-    			attr_dev(li1, "class", "svelte-3jen13");
-    			add_location(li1, file$2, 87, 4, 1642);
-    			attr_dev(ul, "class", "svelte-3jen13");
-    			add_location(ul, file$2, 85, 3, 1578);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, ul, anchor);
-    			append_dev(ul, li0);
-    			append_dev(ul, t1);
-    			append_dev(ul, li1);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(li0, "click", /*excludeOptions*/ ctx[2], false, false, false),
-    					listen_dev(li1, "click", /*joinOptions*/ ctx[3], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: noop$4,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1.name,
-    		type: "if",
-    		source: "(85:2) {#if selected_parameters === 1}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$2(ctx) {
-    	let div;
-
-    	function select_block_type(ctx, dirty) {
-    		if (/*selected_value*/ ctx[0] > 1) return create_if_block;
-    		return create_else_block_1;
-    	}
-
-    	let current_block_type = select_block_type(ctx);
-    	let if_block = current_block_type(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			if_block.c();
-    			attr_dev(div, "class", "tooltip-menu svelte-3jen13");
-    			attr_dev(div, "id", "option-menu");
-    			add_location(div, file$2, 82, 0, 1471);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			if_block.m(div, null);
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(div, null);
-    				}
-    			}
-    		},
-    		i: noop$4,
-    		o: noop$4,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			if_block.d();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$2.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$2($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("Tooltip_option_menu", slots, []);
-    	const dispatch = createEventDispatcher();
-    	let selected_value;
-    	let selected_parameters;
-    	let option;
-
-    	selected.subscribe(value => {
-    		$$invalidate(0, selected_value = value);
-    	});
-
-    	multi_param.subscribe(value => {
-    		$$invalidate(1, selected_parameters = value);
-    	});
-
-    	function handleMouseenter(event) {
-    		select(this).transition().duration(0).style("visibility", "visible");
-    	}
-
-    	function handleMouseleave(event) {
-    		select(this).transition().duration(0.2).delay(100).style("visibility", "hidden");
-    	}
-
-    	function excludeOptions() {
-    		dispatch("message", { action: "exclude" });
-    	}
-
-    	function joinOptions() {
-    		dispatch("message", { action: "join" });
-    	}
-
-    	const writable_props = [];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Tooltip_option_menu> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$capture_state = () => ({
-    		cell,
-    		groupPadding,
-    		d3,
-    		selected,
-    		multi_param,
-    		createEventDispatcher,
-    		dispatch,
-    		selected_value,
-    		selected_parameters,
-    		option,
-    		handleMouseenter,
-    		handleMouseleave,
-    		excludeOptions,
-    		joinOptions
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ("selected_value" in $$props) $$invalidate(0, selected_value = $$props.selected_value);
-    		if ("selected_parameters" in $$props) $$invalidate(1, selected_parameters = $$props.selected_parameters);
-    		if ("option" in $$props) option = $$props.option;
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [selected_value, selected_parameters, excludeOptions, joinOptions];
-    }
-
-    class Tooltip_option_menu extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
     		init$1(this, options, instance$2, create_fragment$2, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "Tooltip_option_menu",
+    			tagName: "Toggle_button",
     			options,
     			id: create_fragment$2.name
     		});
@@ -212142,7 +211597,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (75:2) {#each allOutcomeVars as t}
+    // (79:2) {#each allOutcomeVars as t}
     function create_each_block$1(ctx) {
     	let option;
     	let t0_value = /*t*/ ctx[11] + "";
@@ -212157,7 +211612,7 @@ var app = (function () {
     			t1 = space();
     			option.__value = option_value_value = /*t*/ ctx[11];
     			option.value = option.__value;
-    			add_location(option, file$1, 75, 3, 1290);
+    			add_location(option, file$1, 79, 3, 1434);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -212181,7 +211636,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(75:2) {#each allOutcomeVars as t}",
+    		source: "(79:2) {#each allOutcomeVars as t}",
     		ctx
     	});
 
@@ -212194,11 +211649,13 @@ var app = (function () {
     	let select_id_value;
     	let t0;
     	let button;
-    	let t1;
+    	let svg0;
+    	let path0;
+    	let path1;
     	let button_id_value;
-    	let t2;
-    	let svg_1;
-    	let svg_1_id_value;
+    	let t1;
+    	let svg1;
+    	let svg1_id_value;
     	let div_id_value;
     	let mounted;
     	let dispose;
@@ -212221,27 +211678,40 @@ var app = (function () {
 
     			t0 = space();
     			button = element("button");
-    			t1 = text$2("X");
-    			t2 = space();
-    			svg_1 = svg_element("svg");
-    			attr_dev(select, "class", "vis-dropdown svelte-1upgcjq");
+    			svg0 = svg_element("svg");
+    			path0 = svg_element("path");
+    			path1 = svg_element("path");
+    			t1 = space();
+    			svg1 = svg_element("svg");
+    			attr_dev(select, "class", "vis-dropdown svelte-vqt8yr");
     			attr_dev(select, "id", select_id_value = "vis-" + /*i*/ ctx[1]);
-    			set_style(select, "left", -/*w*/ ctx[3] + "px");
-    			set_style(select, "width", /*w*/ ctx[3] - 38 + "px");
-    			set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 0");
+    			set_style(select, "width", 0.6 * /*w*/ ctx[3] + "px");
+    			set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 " + 0.2 * /*w*/ ctx[3] + "px");
     			if (/*term*/ ctx[0] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[7].call(select));
-    			add_location(select, file$1, 65, 1, 1068);
-    			attr_dev(button, "class", "vis-remove svelte-1upgcjq");
+    			add_location(select, file$1, 73, 1, 1235);
+    			attr_dev(path0, "d", "M0 0h24v24H0V0z");
+    			attr_dev(path0, "fill", "none");
+    			add_location(path0, file$1, 85, 104, 1678);
+    			attr_dev(path1, "d", "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z");
+    			add_location(path1, file$1, 85, 143, 1717);
+    			attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
+    			attr_dev(svg0, "height", "24px");
+    			attr_dev(svg0, "viewBox", "0 0 24 24");
+    			attr_dev(svg0, "width", "24px");
+    			attr_dev(svg0, "fill", "#000000");
+    			attr_dev(svg0, "class", "svelte-vqt8yr");
+    			add_location(svg0, file$1, 85, 2, 1576);
+    			attr_dev(button, "class", "vis-remove svelte-vqt8yr");
     			attr_dev(button, "id", button_id_value = "vis-" + /*i*/ ctx[1]);
-    			add_location(button, file$1, 80, 1, 1352);
-    			attr_dev(svg_1, "id", svg_1_id_value = "vis-" + /*i*/ ctx[1]);
-    			attr_dev(svg_1, "height", /*h*/ ctx[4]);
-    			attr_dev(svg_1, "width", /*w*/ ctx[3]);
-    			attr_dev(svg_1, "class", "svelte-1upgcjq");
-    			add_location(svg_1, file$1, 81, 1, 1441);
-    			attr_dev(div, "class", "vis svelte-1upgcjq");
+    			add_location(button, file$1, 84, 1, 1496);
+    			attr_dev(svg1, "id", svg1_id_value = "vis-" + /*i*/ ctx[1]);
+    			attr_dev(svg1, "height", /*h*/ ctx[4]);
+    			attr_dev(svg1, "width", /*w*/ ctx[3]);
+    			attr_dev(svg1, "class", "svelte-vqt8yr");
+    			add_location(svg1, file$1, 87, 1, 1857);
+    			attr_dev(div, "class", "vis svelte-vqt8yr");
     			attr_dev(div, "id", div_id_value = "vis-" + /*i*/ ctx[1]);
-    			add_location(div, file$1, 64, 0, 1035);
+    			add_location(div, file$1, 72, 0, 1202);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212257,10 +211727,12 @@ var app = (function () {
     			select_option(select, /*term*/ ctx[0]);
     			append_dev(div, t0);
     			append_dev(div, button);
-    			append_dev(button, t1);
-    			append_dev(div, t2);
-    			append_dev(div, svg_1);
-    			/*svg_1_binding*/ ctx[10](svg_1);
+    			append_dev(button, svg0);
+    			append_dev(svg0, path0);
+    			append_dev(svg0, path1);
+    			append_dev(div, t1);
+    			append_dev(div, svg1);
+    			/*svg1_binding*/ ctx[10](svg1);
 
     			if (!mounted) {
     				dispose = [
@@ -212302,15 +211774,11 @@ var app = (function () {
     			}
 
     			if (dirty & /*w*/ 8) {
-    				set_style(select, "left", -/*w*/ ctx[3] + "px");
+    				set_style(select, "width", 0.6 * /*w*/ ctx[3] + "px");
     			}
 
     			if (dirty & /*w*/ 8) {
-    				set_style(select, "width", /*w*/ ctx[3] - 38 + "px");
-    			}
-
-    			if (dirty & /*w*/ 8) {
-    				set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 0");
+    				set_style(select, "margin", "0 " + -/*w*/ ctx[3] + "px 0 " + 0.2 * /*w*/ ctx[3] + "px");
     			}
 
     			if (dirty & /*term, allOutcomeVars*/ 5) {
@@ -212321,16 +211789,16 @@ var app = (function () {
     				attr_dev(button, "id", button_id_value);
     			}
 
-    			if (dirty & /*i*/ 2 && svg_1_id_value !== (svg_1_id_value = "vis-" + /*i*/ ctx[1])) {
-    				attr_dev(svg_1, "id", svg_1_id_value);
+    			if (dirty & /*i*/ 2 && svg1_id_value !== (svg1_id_value = "vis-" + /*i*/ ctx[1])) {
+    				attr_dev(svg1, "id", svg1_id_value);
     			}
 
     			if (dirty & /*h*/ 16) {
-    				attr_dev(svg_1, "height", /*h*/ ctx[4]);
+    				attr_dev(svg1, "height", /*h*/ ctx[4]);
     			}
 
     			if (dirty & /*w*/ 8) {
-    				attr_dev(svg_1, "width", /*w*/ ctx[3]);
+    				attr_dev(svg1, "width", /*w*/ ctx[3]);
     			}
 
     			if (dirty & /*i*/ 2 && div_id_value !== (div_id_value = "vis-" + /*i*/ ctx[1])) {
@@ -212342,7 +211810,7 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     			destroy_each(each_blocks, detaching);
-    			/*svg_1_binding*/ ctx[10](null);
+    			/*svg1_binding*/ ctx[10](null);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -212390,7 +211858,7 @@ var app = (function () {
     	const change_handler = () => dispatch("change");
     	const click_handler = () => dispatch("remove");
 
-    	function svg_1_binding($$value) {
+    	function svg1_binding($$value) {
     		binding_callbacks[$$value ? "unshift" : "push"](() => {
     			svg = $$value;
     			$$invalidate(5, svg);
@@ -212441,7 +211909,7 @@ var app = (function () {
     		select_change_handler,
     		change_handler,
     		click_handler,
-    		svg_1_binding
+    		svg1_binding
     	];
     }
 
@@ -212530,13 +211998,13 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[30] = list[i];
-    	child_ctx[31] = list;
-    	child_ctx[32] = i;
+    	child_ctx[27] = list[i];
+    	child_ctx[28] = list;
+    	child_ctx[29] = i;
     	return child_ctx;
     }
 
-    // (225:3) {#each m.outcomes as outcome, i (outcome.id)}
+    // (200:3) {#each m.outcomes as outcome, i (outcome.id)}
     function create_each_block(key_1, ctx) {
     	let first;
     	let vis_1;
@@ -212554,36 +212022,28 @@ var app = (function () {
     	}
 
     	function vis_1_term_binding(value) {
-    		/*vis_1_term_binding*/ ctx[14](value, /*outcome*/ ctx[30]);
+    		/*vis_1_term_binding*/ ctx[14](value, /*outcome*/ ctx[27]);
     	}
 
     	function change_handler() {
-    		return /*change_handler*/ ctx[15](/*i*/ ctx[32]);
-    	}
-
-    	function mount_handler() {
-    		return /*mount_handler*/ ctx[16](/*i*/ ctx[32]);
-    	}
-
-    	function remove_handler() {
-    		return /*remove_handler*/ ctx[17](/*i*/ ctx[32]);
+    		return /*change_handler*/ ctx[15](/*i*/ ctx[29], /*outcome*/ ctx[27]);
     	}
 
     	let vis_1_props = {
-    		i: /*i*/ ctx[32],
-    		allOutcomeVars: /*m*/ ctx[0].allOutcomeVars
+    		i: /*i*/ ctx[29],
+    		allOutcomeVars: /*m*/ ctx[2].allOutcomeVars
     	};
 
-    	if (/*w1*/ ctx[3] !== void 0) {
-    		vis_1_props.w = /*w1*/ ctx[3];
+    	if (/*w1*/ ctx[5] !== void 0) {
+    		vis_1_props.w = /*w1*/ ctx[5];
     	}
 
-    	if (/*h*/ ctx[1] !== void 0) {
-    		vis_1_props.h = /*h*/ ctx[1];
+    	if (/*h*/ ctx[3] !== void 0) {
+    		vis_1_props.h = /*h*/ ctx[3];
     	}
 
-    	if (/*outcome*/ ctx[30].var !== void 0) {
-    		vis_1_props.term = /*outcome*/ ctx[30].var;
+    	if (/*outcome*/ ctx[27].var !== void 0) {
+    		vis_1_props.term = /*outcome*/ ctx[27].var;
     	}
 
     	vis_1 = new Vis({ props: vis_1_props, $$inline: true });
@@ -212591,8 +212051,6 @@ var app = (function () {
     	binding_callbacks.push(() => bind(vis_1, "h", vis_1_h_binding));
     	binding_callbacks.push(() => bind(vis_1, "term", vis_1_term_binding));
     	vis_1.$on("change", change_handler);
-    	vis_1.$on("mount", mount_handler);
-    	vis_1.$on("remove", remove_handler);
 
     	const block = {
     		key: key_1,
@@ -212610,24 +212068,24 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const vis_1_changes = {};
-    			if (dirty[0] & /*m*/ 1) vis_1_changes.i = /*i*/ ctx[32];
-    			if (dirty[0] & /*m*/ 1) vis_1_changes.allOutcomeVars = /*m*/ ctx[0].allOutcomeVars;
+    			if (dirty & /*m*/ 4) vis_1_changes.i = /*i*/ ctx[29];
+    			if (dirty & /*m*/ 4) vis_1_changes.allOutcomeVars = /*m*/ ctx[2].allOutcomeVars;
 
-    			if (!updating_w && dirty[0] & /*w1*/ 8) {
+    			if (!updating_w && dirty & /*w1*/ 32) {
     				updating_w = true;
-    				vis_1_changes.w = /*w1*/ ctx[3];
+    				vis_1_changes.w = /*w1*/ ctx[5];
     				add_flush_callback(() => updating_w = false);
     			}
 
-    			if (!updating_h && dirty[0] & /*h*/ 2) {
+    			if (!updating_h && dirty & /*h*/ 8) {
     				updating_h = true;
-    				vis_1_changes.h = /*h*/ ctx[1];
+    				vis_1_changes.h = /*h*/ ctx[3];
     				add_flush_callback(() => updating_h = false);
     			}
 
-    			if (!updating_term && dirty[0] & /*m*/ 1) {
+    			if (!updating_term && dirty & /*m*/ 4) {
     				updating_term = true;
-    				vis_1_changes.term = /*outcome*/ ctx[30].var;
+    				vis_1_changes.term = /*outcome*/ ctx[27].var;
     				add_flush_callback(() => updating_term = false);
     			}
 
@@ -212652,7 +212110,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(225:3) {#each m.outcomes as outcome, i (outcome.id)}",
+    		source: "(200:3) {#each m.outcomes as outcome, i (outcome.id)}",
     		ctx
     	});
 
@@ -212690,9 +212148,9 @@ var app = (function () {
     	let mounted;
     	let dispose;
     	toggle = new Toggle_button({ $$inline: true });
-    	let each_value = /*m*/ ctx[0].outcomes;
+    	let each_value = /*m*/ ctx[2].outcomes;
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*outcome*/ ctx[30].id;
+    	const get_key = ctx => /*outcome*/ ctx[27].id;
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -212733,50 +212191,50 @@ var app = (function () {
     			div7 = element("div");
     			svg1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 206, 1, 5401);
+    			add_location(div0, file, 181, 1, 4826);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-1i9h9ss");
-    			add_location(h1, file, 210, 4, 5503);
+    			add_location(h1, file, 185, 4, 4928);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 209, 3, 5476);
+    			add_location(div1, file, 184, 3, 4901);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 212, 3, 5586);
+    			add_location(div2, file, 187, 3, 5011);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 208, 2, 5455);
+    			add_location(div3, file, 183, 2, 4880);
     			attr_dev(div4, "class", "container");
-    			add_location(div4, file, 207, 1, 5427);
+    			add_location(div4, file, 182, 1, 4852);
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file, 219, 126, 5855);
+    			add_location(path0, file, 194, 126, 5330);
     			attr_dev(path1, "d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
-    			add_location(path1, file, 219, 165, 5894);
+    			add_location(path1, file, 194, 165, 5369);
     			attr_dev(svg0, "class", "add-vis-icon svelte-1i9h9ss");
     			attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg0, "height", "32px");
     			attr_dev(svg0, "viewBox", "0 0 24 24");
     			attr_dev(svg0, "width", "32px");
     			attr_dev(svg0, "fill", "#777777");
-    			add_location(svg0, file, 219, 3, 5732);
+    			add_location(svg0, file, 194, 3, 5207);
     			attr_dev(button, "class", "svelte-1i9h9ss");
-    			add_location(button, file, 218, 2, 5682);
+    			add_location(button, file, 193, 2, 5107);
     			attr_dev(div5, "class", "button-wrapper svelte-1i9h9ss");
-    			add_location(div5, file, 217, 1, 5651);
+    			add_location(div5, file, 192, 1, 5076);
     			attr_dev(div6, "class", "vis-container svelte-1i9h9ss");
-    			set_style(div6, "height", /*windowHeight*/ ctx[5]);
-    			add_location(div6, file, 223, 2, 5998);
-    			attr_dev(svg1, "height", /*h*/ ctx[1]);
-    			attr_dev(svg1, "width", /*w2*/ ctx[4]);
+    			set_style(div6, "height", /*windowHeight*/ ctx[7]);
+    			add_location(div6, file, 198, 2, 5473);
+    			attr_dev(svg1, "height", /*h*/ ctx[3]);
+    			attr_dev(svg1, "width", /*w2*/ ctx[6]);
     			attr_dev(svg1, "class", "svelte-1i9h9ss");
-    			add_location(svg1, file, 239, 4, 6524);
+    			add_location(svg1, file, 212, 4, 5976);
     			attr_dev(div7, "class", "grid svelte-1i9h9ss");
-    			set_style(div7, "height", /*windowHeight*/ ctx[5]);
-    			add_location(div7, file, 238, 3, 6470);
+    			set_style(div7, "height", /*windowHeight*/ ctx[7]);
+    			add_location(div7, file, 211, 3, 5922);
     			attr_dev(div8, "class", "grid-container svelte-1i9h9ss");
-    			add_location(div8, file, 237, 2, 6438);
+    			add_location(div8, file, 210, 2, 5890);
     			attr_dev(div9, "class", "main-content svelte-1i9h9ss");
-    			add_location(div9, file, 222, 1, 5969);
+    			add_location(div9, file, 197, 1, 5444);
     			attr_dev(main, "class", "svelte-1i9h9ss");
-    			add_location(main, file, 205, 0, 5393);
+    			add_location(main, file, 180, 0, 4818);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212811,7 +212269,7 @@ var app = (function () {
     			append_dev(div9, div8);
     			append_dev(div8, div7);
     			append_dev(div7, svg1);
-    			/*svg1_binding*/ ctx[18](svg1);
+    			/*svg1_binding*/ ctx[16](svg1);
     			current = true;
 
     			if (!mounted) {
@@ -212819,9 +212277,9 @@ var app = (function () {
     				mounted = true;
     			}
     		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*m, w1, h, drawVis*/ 75) {
-    				each_value = /*m*/ ctx[0].outcomes;
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*m, w1, h, options_to_join, options_to_exclude*/ 47) {
+    				each_value = /*m*/ ctx[2].outcomes;
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -212829,12 +212287,12 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty[0] & /*h*/ 2) {
-    				attr_dev(svg1, "height", /*h*/ ctx[1]);
+    			if (!current || dirty & /*h*/ 8) {
+    				attr_dev(svg1, "height", /*h*/ ctx[3]);
     			}
 
-    			if (!current || dirty[0] & /*w2*/ 16) {
-    				attr_dev(svg1, "width", /*w2*/ ctx[4]);
+    			if (!current || dirty & /*w2*/ 64) {
+    				attr_dev(svg1, "width", /*w2*/ ctx[6]);
     			}
     		},
     		i: function intro(local) {
@@ -212864,7 +212322,7 @@ var app = (function () {
     				each_blocks[i].d();
     			}
 
-    			/*svg1_binding*/ ctx[18](null);
+    			/*svg1_binding*/ ctx[16](null);
     			mounted = false;
     			dispose();
     		}
@@ -212894,8 +212352,8 @@ var app = (function () {
     	validate_slots("App", slots, []);
     	let options_to_exclude;
     	let options_to_join;
-    	const e_unsub = exclude_options.subscribe(value => $$invalidate(7, options_to_exclude = value));
-    	const j_unsub = join_options.subscribe(value => $$invalidate(8, options_to_join = value));
+    	const e_unsub = exclude_options.subscribe(value => $$invalidate(0, options_to_exclude = value));
+    	const j_unsub = join_options.subscribe(value => $$invalidate(1, options_to_join = value));
     	let m = new multiverseMatrix(data2);
     	let vis = CDF;
     	m.initializeData(vis);
@@ -212924,41 +212382,18 @@ var app = (function () {
 
     	const n_options = accum_options[accum_options.length - 1];
 
-    	// maybe move into multiverseMatrix.js
-    	// used for specifically changing a single <Vis/> component
-    	function drawVis(i) {
-    		m.initializeOutcomeData(i);
-    		$$invalidate(0, m);
-    		let combine = combineJoinOptions(options_to_join);
-    		vis(m.updateOutcomeData(i, combine, [], options_to_exclude), select("svg#vis-" + i), m.size, y);
-    	}
-
-    	function redraw(join, exclude) {
-    		let [gridData, outcomeData] = m.updateData(join, exclude);
-    		let grid = select(".grid");
-    		selectAll(".vis > svg");
-    		updateMatrixGrid(gridData, m.parameters(), grid, y, x_params, x_options);
-    	} // console.log(gridData);
-    	// if (Object.values(options_to_exclude).flat().length >= 1) {
-
-    	// 	// do something here
-    	// 	let x = Object.values(options_to_exclude)
-    	// 		.flat()
-    	// 		.forEach(d => {
-    	// 			d3.selectAll(`rect.${d}`).style("opacity", 0.2)
-    	// 		});
-    	// 	console.log(x)
-    	// }
-    	// draw(gridData, outcomeData, m.parameters(), m.size, grid, visSvgs, vis, y, x_params);
     	onDestroy(() => {
     		e_unsub();
     		j_unsub();
     	});
 
     	onMount(() => {
-    		let grid = select(".grid");
-    		drawGrid(m.gridData, m.parameters(), grid, y, x_params);
+    		drawGridNames(m.gridData, m.parameters(), y, x_params);
+    		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
+
+    		// drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x2)
     		let isSyncingLeftScroll = false;
+
     		let isSyncingRightScroll = false;
     		let leftDiv = select(".vis-container").node();
     		let rightDiv = select(".grid").node();
@@ -212982,6 +212417,13 @@ var app = (function () {
     		};
     	});
 
+    	function update(join, exclude) {
+    		let gridData = m.updateGridData(join, exclude);
+    		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
+    		m.updateOutcomeData(0, m.allOutcomeVars[0], join, exclude);
+    		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
+    	}
+
     	const writable_props = [];
 
     	Object_1.keys($$props).forEach(key => {
@@ -212989,39 +212431,36 @@ var app = (function () {
     	});
 
     	const click_handler = () => {
-    		m.addVis();
-    		$$invalidate(0, m);
+    		m.initializeOutcomeData(options_to_join, options_to_exclude);
+    		$$invalidate(2, m);
     	};
 
     	function vis_1_w_binding(value) {
     		w1 = value;
-    		$$invalidate(3, w1);
+    		$$invalidate(5, w1);
     	}
 
     	function vis_1_h_binding(value) {
     		h = value;
-    		(($$invalidate(1, h), $$invalidate(9, size)), $$invalidate(0, m));
+    		(($$invalidate(3, h), $$invalidate(8, size)), $$invalidate(2, m));
     	}
 
     	function vis_1_term_binding(value, outcome) {
     		if ($$self.$$.not_equal(outcome.var, value)) {
     			outcome.var = value;
-    			$$invalidate(0, m);
+    			$$invalidate(2, m);
     		}
     	}
 
-    	const change_handler = i => drawVis(i);
-    	const mount_handler = i => drawVis(i);
-
-    	const remove_handler = i => {
-    		m.removeVis(i);
-    		$$invalidate(0, m);
+    	const change_handler = (i, outcome) => {
+    		m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude);
+    		$$invalidate(2, m);
     	};
 
     	function svg1_binding($$value) {
     		binding_callbacks[$$value ? "unshift" : "push"](() => {
     			svg = $$value;
-    			$$invalidate(2, svg);
+    			$$invalidate(4, svg);
     		});
     	}
 
@@ -213033,8 +212472,9 @@ var app = (function () {
     		multiverseMatrix,
     		CI,
     		CDF,
-    		updateMatrixGrid,
-    		drawGrid,
+    		drawMatrixGrid,
+    		drawGridNames,
+    		drawOutcomes,
     		combineJoinOptions,
     		cell,
     		groupPadding,
@@ -213044,9 +212484,6 @@ var app = (function () {
     		iconSize,
     		header1,
     		Toggle: Toggle_button,
-    		Tooltip: Tooltip_option_menu,
-    		Dropdown: Dropdown_menu,
-    		OptionTooltip: Tooltip_option_menu,
     		scrollTop,
     		Vis,
     		exclude_options,
@@ -213063,8 +212500,7 @@ var app = (function () {
     		cols,
     		accum_options,
     		n_options,
-    		drawVis,
-    		redraw,
+    		update,
     		size,
     		h,
     		w1,
@@ -213076,16 +212512,16 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("options_to_exclude" in $$props) $$invalidate(7, options_to_exclude = $$props.options_to_exclude);
-    		if ("options_to_join" in $$props) $$invalidate(8, options_to_join = $$props.options_to_join);
-    		if ("m" in $$props) $$invalidate(0, m = $$props.m);
+    		if ("options_to_exclude" in $$props) $$invalidate(0, options_to_exclude = $$props.options_to_exclude);
+    		if ("options_to_join" in $$props) $$invalidate(1, options_to_join = $$props.options_to_join);
+    		if ("m" in $$props) $$invalidate(2, m = $$props.m);
     		if ("vis" in $$props) vis = $$props.vis;
-    		if ("svg" in $$props) $$invalidate(2, svg = $$props.svg);
-    		if ("size" in $$props) $$invalidate(9, size = $$props.size);
-    		if ("h" in $$props) $$invalidate(1, h = $$props.h);
-    		if ("w1" in $$props) $$invalidate(3, w1 = $$props.w1);
-    		if ("w2" in $$props) $$invalidate(4, w2 = $$props.w2);
-    		if ("y" in $$props) y = $$props.y;
+    		if ("svg" in $$props) $$invalidate(4, svg = $$props.svg);
+    		if ("size" in $$props) $$invalidate(8, size = $$props.size);
+    		if ("h" in $$props) $$invalidate(3, h = $$props.h);
+    		if ("w1" in $$props) $$invalidate(5, w1 = $$props.w1);
+    		if ("w2" in $$props) $$invalidate(6, w2 = $$props.w2);
+    		if ("y" in $$props) $$invalidate(9, y = $$props.y);
     		if ("x_params" in $$props) x_params = $$props.x_params;
     		if ("colWidth" in $$props) $$invalidate(10, colWidth = $$props.colWidth);
     		if ("x_options" in $$props) x_options = $$props.x_options;
@@ -213096,29 +212532,33 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*m*/ 1) {
-    			$$invalidate(9, size = m.gridData.length); // todo: reactive update
+    		if ($$self.$$.dirty & /*m*/ 4) {
+    			$$invalidate(8, size = m.gridData.length); // todo: reactive update
     		}
 
-    		if ($$self.$$.dirty[0] & /*size*/ 512) {
-    			$$invalidate(1, h = size * cell.height);
+    		if ($$self.$$.dirty & /*size*/ 256) {
+    			$$invalidate(3, h = size * cell.height + namingDim + margin.top + 4 * cell.padding);
     		}
 
-    		if ($$self.$$.dirty[0] & /*size, h*/ 514) {
-    			y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1);
+    		if ($$self.$$.dirty & /*size, h*/ 264) {
+    			$$invalidate(9, y = band().domain(sequence(size)).range([margin.top, h - (margin.bottom + namingDim + cell.height)]).padding(0.1));
     		}
 
-    		if ($$self.$$.dirty[0] & /*colWidth*/ 1024) {
+    		if ($$self.$$.dirty & /*colWidth*/ 1024) {
     			x_options = band().domain(sequence(max$3(Object.values(params).map(d => d.length)))).range([0, colWidth]);
     		}
 
-    		if ($$self.$$.dirty[0] & /*options_to_join, options_to_exclude*/ 384) {
-    			redraw(options_to_join, options_to_exclude);
+    		if ($$self.$$.dirty & /*m, y*/ 516) {
+    			drawOutcomes(m.outcomes, m.size, y);
+    		}
+
+    		if ($$self.$$.dirty & /*options_to_join, options_to_exclude*/ 3) {
+    			update(options_to_join, options_to_exclude);
     		}
     	};
 
-    	$$invalidate(3, w1 = outVisWidth + margin.left);
-    	$$invalidate(4, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
+    	$$invalidate(5, w1 = outVisWidth + margin.left);
+    	$$invalidate(6, w2 = cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
 
     	x_params = ordinal().domain(Object.keys(params)).range(accum_options.reduce(
     		(a, v, i, arr) => {
@@ -213137,24 +212577,22 @@ var app = (function () {
     	$$invalidate(10, colWidth = max$3(Object.values(params).map(d => d.length)) * (cell.width + cell.padding));
 
     	return [
+    		options_to_exclude,
+    		options_to_join,
     		m,
     		h,
     		svg,
     		w1,
     		w2,
     		windowHeight,
-    		drawVis,
-    		options_to_exclude,
-    		options_to_join,
     		size,
+    		y,
     		colWidth,
     		click_handler,
     		vis_1_w_binding,
     		vis_1_h_binding,
     		vis_1_term_binding,
     		change_handler,
-    		mount_handler,
-    		remove_handler,
     		svg1_binding
     	];
     }
@@ -213162,7 +212600,7 @@ var app = (function () {
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance, create_fragment, safe_not_equal, {}, [-1, -1]);
+    		init$1(this, options, instance, create_fragment, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
