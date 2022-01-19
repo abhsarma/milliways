@@ -98,12 +98,12 @@
 	});
 
 	function update(join, exclude) {
-		let gridData = m.updateGridData(join, exclude);
-		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
-		for (let i in m.outcomes) {
-			m.updateOutcomeData(i, m.outcomes[i].var, join, exclude);
-		}		
-		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
+		// call updateHandler
+		m.updateHandler(join, exclude)
+
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
+
+		drawOutcomes(m.outcomes, m.size, y);
 	}
 </script>
 

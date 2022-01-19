@@ -210829,10 +210829,14 @@ var app = (function () {
     		let toJoin = JSON.parse(JSON.stringify(join_data));
     		let toExclude = JSON.parse(JSON.stringify(exclude_data));
     		let combine = combineJoinOptions(toJoin);
+    		let e_data, o_data;
+    		
+    		// gets list of paramters and the options to exclude
     		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
     					.map( d => d[1].map( j => [d[0], j]) )
     					.flat(1)
     					.map( i => ({"parameter": i[0], "option": i[1]}) );
+
     		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
     		this.outcomes.push({
@@ -210848,22 +210852,23 @@ var app = (function () {
     				))
     			});
     		} else {
-    			let temp = this.data.map(function(d) { 
-    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-    					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-    				))
-    			});
-
-    			temp[0]['cdf.x'].map((d, i) => i);
-
-    			this.outcomes[i].data = excludeAndCombineOutcomes(
-    				this.gridData, 
-    				temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y'])), 
-    				option_list, 
-    				exclude,
-    				combine
-    			);
+    			let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term);
+    			o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
     		}
+
+    		const {e_data_processed, o_data_processed} = excludeAndCombineOutcomes(
+    			this.gridData, 
+    			o_data, 
+    			option_list, 
+    			exclude,
+    			combine,
+    			e_data
+    		);
+
+    		this.outcomes[i].data = o_data_processed;
+    		this.outcomes[i].estimate = e_data_processed;
+
     	}
     	
     	updateGridData = (join_data = [], exclude_data = []) => {
@@ -210913,14 +210918,22 @@ var app = (function () {
     	
     			g_data = vec.filter((d, i) => non_duplicates[i]);
     		}
+
+    		this.gridData = g_data;
     	
     		return g_data;
     	}
+
+
     	
     	updateOutcomeData = (index, term, join_data = [], exclude_data = [], graph = CDF) => {
-    		// deep copy data structures
-    		let g_data = JSON.parse(JSON.stringify(this.gridData));
+    		// gets a re-intitialzied version of gridData
+    		let parameters = [...Object.keys(this.parameters())];
+    		let gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
+
+    		let g_data = JSON.parse(JSON.stringify(gridData));
     		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].data));
+    		let e_data;
     		let toJoin = JSON.parse(JSON.stringify(join_data));
     		let toExclude = JSON.parse(JSON.stringify(exclude_data));
 
@@ -210941,36 +210954,59 @@ var app = (function () {
     				))
     			});
     		} else {
-    			let temp = this.data.map(function(d) { 
-    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-    					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-    				))
-    			});
-
-    			temp[0]['cdf.x'].map((d, i) => i);
-
-    			o_data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
+    			o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
     		}
 
     		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
-    		o_data = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine);	
+    		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);	
+    		this.outcomes[index].data = o_data_processed;
+    		this.outcomes[index].estimate = e_data_processed;
+    	}
 
-    		this.outcomes[index].data = o_data;
+    	updateHandler(join, exclude) {
+    		// call update grid data
+    		this.updateGridData(join, exclude);
+    	
+    		// call update otucomes
+    		for (let i in this.outcomes) {
+    			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
+    		}		
+    	
+    		// sort accordingly
     	}
     }
 
-    function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine) {
+    /**
+     * 
+     * @param {object} g_data Multiverse grid data
+     * @param {object} o_data Multiverse outcome data
+     * @param {array} option_list 2D array of parameters and their options
+     * @param {object} combine 2D array containing [paramter, [options_to_join]]
+     * @param {array} exclude List of objects containing {parameter, option} to exclude
+     * @param {object} e_data DOESNT EXIST RIGHT NOW --> Multiverse estimate data
+     * 
+     * 
+     * @return {object} Currently returns o_data... would like to modify to reutrn {o_data, e_data}
+     */
+    function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
     	let size = g_data.length;
+    	let o_data_processed = o_data;
+    	let e_data_processed =e_data;
+    	
     	combine.map(d => d[1].map(x => ([d[0], x])))
     							.flat()
     							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
     	
+    	// if there are any options to exclude
     	if (exclude.length > 0) {
     		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
 
     		g_data = g_data.filter( (i, n) => toFilter[n] );
-    		o_data = o_data.filter( (i, n) => toFilter[n] );
+    		o_data_processed = o_data.filter( (i, n) => toFilter[n] );
+    		e_data_processed = e_data.filter( (i, n) => toFilter[n] );
     	}
 
     	if (combine.length > 0) {
@@ -210996,8 +211032,8 @@ var app = (function () {
     			return JSON.stringify(idx);
     		});
 
-    		o_data = groups(
-    				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
+    		o_data_processed = groups(
+    			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
     				d => d.group
     			).map(d => d[1].map(x => {
     				delete x.group;
@@ -211012,7 +211048,7 @@ var app = (function () {
     			.map(x => x.map(p => p.flat()));
     	}
 
-    	return o_data;
+    	return {e_data_processed, o_data_processed};
     }
 
 
@@ -211022,6 +211058,15 @@ var app = (function () {
 
     	drawHeaders(params, grid_node, x);
     	drawCols(gridData, params, grid_node, yscale, x);
+    }
+
+    function formatCDFOutcomeData(data, term){
+    	let temp = data.map(function(d) { 
+    		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+    			i => Object.assign({}, ...["cdf.x", "cdf.y", "estimate"].map((j) => ({[j]: i[j]})))
+    		))
+    	});
+    	return temp
     }
 
     function drawHeaders(params, grid_node, xscale) {
@@ -211229,11 +211274,9 @@ var app = (function () {
 
     // function from drawing the outcome panel grid
     function drawOutcomes (outcomes, size, yscale) {
-    	// console.log(outcomes);
     	for (let i in outcomes) {
     		let data = outcomes[i].data;
     		outcomes[i].var;
-
     		CDF(data, i, size, yscale);
     	}
     }
@@ -211246,6 +211289,7 @@ var app = (function () {
     // }
 
     function CDF (data, i, size, yscale, term) {
+    	// console.log(data)
     	// console.trace();
     	let results_plot = select('svg#vis-' + i);
     	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
@@ -212191,50 +212235,50 @@ var app = (function () {
     			div7 = element("div");
     			svg1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 183, 1, 4863);
+    			add_location(div0, file, 183, 1, 4652);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-1i9h9ss");
-    			add_location(h1, file, 187, 4, 4965);
+    			add_location(h1, file, 187, 4, 4754);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 186, 3, 4938);
+    			add_location(div1, file, 186, 3, 4727);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 189, 3, 5048);
+    			add_location(div2, file, 189, 3, 4837);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 185, 2, 4917);
+    			add_location(div3, file, 185, 2, 4706);
     			attr_dev(div4, "class", "container");
-    			add_location(div4, file, 184, 1, 4889);
+    			add_location(div4, file, 184, 1, 4678);
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file, 196, 126, 5367);
+    			add_location(path0, file, 196, 126, 5156);
     			attr_dev(path1, "d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
-    			add_location(path1, file, 196, 165, 5406);
+    			add_location(path1, file, 196, 165, 5195);
     			attr_dev(svg0, "class", "add-vis-icon svelte-1i9h9ss");
     			attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg0, "height", "32px");
     			attr_dev(svg0, "viewBox", "0 0 24 24");
     			attr_dev(svg0, "width", "32px");
     			attr_dev(svg0, "fill", "#777777");
-    			add_location(svg0, file, 196, 3, 5244);
+    			add_location(svg0, file, 196, 3, 5033);
     			attr_dev(button, "class", "svelte-1i9h9ss");
-    			add_location(button, file, 195, 2, 5144);
+    			add_location(button, file, 195, 2, 4933);
     			attr_dev(div5, "class", "button-wrapper svelte-1i9h9ss");
-    			add_location(div5, file, 194, 1, 5113);
+    			add_location(div5, file, 194, 1, 4902);
     			attr_dev(div6, "class", "vis-container svelte-1i9h9ss");
     			set_style(div6, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div6, file, 200, 2, 5510);
+    			add_location(div6, file, 200, 2, 5299);
     			attr_dev(svg1, "height", /*h*/ ctx[3]);
     			attr_dev(svg1, "width", /*w2*/ ctx[6]);
     			attr_dev(svg1, "class", "svelte-1i9h9ss");
-    			add_location(svg1, file, 214, 4, 6013);
+    			add_location(svg1, file, 214, 4, 5802);
     			attr_dev(div7, "class", "grid svelte-1i9h9ss");
     			set_style(div7, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div7, file, 213, 3, 5959);
+    			add_location(div7, file, 213, 3, 5748);
     			attr_dev(div8, "class", "grid-container svelte-1i9h9ss");
-    			add_location(div8, file, 212, 2, 5927);
+    			add_location(div8, file, 212, 2, 5716);
     			attr_dev(div9, "class", "main-content svelte-1i9h9ss");
-    			add_location(div9, file, 199, 1, 5481);
+    			add_location(div9, file, 199, 1, 5270);
     			attr_dev(main, "class", "svelte-1i9h9ss");
-    			add_location(main, file, 182, 0, 4855);
+    			add_location(main, file, 182, 0, 4644);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212418,14 +212462,11 @@ var app = (function () {
     	});
 
     	function update(join, exclude) {
-    		let gridData = m.updateGridData(join, exclude);
-    		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
+    		// call updateHandler
+    		m.updateHandler(join, exclude);
 
-    		for (let i in m.outcomes) {
-    			m.updateOutcomeData(i, m.allOutcomeVars[i], join, exclude);
-    		}
-
-    		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
+    		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
+    		drawOutcomes(m.outcomes, m.size, y);
     	}
 
     	const writable_props = [];
