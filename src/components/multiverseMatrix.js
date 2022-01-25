@@ -1,4 +1,4 @@
-import { css, cx } from '@emotion/css'
+ import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
@@ -638,7 +638,9 @@ function drawColNames(params, param, x2) {
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
 				options_to_exclude[param].push(d);
+				console.log(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", true)
+				// d3.select('g.${}')
 			} else {
 				let index = options_to_exclude[param].indexOf(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", false)
