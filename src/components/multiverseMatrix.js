@@ -250,10 +250,14 @@ class multiverseMatrix {
 		let toJoin = JSON.parse(JSON.stringify(join_data));
 		let toExclude = JSON.parse(JSON.stringify(exclude_data));
 		let combine = combineJoinOptions(toJoin);
+		let e_data, o_data
+		
+		// gets list of paramters and the options to exclude
 		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
 					.map( d => d[1].map( j => [d[0], j]) )
 					.flat(1)
 					.map( i => ({"parameter": i[0], "option": i[1]}) );
+
 		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
 		this.outcomes.push({
@@ -269,22 +273,23 @@ class multiverseMatrix {
 				))
 			});
 		} else {
-			let temp = this.data.map(function(d) { 
-				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-				))
-			});
-
-			let indices = temp[0]['cdf.x'].map((d, i) => i);
-
-			this.outcomes[i].data = excludeAndCombineOutcomes(
-				this.gridData, 
-				temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y'])), 
-				option_list, 
-				exclude,
-				combine
-			)
+			let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
+			o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
 		}
+
+		const {e_data_processed, o_data_processed} = excludeAndCombineOutcomes(
+			this.gridData, 
+			o_data, 
+			option_list, 
+			exclude,
+			combine,
+			e_data
+		)
+
+		this.outcomes[i].data = o_data_processed;
+		this.outcomes[i].estimate = e_data_processed;
+
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
@@ -334,14 +339,22 @@ class multiverseMatrix {
 	
 			g_data = vec.filter((d, i) => non_duplicates[i]);
 		}
+
+		this.gridData = g_data
 	
 		return g_data;
 	}
+
+
 	
 	updateOutcomeData = (index, term, join_data = [], exclude_data = [], graph = CDF) => {
-		// deep copy data structures
-		let g_data = JSON.parse(JSON.stringify(this.gridData));
+		// gets a re-intitialzied version of gridData
+		let parameters = [...Object.keys(this.parameters())];
+		let gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
+
+		let g_data = JSON.parse(JSON.stringify(gridData));
 		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].data));
+		let e_data
 		let toJoin = JSON.parse(JSON.stringify(join_data));
 		let toExclude = JSON.parse(JSON.stringify(exclude_data));
 
@@ -362,38 +375,61 @@ class multiverseMatrix {
 				))
 			});
 		} else {
-			let temp = this.data.map(function(d) { 
-				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-				))
-			});
-
-			let indices = temp[0]['cdf.x'].map((d, i) => i);
-
-			o_data = temp.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+			let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
+			o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
 		}
 
 		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
-		o_data = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine)	
+		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data)	
+		this.outcomes[index].data = o_data_processed;
+		this.outcomes[index].estimate = e_data_processed;
+	}
 
-		this.outcomes[index].data = o_data;
+	updateHandler(join, exclude) {
+		// call update grid data
+		this.updateGridData(join, exclude);
+	
+		// call update otucomes
+		for (let i in this.outcomes) {
+			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
+		}		
+	
+		// sort accordingly
 	}
 }
 
 export default multiverseMatrix
 
-export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine) {
+/**
+ * 
+ * @param {object} g_data Multiverse grid data
+ * @param {object} o_data Multiverse outcome data
+ * @param {array} option_list 2D array of parameters and their options
+ * @param {object} combine 2D array containing [paramter, [options_to_join]]
+ * @param {array} exclude List of objects containing {parameter, option} to exclude
+ * @param {object} e_data DOESNT EXIST RIGHT NOW --> Multiverse estimate data
+ * 
+ * 
+ * @return {object} Currently returns o_data... would like to modify to reutrn {o_data, e_data}
+ */
+export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
 	let size = g_data.length;
+	let o_data_processed = o_data
+	let e_data_processed =e_data
+	
 	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
 	
+	// if there are any options to exclude
 	if (exclude.length > 0) {
 		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
 
 		g_data = g_data.filter( (i, n) => toFilter[n] );
-		o_data = o_data.filter( (i, n) => toFilter[n] );
+		o_data_processed = o_data.filter( (i, n) => toFilter[n] );
+		e_data_processed = e_data.filter( (i, n) => toFilter[n] );
 	}
 
 	if (combine.length > 0) {
@@ -419,8 +455,8 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 			return JSON.stringify(idx);
 		});
 
-		o_data = d3.groups(
-				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
+		o_data_processed = d3.groups(
+			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
 				d => d.group
 			).map(d => d[1].map(x => {
 				delete x.group;
@@ -435,7 +471,7 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 			.map(x => x.map(p => p.flat()))
 	}
 
-	return o_data;
+	return {e_data_processed, o_data_processed};
 }
 
 
@@ -445,6 +481,15 @@ export function drawGridNames (gridData, params, yscale, x) {
 
 	drawHeaders(params, grid_node, x);
 	drawCols(gridData, params, grid_node, yscale, x);
+}
+
+function formatCDFOutcomeData(data, term){
+	let temp = data.map(function(d) { 
+		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+			i => Object.assign({}, ...["cdf.x", "cdf.y", "estimate"].map((j) => ({[j]: i[j]})))
+		))
+	});
+	return temp
 }
 
 function drawHeaders(params, grid_node, xscale) {
@@ -700,11 +745,9 @@ function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 
 // function from drawing the outcome panel grid
 export function drawOutcomes (outcomes, size, yscale) {
-	// console.log(outcomes);
 	for (let i in outcomes) {
 		let data = outcomes[i].data;
 		let term = outcomes[i].var;
-
 		CDF(data, i, size, yscale, term);
 	}
 }
@@ -717,6 +760,7 @@ export function drawOutcomes (outcomes, size, yscale) {
 // }
 
 export function CDF (data, i, size, yscale, term) {
+	// console.log(data)
 	// console.trace();
 	let results_plot = d3.select('svg#vis-' + i);
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
