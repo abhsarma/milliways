@@ -67,8 +67,7 @@
 		.domain(d3.range(d3.max(Object.values(params).map(d => d.length))))
 		.range( [0, colWidth] );
 
-	$: drawOutcomes(m.outcomes, m.size, y);
-	$: update(options_to_join, options_to_exclude);
+	$: update(m.outcomes, m.size, y, options_to_join, options_to_exclude);
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
@@ -97,13 +96,13 @@
 		}
 	});
 
-	function update(join, exclude) {
+	function update(outcomes, size, y, join, exclude) {
 		// call updateHandler
 		m.updateHandler(join, exclude)
 
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
 
-		drawOutcomes(m.outcomes, m.size, y);
+		drawOutcomes(outcomes, size, y);
 	}
 </script>
 

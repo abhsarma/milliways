@@ -210769,6 +210769,93 @@ var app = (function () {
     	}).filter(i => (i != null))
     }
 
+    /**
+     * 
+     * @param {array} gridData Multiverse grid data
+     * @param {array} outcomeData Multiverse outcome data
+     * @param {array} estimateData Multiverse estimate data
+     * @param {boolean} ascending Boolean for ascending or descending
+     * @param {boolean} outcomeIndex Index of the outcome we are sorting on
+     * 
+     * 
+     * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
+     */
+    function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
+
+    	// Definitions
+    	// Sorting Factor --> The estimate value of the outcome that we are sorting on
+
+    	// Notes
+    	// I feel like this can be made significantly more efficient, but as of now it is operational.
+
+    	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
+    	if (!outcomeData.length){
+    		return {gridData, outcomeData, estimateData}
+    	}
+
+    	// Add the sorting factor (the outcome that we are sorting on) to the gridData
+    	let gridDataSortingList = [];
+    	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
+    		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[outcomeIndex][i]});
+    	}
+
+    	// Add the sorting factor (the outcome that we are sorting on) to each outcome 
+    	let outcomeDataSortingList = [];
+    	for (let i =0; i< outcomeData.length; i++){
+    		var list = [];
+    		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
+    			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[i][j], 'sortingFactor': estimateData[outcomeIndex][j]});
+    		}
+    		outcomeDataSortingList.push(list);
+    	}
+
+
+
+
+    	// sort each of the outcomes according to the sorting factor
+    	for (let i=0; i<outcomeDataSortingList.length; i++){
+    		if (ascending) {
+    			outcomeDataSortingList[i].sort(function(a, b) {
+    				return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+    			});
+    		}
+    		else {
+    			outcomeDataSortingList[i].sort(function(a, b) {
+    				return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+    			});
+    		}
+    		
+    	}
+
+    	// Sort the grid data according to its sorting factor
+    	if (ascending) {
+    		gridDataSortingList.sort(function(a, b) {
+    			return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+    		});
+    	}
+    	else {
+    		gridDataSortingList.sort(function(a, b) {
+    			return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+    		});
+    	}
+    	
+
+    	// Reassign gridData to contain sorted values
+    	for (var k = 0; k < gridDataSortingList.length; k++) {
+    		gridData[k] = gridDataSortingList[k].gridData;
+    	}
+
+    	// Reassign outcomeData and estimateData to contain sorted values
+    	for (var k = 0; k < outcomeDataSortingList.length; k++) {
+    		for (var j = 0; j<outcomeDataSortingList[k].length; j++) {
+    			outcomeData[k][j] = outcomeDataSortingList[k][j].outcomeData;
+    			estimateData[k][j] = outcomeDataSortingList[k][j].estimateData;
+    		}
+    	}
+
+    	return {gridData, outcomeData, estimateData}
+    }
+
     class multiverseMatrix {
     	constructor (dat) {		
     		// data for the plot constructor
@@ -210829,10 +210916,14 @@ var app = (function () {
     		let toJoin = JSON.parse(JSON.stringify(join_data));
     		let toExclude = JSON.parse(JSON.stringify(exclude_data));
     		let combine = combineJoinOptions(toJoin);
+    		let e_data, o_data;
+    		
+    		// gets list of paramters and the options to exclude
     		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
     					.map( d => d[1].map( j => [d[0], j]) )
     					.flat(1)
     					.map( i => ({"parameter": i[0], "option": i[1]}) );
+
     		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
     		this.outcomes.push({
@@ -210848,22 +210939,23 @@ var app = (function () {
     				))
     			});
     		} else {
-    			let temp = this.data.map(function(d) { 
-    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-    					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-    				))
-    			});
-
-    			temp[0]['cdf.x'].map((d, i) => i);
-
-    			this.outcomes[i].data = excludeAndCombineOutcomes(
-    				this.gridData, 
-    				temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y'])), 
-    				option_list, 
-    				exclude,
-    				combine
-    			);
+    			let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term);
+    			o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
     		}
+
+    		const {e_data_processed, o_data_processed} = excludeAndCombineOutcomes(
+    			this.gridData, 
+    			o_data, 
+    			option_list, 
+    			exclude,
+    			combine,
+    			e_data
+    		);
+
+    		this.outcomes[i].data = o_data_processed;
+    		this.outcomes[i].estimate = e_data_processed;
+
     	}
     	
     	updateGridData = (join_data = [], exclude_data = []) => {
@@ -210913,14 +211005,22 @@ var app = (function () {
     	
     			g_data = vec.filter((d, i) => non_duplicates[i]);
     		}
+
+    		this.gridData = g_data;
     	
     		return g_data;
     	}
+
+
     	
     	updateOutcomeData = (index, term, join_data = [], exclude_data = [], graph = CDF) => {
-    		// deep copy data structures
-    		let g_data = JSON.parse(JSON.stringify(this.gridData));
+    		// gets a re-intitialzied version of gridData
+    		let parameters = [...Object.keys(this.parameters())];
+    		let gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
+
+    		let g_data = JSON.parse(JSON.stringify(gridData));
     		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].data));
+    		let e_data;
     		let toJoin = JSON.parse(JSON.stringify(join_data));
     		let toExclude = JSON.parse(JSON.stringify(exclude_data));
 
@@ -210941,43 +211041,75 @@ var app = (function () {
     				))
     			});
     		} else {
-    			let temp = this.data.map(function(d) { 
-    				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-    					i => Object.assign({}, ...["cdf.x", "cdf.y"].map((j) => ({[j]: i[j]})))
-    				))
-    			});
-
-    			temp[0]['cdf.x'].map((d, i) => i);
-
-    			o_data = temp.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
+    			o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+    			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
     		}
 
     		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
-    		o_data = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine);	
+    		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);	
+    		this.outcomes[index].data = o_data_processed;
+    		this.outcomes[index].estimate = e_data_processed;
+    	}
 
-    		this.outcomes[index].data = o_data;
+    	updateHandler(join, exclude) {
+    		// call update grid data
+    		this.updateGridData(join, exclude);
+    	
+    		// call update otucomes
+    		for (let i in this.outcomes) {
+    			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
+    		}		
+    	
+    		console.log(this.outcomes);
+    		let outcomeData = this.outcomes.map(x => x['data']);
+    		// get the estimate data for the outcomes
+    		let estimateData = this.outcomes.map(x => x['estimate']);
+
+    		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, true);
+
+    		this.gridData, this.outcomes, this.estimateData = g_data, e_data;
+
     	}
     }
 
-    function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine) {
+    /**
+     * 
+     * @param {object} g_data Multiverse grid data
+     * @param {object} o_data Multiverse outcome data
+     * @param {array} option_list 2D array of parameters and their options
+     * @param {object} combine 2D array containing [paramter, [options_to_join]]
+     * @param {array} exclude List of objects containing {parameter, option} to exclude
+     * @param {object} e_data Estimate data for each of the outcomes
+     * 
+     * 
+     * @return {object} Currently returns o_data... would like to modify to reutrn {o_data, e_data}
+     */
+    function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
+    	console.log(o_data);
     	let size = g_data.length;
+    	let o_data_processed = o_data;
+    	let e_data_processed =e_data;
+    	
     	combine.map(d => d[1].map(x => ([d[0], x])))
     							.flat()
     							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
     	
+    	// if there are any options to exclude
     	if (exclude.length > 0) {
     		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
 
     		g_data = g_data.filter( (i, n) => toFilter[n] );
-    		o_data = o_data.filter( (i, n) => toFilter[n] );
+    		o_data_processed = o_data.filter( (i, n) => toFilter[n] );
+    		e_data_processed = e_data.filter( (i, n) => toFilter[n] );
     	}
 
     	if (combine.length > 0) {
     		let groups$1 = combine.map(d => d[1].map(x => ([d[0], x])))
     							.flat()
     							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-    	
+    		// 
     		let grouping_vector = g_data.map((d, i) => {
     			let options = Object.values(d).flat();
     			let idx = option_list.map(x => which_idx(x, options)).flat();
@@ -210996,8 +211128,20 @@ var app = (function () {
     			return JSON.stringify(idx);
     		});
 
-    		o_data = groups(
-    				o_data.map((d, i) => ({group: grouping_vector[i], data: d})),
+    		e_data_processed = groups(
+    			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
+    				d => d.group
+    		).map(d => d[1].map(x => {
+    			delete x.group;
+    			return Object.values(x).flat();
+    		}));
+
+    		console.log(e_data_processed);
+
+    		
+    		
+    		o_data_processed = groups(
+    			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
     				d => d.group
     			).map(d => d[1].map(x => {
     				delete x.group;
@@ -211012,7 +211156,7 @@ var app = (function () {
     			.map(x => x.map(p => p.flat()));
     	}
 
-    	return o_data;
+    	return {e_data_processed, o_data_processed};
     }
 
 
@@ -211022,6 +211166,15 @@ var app = (function () {
 
     	drawHeaders(params, grid_node, x);
     	drawCols(gridData, params, grid_node, yscale, x);
+    }
+
+    function formatCDFOutcomeData(data, term){
+    	let temp = data.map(function(d) { 
+    		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+    			i => Object.assign({}, ...["cdf.x", "cdf.y", "estimate"].map((j) => ({[j]: i[j]})))
+    		))
+    	});
+    	return temp
     }
 
     function drawHeaders(params, grid_node, xscale) {
@@ -211231,11 +211384,9 @@ var app = (function () {
 
     // function from drawing the outcome panel grid
     function drawOutcomes (outcomes, size, yscale) {
-    	// console.log(outcomes);
     	for (let i in outcomes) {
     		let data = outcomes[i].data;
     		outcomes[i].var;
-
     		CDF(data, i, size, yscale);
     	}
     }
@@ -211248,6 +211399,7 @@ var app = (function () {
     // }
 
     function CDF (data, i, size, yscale, term) {
+    	// console.log(data)
     	// console.trace();
     	let results_plot = select('svg#vis-' + i);
     	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
@@ -212006,7 +212158,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (202:3) {#each m.outcomes as outcome, i (outcome.id)}
+    // (201:3) {#each m.outcomes as outcome, i (outcome.id)}
     function create_each_block(key_1, ctx) {
     	let first;
     	let vis_1;
@@ -212112,7 +212264,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(202:3) {#each m.outcomes as outcome, i (outcome.id)}",
+    		source: "(201:3) {#each m.outcomes as outcome, i (outcome.id)}",
     		ctx
     	});
 
@@ -212193,50 +212345,50 @@ var app = (function () {
     			div7 = element("div");
     			svg1 = svg_element("svg");
     			attr_dev(div0, "id", "leftDiv");
-    			add_location(div0, file, 183, 1, 4861);
+    			add_location(div0, file, 182, 1, 4649);
     			set_style(h1, "margin", header1.top + "px 0px");
     			attr_dev(h1, "class", "svelte-1i9h9ss");
-    			add_location(h1, file, 187, 4, 4963);
+    			add_location(h1, file, 186, 4, 4751);
     			attr_dev(div1, "class", "col-sm-8");
-    			add_location(div1, file, 186, 3, 4936);
+    			add_location(div1, file, 185, 3, 4724);
     			attr_dev(div2, "class", "col-sm-3");
-    			add_location(div2, file, 189, 3, 5046);
+    			add_location(div2, file, 188, 3, 4834);
     			attr_dev(div3, "class", "row");
-    			add_location(div3, file, 185, 2, 4915);
+    			add_location(div3, file, 184, 2, 4703);
     			attr_dev(div4, "class", "container");
-    			add_location(div4, file, 184, 1, 4887);
+    			add_location(div4, file, 183, 1, 4675);
     			attr_dev(path0, "d", "M0 0h24v24H0V0z");
     			attr_dev(path0, "fill", "none");
-    			add_location(path0, file, 196, 126, 5365);
+    			add_location(path0, file, 195, 126, 5153);
     			attr_dev(path1, "d", "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z");
-    			add_location(path1, file, 196, 165, 5404);
+    			add_location(path1, file, 195, 165, 5192);
     			attr_dev(svg0, "class", "add-vis-icon svelte-1i9h9ss");
     			attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg0, "height", "32px");
     			attr_dev(svg0, "viewBox", "0 0 24 24");
     			attr_dev(svg0, "width", "32px");
     			attr_dev(svg0, "fill", "#777777");
-    			add_location(svg0, file, 196, 3, 5242);
+    			add_location(svg0, file, 195, 3, 5030);
     			attr_dev(button, "class", "svelte-1i9h9ss");
-    			add_location(button, file, 195, 2, 5142);
+    			add_location(button, file, 194, 2, 4930);
     			attr_dev(div5, "class", "button-wrapper svelte-1i9h9ss");
-    			add_location(div5, file, 194, 1, 5111);
+    			add_location(div5, file, 193, 1, 4899);
     			attr_dev(div6, "class", "vis-container svelte-1i9h9ss");
     			set_style(div6, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div6, file, 200, 2, 5508);
+    			add_location(div6, file, 199, 2, 5296);
     			attr_dev(svg1, "height", /*h*/ ctx[3]);
     			attr_dev(svg1, "width", /*w2*/ ctx[6]);
     			attr_dev(svg1, "class", "svelte-1i9h9ss");
-    			add_location(svg1, file, 214, 4, 6011);
+    			add_location(svg1, file, 213, 4, 5799);
     			attr_dev(div7, "class", "grid svelte-1i9h9ss");
     			set_style(div7, "height", /*windowHeight*/ ctx[7]);
-    			add_location(div7, file, 213, 3, 5957);
+    			add_location(div7, file, 212, 3, 5745);
     			attr_dev(div8, "class", "grid-container svelte-1i9h9ss");
-    			add_location(div8, file, 212, 2, 5925);
+    			add_location(div8, file, 211, 2, 5713);
     			attr_dev(div9, "class", "main-content svelte-1i9h9ss");
-    			add_location(div9, file, 199, 1, 5479);
+    			add_location(div9, file, 198, 1, 5267);
     			attr_dev(main, "class", "svelte-1i9h9ss");
-    			add_location(main, file, 182, 0, 4853);
+    			add_location(main, file, 181, 0, 4641);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -212419,15 +212571,12 @@ var app = (function () {
     		};
     	});
 
-    	function update(join, exclude) {
-    		let gridData = m.updateGridData(join, exclude);
-    		drawMatrixGrid(gridData, m.parameters(), y, x_params, x_options);
+    	function update(outcomes, size, y, join, exclude) {
+    		// call updateHandler
+    		m.updateHandler(join, exclude);
 
-    		for (let i in m.outcomes) {
-    			m.updateOutcomeData(i, m.outcomes[i].var, join, exclude);
-    		}
-
-    		drawOutcomes(m.outcomes, m.size, y); // this call here feels redundant, but change from m.updateOutcomeData on line 103 is not resulting in the reactive update
+    		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
+    		drawOutcomes(outcomes, size, y);
     	}
 
     	const writable_props = [];
@@ -212554,12 +212703,8 @@ var app = (function () {
     			x_options = band().domain(sequence(max$3(Object.values(params).map(d => d.length)))).range([0, colWidth]);
     		}
 
-    		if ($$self.$$.dirty & /*m, y*/ 516) {
-    			drawOutcomes(m.outcomes, m.size, y);
-    		}
-
-    		if ($$self.$$.dirty & /*options_to_join, options_to_exclude*/ 3) {
-    			update(options_to_join, options_to_exclude);
+    		if ($$self.$$.dirty & /*m, y, options_to_join, options_to_exclude*/ 519) {
+    			update(m.outcomes, m.size, y, options_to_join, options_to_exclude);
     		}
     	};
 

@@ -147,31 +147,92 @@ function which_idx(option_list, curr_options) {
 	}).filter(i => (i != null))
 }
 
-function sortByOutcome(gridData, outcomeData, ascending = false) {
-	let o_data = d3.rollups(
-			outcomeData.map((d, i) => ([i, d].flat())), 
-			v => {
-				v[0].shift()
-				return d3.median(v[0], x => ((x[1] + x[2])/2))
-			}, 
-			d => d[0]);
+/**
+ * 
+ * @param {array} gridData Multiverse grid data
+ * @param {array} outcomeData Multiverse outcome data
+ * @param {array} estimateData Multiverse estimate data
+ * @param {boolean} ascending Boolean for ascending or descending
+ * @param {boolean} outcomeIndex Index of the outcome we are sorting on
+ * 
+ * 
+ * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
+ */
+function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
 
-	let order = o_data.map(d => d[1]);
-	let g_data = gridData.map((d,i) => Object.assign({}, {orderBy: order[i], ...d}))
+	// Definitions
+	// Sorting Factor --> The estimate value of the outcome that we are sorting on
 
-	if (ascending) {
-		// we need to sort by descending here as values with higher mean estimate would have a lower 
-		// cumulative probability density value at the median
-		o_data.sort((a, b) => d3.descending(a[1], b[1]));
-		g_data.sort((a, b) => d3.descending(a.orderBy, b.orderBy));
-	} else {
-		o_data.sort((a, b) => d3.ascending(a[1], b[1]));
-		g_data.sort((a, b) => d3.ascending(a.orderBy, b.orderBy));
+	// Notes
+	// I feel like this can be made significantly more efficient, but as of now it is operational.
+
+	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
+	if (!outcomeData.length){
+		return {gridData, outcomeData, estimateData}
 	}
 
-	return [g_data, o_data];
-}
+	// Add the sorting factor (the outcome that we are sorting on) to the gridData
+	let gridDataSortingList = []
+	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
+		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[outcomeIndex][i]})
+	}
 
+	// Add the sorting factor (the outcome that we are sorting on) to each outcome 
+	let outcomeDataSortingList = []
+	for (let i =0; i< outcomeData.length; i++){
+		var list = []
+		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
+			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[i][j], 'sortingFactor': estimateData[outcomeIndex][j]})
+		}
+		outcomeDataSortingList.push(list)
+	}
+
+
+
+
+	// sort each of the outcomes according to the sorting factor
+	for (let i=0; i<outcomeDataSortingList.length; i++){
+		if (ascending) {
+			outcomeDataSortingList[i].sort(function(a, b) {
+				return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+			})
+		}
+		else {
+			outcomeDataSortingList[i].sort(function(a, b) {
+				return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+			})
+		}
+		
+	}
+
+	// Sort the grid data according to its sorting factor
+	if (ascending) {
+		gridDataSortingList.sort(function(a, b) {
+			return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+		});
+	}
+	else {
+		gridDataSortingList.sort(function(a, b) {
+			return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
+		});
+	}
+	
+
+	// Reassign gridData to contain sorted values
+	for (var k = 0; k < gridDataSortingList.length; k++) {
+		gridData[k] = gridDataSortingList[k].gridData;
+	}
+
+	// Reassign outcomeData and estimateData to contain sorted values
+	for (var k = 0; k < outcomeDataSortingList.length; k++) {
+		for (var j = 0; j<outcomeDataSortingList[k].length; j++) {
+			outcomeData[k][j] = outcomeDataSortingList[k][j].outcomeData
+			estimateData[k][j] = outcomeDataSortingList[k][j].estimateData
+		}
+	}
+
+	return {gridData, outcomeData, estimateData}
+}
 
 function sortInGroups(gridData, outcomeData, ascending = false) {
 	let group = new Array(outcomeData.length).fill(0, 0, 70).fill(1, 70, 140).fill(2, 140, 210)
@@ -396,7 +457,15 @@ class multiverseMatrix {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
 		}		
 	
-		// sort accordingly
+		console.log(this.outcomes)
+		let outcomeData = this.outcomes.map(x => x['data'])
+		// get the estimate data for the outcomes
+		let estimateData = this.outcomes.map(x => x['estimate'])
+
+		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, true);
+
+		this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
+
 	}
 }
 
@@ -409,12 +478,13 @@ export default multiverseMatrix
  * @param {array} option_list 2D array of parameters and their options
  * @param {object} combine 2D array containing [paramter, [options_to_join]]
  * @param {array} exclude List of objects containing {parameter, option} to exclude
- * @param {object} e_data DOESNT EXIST RIGHT NOW --> Multiverse estimate data
+ * @param {object} e_data Estimate data for each of the outcomes
  * 
  * 
  * @return {object} Currently returns o_data... would like to modify to reutrn {o_data, e_data}
  */
 export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
+	console.log(o_data)
 	let size = g_data.length;
 	let o_data_processed = o_data
 	let e_data_processed =e_data
@@ -436,7 +506,7 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
+		// 
 		let grouping_vector = g_data.map((d, i) => {
 			let options = Object.values(d).flat();
 			let idx = option_list.map(x => which_idx(x, options)).flat();
@@ -455,6 +525,18 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 			return JSON.stringify(idx);
 		});
 
+		e_data_processed = d3.groups(
+			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
+				d => d.group
+		).map(d => d[1].map(x => {
+			delete x.group;
+			return Object.values(x).flat();
+		}))
+
+		console.log(e_data_processed)
+
+		
+		
 		o_data_processed = d3.groups(
 			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
 				d => d.group
