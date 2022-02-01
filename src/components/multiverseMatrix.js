@@ -262,18 +262,8 @@ class multiverseMatrix {
 		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
 		this.outcomes = []; //[this.allOutcomeVars[0]];
 		this.gridData = null;
+		this.gridDataAll = null;
 	}
-
-	// addVis = () => {
-	// 	this.initializeOutcomeData(this.outcomes.length)
-	// 	// this.outcomeVars = this.outcomeVars.concat(this.allOutcomeVars[0]); // is "(Intercept)" as default
-	// 	// this.outcomeData = this.outcomeData.concat(null);
-	// 	// this.initializeOutcomeData(this.outcomeData.length-1);
-	// }
-
-	// removeVis = (i) => {
-	// 	this.outcomes.splice(i, 1);
-	// } 
 
 	parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
@@ -302,7 +292,9 @@ class multiverseMatrix {
 	initializeGridData = () => {
 		// creating a shallow copy which is fine for here
 		let parameters = [...Object.keys(this.parameters())];
-		this.gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
+		let g_data = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
+		this.gridData = g_data;
+		this.gridDataAll = g_data;
 	}
 
 	initializeOutcomeData = (join_data = [], exclude_data = [], graph = CDF) => { // change i here
@@ -350,7 +342,6 @@ class multiverseMatrix {
 
 		this.outcomes[i].data = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
-
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
@@ -359,7 +350,7 @@ class multiverseMatrix {
 		let combine = combineJoinOptions(toJoin);
 
 		// deep copy data structures
-		let g_data = JSON.parse(JSON.stringify(this.gridData));
+		let g_data = JSON.parse(JSON.stringify(this.gridDataAll));
 	
 		let combined_options = combine
 					.map( d => d[1].map( j => [d[0], j]) )
@@ -402,11 +393,7 @@ class multiverseMatrix {
 		}
 
 		this.gridData = g_data
-	
-		return g_data;
 	}
-
-
 	
 	updateOutcomeData = (index, term, join_data = [], exclude_data = [], graph = CDF) => {
 		// gets a re-intitialzied version of gridData
@@ -472,6 +459,7 @@ class multiverseMatrix {
 export default multiverseMatrix
 
 /**
+ * function which processes the result of exclusion and combinations of options on outcomes (CDF and estimate); returns the processed outcomeData (CDF) and estimateData (point estimate) objects
  * 
  * @param {object} g_data Multiverse grid data
  * @param {object} o_data Multiverse outcome data
@@ -481,13 +469,14 @@ export default multiverseMatrix
  * @param {object} e_data Estimate data for each of the outcomes
  * 
  * 
- * @return {object} Currently returns o_data... would like to modify to reutrn {o_data, e_data}
- */
+ * @return {object} an object containing processed outcome and estimate data arrays: {o_data, e_data}
+ **/
 export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
 	console.log(o_data)
 	let size = g_data.length;
 	let o_data_processed = o_data
-	let e_data_processed =e_data
+	let e_data_processed = e_data
+	const average = (array) => array.reduce((a, b) => a + b) / array.length;
 	
 	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
@@ -551,20 +540,31 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 				return mod
 			})
 			.map(x => x.map(p => p.flat()))
+
+		e_data_processed = d3.groups(
+			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
+				d => d.group
+			).map(d => d[1].map(x => {
+				delete x.group;
+				return Object.values(x).flat();
+			})).map(x => average(x.flat()));
 	}
 
 	return {e_data_processed, o_data_processed};
 }
 
-
-// function from drawing the decision grid
-export function drawGridNames (gridData, params, yscale, x) {
-	let grid_node = d3.select(".grid");
-
-	drawHeaders(params, grid_node, x);
-	drawCols(gridData, params, grid_node, yscale, x);
-}
-
+/**
+ * function for processing array containing CDF information 
+ * 
+ * @param {object} data Multiverse data containing information about each universe and CDF for each term
+ * @param {string} term Coefficient name
+ * 
+ * @return {array} array of objects in the following format
+ * [
+ *     {cdf.x: [...], cdf.y: [...], estimate: ...}, // corresponds to each universe (or group of universes when joined)
+ *     ...
+ * ]
+ **/
 function formatCDFOutcomeData(data, term){
 	let temp = data.map(function(d) { 
 		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
@@ -574,8 +574,32 @@ function formatCDFOutcomeData(data, term){
 	return temp
 }
 
-function drawHeaders(params, grid_node, xscale) {
-	let plot = grid_node.select("svg");
+
+/**
+ * wrapper function for drawing the:
+ * (1) parameter names of the decision grid
+ * (2) column names of the decision grid
+ * 
+ * @param {object} gridData Multiverse grid data
+ * @param {object of arrays} params Multiverse parameters and corresponding options
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ * @param {function} x A D3 scale definition for x position of each parameter
+ **/
+export function drawGridNames (gridData, params, yscale, x) {
+	drawParameterNames(params, x);
+	drawOptionNames(params, yscale, x);
+}
+
+/**
+ * function for drawing the parameter names of the decision grid
+ * 
+ * @param {object} gridData Multiverse grid data
+ * @param {object of arrays} params Multiverse parameters and corresponding options
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ * @param {function} x A D3 scale definition for x position of each parameter
+ **/
+function drawParameterNames(params, xscale) {
+	let plot = d3.select(".grid").select("svg");
 
 	let options = Object.values(params);
 	let col_idx = [0, ...options.map(d => d.length).map((sum => value => sum += value)(0))];
@@ -602,8 +626,17 @@ function drawHeaders(params, grid_node, xscale) {
 	})
 }
 
-function drawCols(data, params, grid_node, yscale, x1) {
-	let plot = grid_node.select("svg");
+/**
+ * function for drawing the Option names of the decision grid
+ * calls `drawColNames` and `drawColOptions``
+ * 
+ * @param {object} gridData Multiverse grid data
+ * @param {object of arrays} params Multiverse parameters and corresponding options
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ * @param {function} x A D3 scale definition for x position of each parameter
+ **/
+function drawOptionNames(params, yscale, x1) {
+	let plot = d3.select(".grid").select("svg");
 	let parameter_list = Object.entries(params)
 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
 
@@ -636,78 +669,18 @@ function drawCols(data, params, grid_node, yscale, x1) {
 	Object.keys(params).forEach( 
 		(d, i) => {
 			drawColNames(params, d, x2);
-			// drawColOptions(data, params, d, grid_node, yscale, x1, x2);
 	});
 }
 
-export function drawMatrixGrid(data, params, yscale, x1, x2) {
-	let ypos;
-	let plot = d3.select('.grid').select('svg');
-	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
-
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
-
-	let parameterCols = plot.selectAll("g.option-cols")
-		.data(param_names)
-		.join("g")
-		.attr("transform",  (d, i) => `translate(${x1(d)}, ${ypos})`)
-		.attr("class", (d, i) => `parameter-col ${d}`)
-
-	let optionCols = parameterCols.selectAll('g')
-		.data((d, i) => params[d])
-		.join('g')
-		.attr("class", function (d, i) {
-			let parameter = d3.select(this.parentNode).attr('class').split(' ')[1];
-			return `option-value ${parameter} ${d}`
-		})
-		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
-
-	optionCols.each((d, i) => {
-		let optionNodes = d3.select(`g.${d}`)
-			.selectAll(`rect.${d}`)
-			.data(data)
-			.join(
-				enter => enter.append("rect").style('opacity', 1),
-				update => update,
-				exit => exit.remove()
-			)
-			.attr("x", 0)
-			.attr("y", (d, i) => yscale(i) )
-			.attr("width", cell.width)
-			.attr("height", yscale.bandwidth())
-			.attr("class", function(d, i) {
-				let parent_class = d3.select(this.parentNode).attr("class").split(' ');
-				let parameter = parent_class[1];
-				let option = parent_class[2];
-				if (d[parameter].includes(option)) {
-					return `${options_container} ${selected_option} ${option}`
-				}
-				return `${options_container} ${option}`
-			});
-	})
-}
-
-// d3.selection.prototype.moveToFront = function() {
-// 	return this.each(function(){
-// 		this.parentNode.appendChild(this);
-// 	});
-// }
-
-// function position(d, dragging, xscale) {
-// 	var v = dragging[d];
-// 	return v == null ? xscale(d) : v;
-// }
-
-// function dragTransition(g) {
-// 	return g.transition().duration(500);
-// }
-
+/**
+ * function for drawing the Option names of the decision grid
+ * 
+ * @param {object of arrays} params Multiverse parameters and corresponding options
+ * @param {string} param A D3 scale definition for y position of each universe
+ * @param {x2} x A D3 scale definition for x position of each option
+ **/
 function drawColNames(params, param, x2) {
-	let options = params[param]
+	let options = params[param];
 
 	// creates option-join icons
 	d3.select(`g.option-name.${param}`)
@@ -765,7 +738,6 @@ function drawColNames(params, param, x2) {
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
 				options_to_exclude[param].push(d);
-				console.log(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", true)
 				// d3.select('g.${}')
 			} else {
@@ -787,11 +759,63 @@ function drawColNames(params, param, x2) {
 		.text(d => d);
 }
 
+// /**
+//  * function for drawing the Option names of the decision grid
+//  * 
+//  * @param {object of arrays} params Multiverse parameters and corresponding options
+//  * @param {string} param A D3 scale definition for y position of each universe
+//  * @param {x2} x A D3 scale definition for x position of each option
+//  **/
+// function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
+// 	let plot = grid_node.select("svg");
+// 	let options = params[param];
+// 	let ypos;
 
-function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
-	let plot = grid_node.select("svg");
-	let options = params[param];
+// 	if (state_value == 0) {
+// 		ypos = 4 * cell.padding;
+// 	} else {
+// 		ypos = namingDim + 4 * cell.padding;
+// 	}
+
+// 	let optionCell = plot.append("g")
+// 		.attr("class", "option-value")
+// 		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
+// 		.selectAll("g")
+// 		.data(data)
+// 		.join("g")
+// 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
+// 		.attr("class", function (d, i) {
+// 			return d[param].join(" ")
+// 		})
+
+// 	optionCell.selectAll("rect")
+// 		.data(options)
+// 		.join("rect")
+// 		.attr("x", (d, i) => x2(i) )
+// 		.attr("width", cell.width)
+// 		.attr("height", yscale.bandwidth())
+// 		.attr("class", function(d, i) {
+// 			let parent_class = d3.select(this.parentNode).attr("class").split(' ');
+// 			if (parent_class.includes(d)) {
+// 				return `${options_container} ${selected_option} ${d}`
+// 			}
+// 			return `${options_container} ${d}`
+// 		});
+// }
+
+/**
+ * function for drawing the decision grid (indicating the configuration for each universe in the multiverse)
+ * 
+ * @param {object} gridData Multiverse grid data
+ * @param {object of arrays} params Multiverse parameters and corresponding options
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ * @param {function} x1 A D3 scale definition for x position of each parameter
+ * @param {function} x2 A D3 scale definition for x position of each option within each parameter
+ **/
+export function drawMatrixGrid(data, params, yscale, x1, x2) {
 	let ypos;
+	let plot = d3.select('.grid').select('svg');
+	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 
 	if (state_value == 0) {
 		ypos = 4 * cell.padding;
@@ -799,33 +823,68 @@ function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
 		ypos = namingDim + 4 * cell.padding;
 	}
 
-	let optionCell = plot.append("g")
-		.attr("class", "option-value")
-		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
-		.selectAll("g")
-		.data(data)
+	let parameterCols = plot.selectAll("g.option-cols")
+		.data(param_names)
 		.join("g")
-		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
-		.attr("class", function (d, i) {
-			return d[param].join(" ")
-		})
+		.attr("transform",  (d, i) => `translate(${x1(d)}, ${ypos})`)
+		.attr("class", (d, i) => `parameter-col ${d}`)
 
-	optionCell.selectAll("rect")
-		.data(options)
-		.join("rect")
-		.attr("x", (d, i) => x2(i) )
-		.attr("width", cell.width)
-		.attr("height", yscale.bandwidth())
-		.attr("class", function(d, i) {
-			let parent_class = d3.select(this.parentNode).attr("class").split(' ');
-			if (parent_class.includes(d)) {
-				return `${options_container} ${selected_option} ${d}`
-			}
-			return `${options_container} ${d}`
-		});
+	let optionCols = parameterCols.selectAll('g')
+		.data((d, i) => params[d])
+		.join('g')
+		.attr("class", function (d, i) {
+			let parameter = d3.select(this.parentNode).attr('class').split(' ')[1];
+			return `option-value ${parameter} ${d}`
+		})
+		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
+
+	optionCols.each((d, i) => {
+		let optionNodes = d3.select(`g.${d}`)
+			.selectAll(`rect.${d}`)
+			.data(data)
+			.join(
+				enter => enter.append("rect").style('opacity', 1),
+				update => update,
+				exit => exit.remove()
+			)
+			.attr("x", 0)
+			.attr("y", (d, i) => yscale(i) )
+			.attr("width", cell.width)
+			.attr("height", yscale.bandwidth())
+			.attr("class", function(d, i) {
+				let parent_class = d3.select(this.parentNode).attr("class").split(' ');
+				let parameter = parent_class[1];
+				let option = parent_class[2];
+				if (d[parameter].includes(option)) {
+					return `${options_container} ${selected_option} ${option}`
+				}
+				return `${options_container} ${option}`
+			});
+	})
 }
 
-// function from drawing the outcome panel grid
+d3.selection.prototype.moveToFront = function() {
+	return this.each(function(){
+		this.parentNode.appendChild(this);
+	});
+}
+
+function position(d, dragging, xscale) {
+	var v = dragging[d];
+	return v == null ? xscale(d) : v;
+}
+
+function dragTransition(g) {
+	return g.transition().duration(500);
+}
+
+/**
+ * wrapper function for drawing the outcome CDF for (one or more) coefficient(s) per universe
+ * 
+ * @param {array of object} outcomes Each object contains: (1) a field for CDFs, and (2) estimate for each universe
+ * @param {integer} size # of universes in the multiverse
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ **/
 export function drawOutcomes (outcomes, size, yscale) {
 	for (let i in outcomes) {
 		let data = outcomes[i].data;
@@ -834,16 +893,16 @@ export function drawOutcomes (outcomes, size, yscale) {
 	}
 }
 
-// export function drawOutcomes (outcomes, index, size, yscale) {
-// 	let data = outcomes.data;
-// 	let term = outcomes.var;
-
-// 	CDF(data, d3.select('svg#vis-'+index), size, yscale, term);
-// }
-
+/**
+ * function for drawing the outcome CDF for (one or more) coefficient(s) per universe
+ * 
+ * @param {array of arrays} data Contains x, y_lower and y_upper values to draw p-boxes for a coefficient for each universe
+ * @param {integer} i index corresponding to the outcome plot being drawn
+ * @param {integer} size # of universes in the multiverse
+ * @param {function} yscale A D3 scale definition for y position of each universe
+ * @param {string} term Coefficient name
+ **/
 export function CDF (data, i, size, yscale, term) {
-	// console.log(data)
-	// console.trace();
 	let results_plot = d3.select('svg#vis-' + i);
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	let ypos;
@@ -908,6 +967,7 @@ export function CDF (data, i, size, yscale, term) {
 		)
 }
 
+// helper function called by CDF
 function enterCDF(enter, yscale, area) {
 	enter.append('g')
 		.attr("class", (d, i) => `universe universe-${i}`)
@@ -922,6 +982,7 @@ function enterCDF(enter, yscale, area) {
 		)
 }
 
+// helper function called by CDF
 function updateCDF(update, area) {
 	update
 		.call(g => 
@@ -931,6 +992,7 @@ function updateCDF(update, area) {
 	)
 }
 
+// helper function called by CDF
 function exitCDF(exit) {
 	exit.call(g => g.remove())
 }
