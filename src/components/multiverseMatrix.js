@@ -406,8 +406,7 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 	let size = g_data.length;
 	let o_data_processed = o_data
 	let e_data_processed = e_data
-
-	console.log(exclude, g_data);
+	const average = (array) => array.reduce((a, b) => a + b) / array.length;
 	
 	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
@@ -459,6 +458,14 @@ export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude,
 				return mod
 			})
 			.map(x => x.map(p => p.flat()))
+
+		e_data_processed = d3.groups(
+			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
+				d => d.group
+			).map(d => d[1].map(x => {
+				delete x.group;
+				return Object.values(x).flat();
+			})).map(x => average(x.flat()));
 	}
 
 	return {e_data_processed, o_data_processed};
@@ -649,7 +656,6 @@ function drawColNames(params, param, x2) {
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
 				options_to_exclude[param].push(d);
-				// console.log(d);
 				d3.selectAll(`button.join.${d}`).property("disabled", true)
 				// d3.select('g.${}')
 			} else {
