@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, { CI, CDF, drawMatrixGrid, drawGridNames, drawOutcomes, combineJoinOptions } from './components/multiverseMatrix.js';
+	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
@@ -16,8 +16,7 @@
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 
 	let m = new multiverseMatrix(data.default); 
-	let vis = CDF;
-	m.initializeData(vis);
+	m.initializeData();
 	
 	const params = m.parameters();
 
