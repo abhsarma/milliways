@@ -1,9 +1,14 @@
- import { css, cx } from '@emotion/css'
+import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, selected, multi_param, exclude_options, join_options } from './stores.js';
+
+//helpers
+import combineJoinOptions from './helpers/combineJoinOptions'
+import sortByOutcome from './helpers/sortByOutcome.js';
+import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
 
 // CSS Styles
 export const parameters = css`
@@ -91,52 +96,6 @@ function any_common(arr) {
 	return (new_arr);
 }
 
-// console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]))
-
-function _combineJoinOptionsHelper(input) {
-	let dict = {};                                              // (key:value) => (option:index in combined)
-	let combined = [];                                          // holds the arrays of options to be joined (including disregarded ones)
-	for (let [opt1, opt2] of input) {
-		let ind1 = dict[opt1], ind2 = dict[opt2];               // the indices of where the join array is in combined
-		if (opt1 in dict && opt2 in dict) {
-			combined[dict[opt1]].push(...combined[dict[opt2]]); // combine the two arrays (puts all elements of opt2's array into opt1's)
-			for (let opt of combined[dict[opt2]])               // change the index of the elements opt2's array to be the new combined array
-				dict[opt] = dict[opt1];
-		} else if (opt1 in dict) {                              // aka (opt1 in dict && !(opt2 in dict))
-			combined[ind1].push(opt2);                          // put opt2 in the array that opt1 is in
-			dict[opt2] = dict[opt1];                            // add opt2 to the dictionary, set index of opt2 to the index of opt1
-		} else if (opt2 in dict) {                              // aka (opt2 in dict && !(opt1 in dict))
-			combined[ind2].push(opt1);                          // put opt1 in the array that opt2 is in
-			dict[opt1] = dict[opt2];                            // add opt1 to the dictionary, set index of opt1 to the index of opt2
-		} else {
-			combined.push([opt1, opt2]);                        // create a new array with opt1 and opt2
-			dict[opt1] = combined.length-1;                     // set index of opt1 to the new array
-			dict[opt2] = combined.length-1;                     // set index of opt2 to the new array
-		}
-	}
-	let indices = [...new Set(Object.values(dict))];            // to get a unique array of indices
-	let ret = [];                                               // holds the arrays of options to be joined (not including disregarded ones)
-	for (let i of indices) {                                    // places the relevant arrays into ret
-		ret.push(combined[i]);
-	}
-	return ret;
-}
-
-export function combineJoinOptions(input_array) {
-	let arr = JSON.parse(JSON.stringify(input_array));
-	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
-	let new_arr = {};
-	
-	for (let i in params) {
-		let input = arr.filter(d => (d['parameter'] == params[i]))
-						.map(d => d['options']);
-		let output = _combineJoinOptionsHelper(input) // recurseCombine(input);
-		new_arr[params[i]] = output
-	}
-
-	return Object.entries(new_arr);
-}
-
 function which_idx(option_list, curr_options) {
 	return option_list.map((d, i) => {
 		if (curr_options.includes(d)) {
@@ -145,110 +104,6 @@ function which_idx(option_list, curr_options) {
 			return null;
 		}
 	}).filter(i => (i != null))
-}
-
-/**
- * 
- * @param {array} gridData Multiverse grid data
- * @param {array} outcomeData Multiverse outcome data
- * @param {array} estimateData Multiverse estimate data
- * @param {boolean} ascending Boolean for ascending or descending
- * @param {boolean} outcomeIndex Index of the outcome we are sorting on
- * 
- * 
- * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
- */
-function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
-
-	// Definitions
-	// Sorting Factor --> The estimate value of the outcome that we are sorting on
-
-	// Notes
-	// I feel like this can be made significantly more efficient, but as of now it is operational.
-
-	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
-	if (!outcomeData.length){
-		return {gridData, outcomeData, estimateData}
-	}
-
-	// Add the sorting factor (the outcome that we are sorting on) to the gridData
-	let gridDataSortingList = []
-	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
-		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[outcomeIndex][i]})
-	}
-
-	// Add the sorting factor (the outcome that we are sorting on) to each outcome 
-	let outcomeDataSortingList = []
-	for (let i =0; i< outcomeData.length; i++){
-		var list = []
-		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
-			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[i][j], 'sortingFactor': estimateData[outcomeIndex][j]})
-		}
-		outcomeDataSortingList.push(list)
-	}
-
-
-
-
-	// sort each of the outcomes according to the sorting factor
-	for (let i=0; i<outcomeDataSortingList.length; i++){
-		if (ascending) {
-			outcomeDataSortingList[i].sort(function(a, b) {
-				return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
-			})
-		}
-		else {
-			outcomeDataSortingList[i].sort(function(a, b) {
-				return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
-			})
-		}
-		
-	}
-
-	// Sort the grid data according to its sorting factor
-	if (ascending) {
-		gridDataSortingList.sort(function(a, b) {
-			return ((a.sortingFactor < b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
-		});
-	}
-	else {
-		gridDataSortingList.sort(function(a, b) {
-			return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
-		});
-	}
-	
-
-	// Reassign gridData to contain sorted values
-	for (var k = 0; k < gridDataSortingList.length; k++) {
-		gridData[k] = gridDataSortingList[k].gridData;
-	}
-
-	// Reassign outcomeData and estimateData to contain sorted values
-	for (var k = 0; k < outcomeDataSortingList.length; k++) {
-		for (var j = 0; j<outcomeDataSortingList[k].length; j++) {
-			outcomeData[k][j] = outcomeDataSortingList[k][j].outcomeData
-			estimateData[k][j] = outcomeDataSortingList[k][j].estimateData
-		}
-	}
-
-	return {gridData, outcomeData, estimateData}
-}
-
-function sortInGroups(gridData, outcomeData, ascending = false) {
-	let group = new Array(outcomeData.length).fill(0, 0, 70).fill(1, 70, 140).fill(2, 140, 210)
-
-	let o_data = d3.rollups(
-			outcomeData.map((d, i) => ([i, d].flat())), 
-			v => {
-				v[0].shift()
-				return d3.median(v[0], x => ((x[1] + x[2])/2))
-			}, 
-			d => d[0])
-		.map((d, i) => d.concat(group[i]));
-
-	let grouped_data = d3.groups(o_data, d => d[2])
-		.map(d => d[1].sort((a, b) => d3.descending(a[1], b[1])))
-		.flat(1);
 }
 
 class multiverseMatrix {
@@ -449,7 +304,7 @@ class multiverseMatrix {
 		// get the estimate data for the outcomes
 		let estimateData = this.outcomes.map(x => x['estimate'])
 
-		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, true);
+		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, false);
 
 		this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
 
@@ -458,100 +313,6 @@ class multiverseMatrix {
 
 export default multiverseMatrix
 
-/**
- * function which processes the result of exclusion and combinations of options on outcomes (CDF and estimate); returns the processed outcomeData (CDF) and estimateData (point estimate) objects
- * 
- * @param {object} g_data Multiverse grid data
- * @param {object} o_data Multiverse outcome data
- * @param {array} option_list 2D array of parameters and their options
- * @param {object} combine 2D array containing [paramter, [options_to_join]]
- * @param {array} exclude List of objects containing {parameter, option} to exclude
- * @param {object} e_data Estimate data for each of the outcomes
- * 
- * 
- * @return {object} an object containing processed outcome and estimate data arrays: {o_data, e_data}
- **/
-export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
-	console.log(o_data)
-	let size = g_data.length;
-	let o_data_processed = o_data
-	let e_data_processed = e_data
-	const average = (array) => array.reduce((a, b) => a + b) / array.length;
-	
-	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-							.flat()
-							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
-	// if there are any options to exclude
-	if (exclude.length > 0) {
-		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-
-		g_data = g_data.filter( (i, n) => toFilter[n] );
-		o_data_processed = o_data.filter( (i, n) => toFilter[n] );
-		e_data_processed = e_data.filter( (i, n) => toFilter[n] );
-	}
-
-	if (combine.length > 0) {
-		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-							.flat()
-							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-		// 
-		let grouping_vector = g_data.map((d, i) => {
-			let options = Object.values(d).flat();
-			let idx = option_list.map(x => which_idx(x, options)).flat();
-			let g = groups
-				.map(x => {
-					let includes = options.map(d => x['group'].includes(d)) // .reduce((a, b) => (a || b));
-					return [includes.indexOf(true), x['id']];
-				})
-
-			g.forEach(x => {
-				if (x[0] > -1) {
-					idx[x[0]] = size + x[1]
-				}
-			})
-
-			return JSON.stringify(idx);
-		});
-
-		e_data_processed = d3.groups(
-			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-		).map(d => d[1].map(x => {
-			delete x.group;
-			return Object.values(x).flat();
-		}))
-
-		console.log(e_data_processed)
-
-		
-		
-		o_data_processed = d3.groups(
-			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-			).map(d => d[1].map(x => {
-				delete x.group;
-				return Object.values(x).flat();
-			}))
-			.map(x => {
-				let mod = d3.rollups(x.flat(), v => {
-					return [d3.min(v, d => d[1]), d3.max(v, d => d[1])]
-				}, d => d[0]);
-				return mod
-			})
-			.map(x => x.map(p => p.flat()))
-
-		e_data_processed = d3.groups(
-			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-			).map(d => d[1].map(x => {
-				delete x.group;
-				return Object.values(x).flat();
-			})).map(x => average(x.flat()));
-	}
-
-	return {e_data_processed, o_data_processed};
-}
 
 /**
  * function for processing array containing CDF information 
