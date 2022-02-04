@@ -88,7 +88,6 @@ function any_common(arr) {
 	let new_arr = arr.forEach((d, i) => {
 		let new_arr = [...arr];
 		let common = new_arr.splice(i, 1).map(x => d.map(item => x.includes(item))).reduce((a, b) => (a||b))
-		console.log(common)
 		return common
 	})
 
@@ -299,11 +298,10 @@ class multiverseMatrix {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
 		}		
 	
-		console.log(this.outcomes)
 		let outcomeData = this.outcomes.map(x => x['data'])
 		// get the estimate data for the outcomes
 		let estimateData = this.outcomes.map(x => x['estimate'])
-
+			
 		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, false);
 
 		this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data

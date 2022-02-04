@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-function which_idx(option_list, curr_options) {
+function which_option_index(option_list, curr_options) {
 	return option_list.map((d, i) => {
 		if (curr_options.includes(d)) {
 			return i;
@@ -25,7 +25,6 @@ function which_idx(option_list, curr_options) {
  * @return {object} an object containing processed outcome and estimate data arrays: {o_data, e_data}
  **/
 function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
-	console.log(o_data)
 	let size = g_data.length;
 	let o_data_processed = o_data
 	let e_data_processed = e_data
@@ -51,7 +50,7 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 		// 
 		let grouping_vector = g_data.map((d, i) => {
 			let options = Object.values(d).flat();
-			let idx = option_list.map(x => which_idx(x, options)).flat();
+			let idx = option_list.map(x => which_option_index(x, options)).flat();
 			let g = groups
 				.map(x => {
 					let includes = options.map(d => x['group'].includes(d)) // .reduce((a, b) => (a || b));
@@ -66,18 +65,6 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 
 			return JSON.stringify(idx);
 		});
-
-		e_data_processed = d3.groups(
-			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-		).map(d => d[1].map(x => {
-			delete x.group;
-			return Object.values(x).flat();
-		}))
-
-		console.log(e_data_processed)
-
-		
 		
 		o_data_processed = d3.groups(
 			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
