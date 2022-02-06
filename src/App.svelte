@@ -15,6 +15,9 @@
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 
+	let dragging = {};
+	let trigger;
+
 	let m = new multiverseMatrix(data.default); 
 	m.initializeData();
 	
@@ -25,6 +28,11 @@
 	const windowHeight = (window.innerHeight - 170) + "px";
 	// const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
+
+	let order = {
+		name: d3.range(cols).sort(function(a, b) { return a - b; })
+  	};
+
 	const accum_options = Object.values(params).map( d => d.length )
 		.reduce( (acc, val, index) => {
 			if (index > 0) {
@@ -47,7 +55,7 @@
 		.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
 		.padding(0.1);
 
-	$: x_params = d3.scaleOrdinal()
+	const x_scale_params = d3.scaleOrdinal()
 		.domain(Object.keys(params))
 		.range(
 			accum_options.reduce((a, v, i, arr) => {
@@ -61,10 +69,13 @@
 			}, [])
 		)
 
-	$: colWidth = d3.max(Object.values(params).map(d => d.length)) * (cell.width + cell.padding);
-	$: x_options = d3.scaleBand()
-		.domain(d3.range(d3.max(Object.values(params).map(d => d.length))))
-		.range( [0, colWidth] );
+	const colWidth = d3.max(Object.values(params).map(d => d.length)) * (cell.width + cell.padding);
+	const x_scale_options = {}
+	Object.keys(params).forEach(function(d, i) {
+		x_scale_options[d] = d3.scaleBand()
+								.domain( d3.range(d3.max(Object.values(params).map(d => d.length))) )
+								.range( [0, colWidth] );
+	})
 
 	$: drawOutcomes(m.outcomes, m.size, y);
 	$: update(options_to_join, options_to_exclude);
@@ -72,9 +83,13 @@
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
-		drawGridNames(m.gridData, m.parameters(), y, x_params);
-		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options)
-		// drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x2)
+		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
+
+		// console.log(x_scale_params(Object.keys(params)[1]), x_scale_params(Object.keys(params)[2]), x_scale_params(Object.keys(params)[3]))
+
+		d3.selectAll(".option-value").call(drag);
+		// drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params, x2)
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -94,15 +109,68 @@
 			}
 			isSyncingRightScroll = false;
 		}
+
 	});
 
 	function update(join, exclude) {
 		// call updateHandler
 		m.updateHandler(join, exclude)
 
-		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options);
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 
 		drawOutcomes(m.outcomes, m.size, y);
+	}
+
+	let drag = d3.drag()
+		.subject(function(event, d) {
+			return {x: x_scale_params(d[0].parameter) + x_scale_options[d[0].parameter](d[0].index)}
+			// return {x: x(d[0].x)}; 
+		})
+		.on("start", function(event, d) {
+			trigger = event.sourceEvent.target.className.split(" ")[0];
+
+			if (trigger == "option-label") {
+				dragging[d[0].index] = x_scale_options[d[0].parameter](d[0].index);
+
+				// Move the column that is moving on the front
+				let sel = d3.select(this);
+				sel.moveToFront();
+			}
+		})
+		.on("drag", function(event, d) {
+			if (trigger == "option-label") {
+				dragging[d[0].index] = Math.min(
+					x_scale_options[d[0].parameter].range()[1] + x_scale_options[d[0].parameter].bandwidth(),
+					Math.max(-x_scale_options[d[0].parameter].bandwidth(), (event.x - x_scale_params(d[0].parameter)))
+				);
+
+				order.name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
+				x_scale_options[d[0].parameter].domain(order.name);
+
+				d3.selectAll(`g.option-value.${d[0].parameter}`).attr("transform", function(d, i) { 
+					return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
+				});
+			}
+		})
+		.on("end", function(event, d) {
+			delete dragging[d[0].index];
+			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
+		});
+
+	d3.selection.prototype.moveToFront = function() {
+		return this.each(function(){
+			this.parentNode.appendChild(this);
+		});
+	}
+
+	function cPosition(p, d) {
+	  	var v = dragging[d];
+	  	console.log(v, x_scale_options[p](d));
+	  	return v == null ? x_scale_options[p](d) : v;
+	}
+
+	function transition(g) {
+	  	return g.transition().duration(500);
 	}
 </script>
 

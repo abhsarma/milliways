@@ -505,7 +505,7 @@ function formatCDFOutcomeData(data, term){
  **/
 export function drawGridNames (gridData, params, yscale, x) {
 	drawParameterNames(params, x);
-	drawOptionNames(params, yscale, x);
+	drawColNames(params, yscale, x);
 }
 
 /**
@@ -546,123 +546,104 @@ function drawParameterNames(params, xscale) {
 
 /**
  * function for drawing the Option names of the decision grid
- * calls `drawColNames` and `drawColOptions``
  * 
- * @param {object} gridData Multiverse grid data
  * @param {object of arrays} params Multiverse parameters and corresponding options
  * @param {function} yscale A D3 scale definition for y position of each universe
  * @param {function} x A D3 scale definition for x position of each parameter
  **/
-function drawOptionNames(params, yscale, x1) {
-	let plot = d3.select(".grid").select("svg");
+function drawColNames(params, y, x1) {
+	let plot = d3.select('.grid').select('svg');
+	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
+	let ypos = 4 * cell.padding;
 	let parameter_list = Object.entries(params)
 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
 
-	let optionContainer = plot.append("g")
-		.attr("class", "parameter-options")
-		.selectAll("g")
-		.data(parameter_list)
-		.join("g")
-		.attr("class", d => `option-name ${d.parameter}`)
-		.attr( "transform", d => `translate(${x1(d.parameter)}, ${yscale(0)})`)
-		.attr("text-anchor", "end")
-
-	// let parameter_name = Object.keys(params)[col];
 	let options = parameter_list.map(d => d.options);
-	let col_idx = [0, ...options.map(d => d.length).map((sum => value => sum += value)(0))];
 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-	let ypos;
-
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
 
 	let x2 = d3.scaleBand()
 		.domain(d3.range(d3.max(options.map(d => d.length))))
 		.range( [0, colWidth] );
 
+	let parameterCols = plot.selectAll("g.parameter-col")
+		.data(param_names)
+		.join("g")
+		.attr("transform",  (d, i) => `translate(${x1(d)}, ${y(0)})`)
+		.attr("class", (d, i) => `parameter-col ${d}`)
+		// .attr( "transform", d => `translate(${x1(d.parameter)}, ${y(0)})`)
+		// .attr("text-anchor", "end");
 
-	Object.keys(params).forEach( 
-		(d, i) => {
-			drawColNames(params, d, x2);
-	});
-}
-
-/**
- * function for drawing the Option names of the decision grid
- * 
- * @param {object of arrays} params Multiverse parameters and corresponding options
- * @param {string} param A D3 scale definition for y position of each universe
- * @param {x2} x A D3 scale definition for x position of each option
- **/
-function drawColNames(params, param, x2) {
-	let options = params[param];
-
-	// creates option-join icons
-	d3.select(`g.option-name.${param}`)
-		.selectAll("text")
-		.data(d => options.slice(0, -1))
+	parameterCols.selectAll("g.join-options")
+		.data((d, i) => options[i].slice(0, -1))
 		.join("foreignObject")
 		.attr("class", (d, i) => `option-join ${d}`)
 		.attr("width", 2*iconSize + "px" )
 		.attr("height", 2*iconSize + "px")
 		.attr("x", (d, i) => (x2(i) + x2(i+1))/2)
 		.each(function(d, i) {
-			let node = d3.select(this).node()
+			let node = d3.select(this).node();
+			let parent_class = d3.select(this.parentNode).attr('class').split(' ');
+			let parameter = parent_class[1];
+			let option_set = params[parameter];
 
 			const optionJoin = new OptionJoin({ 
 				target: node,
 				props: {
-					option1: options[i],
-					option2: options[i+1]
+					option1: option_set[i],
+					option2: option_set[i+1]
 				}
 			})
 
 			optionJoin.$on('message', event => {
-				let option_pair = [options[i], options[i+1]];
+				let option_pair = [option_set[i], option_set[i+1]];
 				if (event.detail.text) {
-					options_to_join.push({'parameter': param, 'options': option_pair});
+					options_to_join.push({'parameter': parameter, 'options': option_pair});
 				} else {
 					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
 				}
 				join_options.update(arr => arr = options_to_join);
-				// m_obj.update(options_to_join, options_to_exclude, results_node, grid_node, vis_type, yscale, x1);
 			})
 		});
 
-	// creates option-name text and option-exclude icons
-	let optionNames = d3.select(`g.option-name.${param}`)
-		.selectAll("text")
-		.data(options)
-		.join("foreignObject")
+	let optionCols = parameterCols.selectAll('g')
+		.data( (d, i) => (params[d].map((j, k) => [{parameter: d, option: j, index: k}])) )
+		.join('g')
+		.attr("class", function (d, i) {
+			return `option-value ${d[0].parameter} ${d[0].option}`
+		})
+		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
+
+	let optionNames = optionCols
+		.append("foreignObject")
 		.attr("width", cell.width + cell.padding + "px" )
 		.attr("height", namingDim + "px")
-		.attr("x", (d, i) => x2(i) )
+		.attr("x", (d, i) => 0 )
 		.attr("y", iconSize + cell.padding + "px")
-		.attr("class", (d, i) => `option-name ${d}`)
+		.attr("class", (d, i) => `option-name ${d[0].option}`)
 
+	// creates option-exclude icon
 	optionNames.each(function(d, i) {
-		let node = d3.select(`foreignObject.option-name.${d}`).node();
+		let node = d3.select(`foreignObject.option-name.${d[0].option}`).node();
+		let parameter = d[0].parameter;
+		let option = d[0].option;
 
 		const optionSwitch = new OptionToggle({ 
 			target: node,
 			props: {
-				option: d
+				option: option
 			}
 		});
 
 		optionSwitch.$on('message', event => {
 			if (!event.detail.text) {
-				options_to_exclude[param].push(d);
-				d3.selectAll(`button.join.${d}`).property("disabled", true)
+				options_to_exclude[parameter].push(option);
+				d3.selectAll(`button.join.${option}`).property("disabled", true)
 				// d3.select('g.${}')
 			} else {
-				let index = options_to_exclude[param].indexOf(d);
-				d3.selectAll(`button.join.${d}`).property("disabled", false)
+				let index = options_to_exclude[parameter].indexOf(option);
+				d3.selectAll(`button.join.${option}`).property("disabled", false)
 				if (index > -1) {
-					options_to_exclude[param].splice(index, 1);
+					options_to_exclude[parameter].splice(index, 1);
 				} else {
 					console.log("error option index not found");
 				}
@@ -672,54 +653,11 @@ function drawColNames(params, param, x2) {
 		})
 	})
 
+	// creates option-name text label
 	optionNames.append("xhtml:div")
-		.attr("class", (d, i) => `option-label ${option_names} ${d}`)
-		.text(d => d);
+		.attr("class", (d, i) => `option-label ${option_names} ${d[0].option}`)
+		.text(d => d[0].option);
 }
-
-// /**
-//  * function for drawing the Option names of the decision grid
-//  * 
-//  * @param {object of arrays} params Multiverse parameters and corresponding options
-//  * @param {string} param A D3 scale definition for y position of each universe
-//  * @param {x2} x A D3 scale definition for x position of each option
-//  **/
-// function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
-// 	let plot = grid_node.select("svg");
-// 	let options = params[param];
-// 	let ypos;
-
-// 	if (state_value == 0) {
-// 		ypos = 4 * cell.padding;
-// 	} else {
-// 		ypos = namingDim + 4 * cell.padding;
-// 	}
-
-// 	let optionCell = plot.append("g")
-// 		.attr("class", "option-value")
-// 		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
-// 		.selectAll("g")
-// 		.data(data)
-// 		.join("g")
-// 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
-// 		.attr("class", function (d, i) {
-// 			return d[param].join(" ")
-// 		})
-
-// 	optionCell.selectAll("rect")
-// 		.data(options)
-// 		.join("rect")
-// 		.attr("x", (d, i) => x2(i) )
-// 		.attr("width", cell.width)
-// 		.attr("height", yscale.bandwidth())
-// 		.attr("class", function(d, i) {
-// 			let parent_class = d3.select(this.parentNode).attr("class").split(' ');
-// 			if (parent_class.includes(d)) {
-// 				return `${options_container} ${selected_option} ${d}`
-// 			}
-// 			return `${options_container} ${d}`
-// 		});
-// }
 
 /**
  * function for drawing the decision grid (indicating the configuration for each universe in the multiverse)
@@ -730,35 +668,20 @@ function drawColNames(params, param, x2) {
  * @param {function} x1 A D3 scale definition for x position of each parameter
  * @param {function} x2 A D3 scale definition for x position of each option within each parameter
  **/
-export function drawMatrixGrid(data, params, yscale, x1, x2) {
-	let ypos;
+export function drawMatrixGrid(data, params, yscale, x1) {
 	let plot = d3.select('.grid').select('svg');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
-
-	let parameterCols = plot.selectAll("g.option-cols")
-		.data(param_names)
-		.join("g")
-		.attr("transform",  (d, i) => `translate(${x1(d)}, ${ypos})`)
-		.attr("class", (d, i) => `parameter-col ${d}`)
-
-	let optionCols = parameterCols.selectAll('g')
-		.data((d, i) => params[d])
-		.join('g')
-		.attr("class", function (d, i) {
-			let parameter = d3.select(this.parentNode).attr('class').split(' ')[1];
-			return `option-value ${parameter} ${d}`
-		})
-		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
+	let optionCols = d3.selectAll(`g.parameter-col`).selectAll(`g.option-value`)
 
 	optionCols.each((d, i) => {
-		let optionNodes = d3.select(`g.${d}`)
-			.selectAll(`rect.${d}`)
+		let parameter = d[0].parameter;
+		let option = d[0].option;
+
+		let optionNodes = d3.select(`g.${option}`)
+			// .append('g')
+			// .attr('transform', `translate(0, ${namingDim - (iconSize + cell.padding)})`)
+			.selectAll(`rect.${option}`)
 			.data(data)
 			.join(
 				enter => enter.append("rect").style('opacity', 1),
@@ -766,34 +689,16 @@ export function drawMatrixGrid(data, params, yscale, x1, x2) {
 				exit => exit.remove()
 			)
 			.attr("x", 0)
-			.attr("y", (d, i) => yscale(i) )
+			.attr("y", (d, i) => yscale(i) + namingDim - (iconSize + cell.padding) )
 			.attr("width", cell.width)
 			.attr("height", yscale.bandwidth())
 			.attr("class", function(d, i) {
-				let parent_class = d3.select(this.parentNode).attr("class").split(' ');
-				let parameter = parent_class[1];
-				let option = parent_class[2];
 				if (d[parameter].includes(option)) {
 					return `${options_container} ${selected_option} ${option}`
 				}
 				return `${options_container} ${option}`
 			});
 	})
-}
-
-d3.selection.prototype.moveToFront = function() {
-	return this.each(function(){
-		this.parentNode.appendChild(this);
-	});
-}
-
-function position(d, dragging, xscale) {
-	var v = dragging[d];
-	return v == null ? xscale(d) : v;
-}
-
-function dragTransition(g) {
-	return g.transition().duration(500);
 }
 
 /**
