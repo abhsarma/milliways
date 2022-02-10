@@ -2,7 +2,7 @@
 	import 'bootstrap-grid/dist/grid.min.css';
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data2.json';
+	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-button.svelte'
@@ -103,6 +103,10 @@
 
 		drawOutcomes(outcomes, size, y);
 	}
+
+	function sortDirecitonCallback(event){
+		m.sortIndex = event.detail
+	}
 </script>
 
 <style>
@@ -176,8 +180,6 @@
 	}
 </style>
 
-<!-- <div bind:this={el} class="chart"></div> -->
-
 <main>
 	<div id="leftDiv"></div>
 	<div class = "container">
@@ -199,12 +201,17 @@
 		<div class="vis-container" style="height: {windowHeight};">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
-					i              = {i}
-					allOutcomeVars = {m.allOutcomeVars}
-					bind:w         = {w1}
-					bind:h         = {h}
-					bind:term      = {outcome.var}
-					on:change	   = {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
+					i              		= {i}
+					allOutcomeVars 		= {m.allOutcomeVars}
+					bind:w         		= {w1}
+					bind:h         		= {h}
+					bind:term      		= {outcome.var}
+					bind:sortIndex 		= {m.sortIndex}
+					bind:sortAscending 	= {m.sortAscending}
+					on:change	   		= {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
+					on:setSortIndex 	= {sortDirecitonCallback}
+					on:changeSortDirection = {() => {m.sortAscending = !m.sortAscending}}
+					on:remove			= {(m.outcomes.splice(i,1))}
 				/>
 			{/each}
 		</div>

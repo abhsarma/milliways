@@ -117,6 +117,10 @@ class multiverseMatrix {
 		this.outcomes = []; //[this.allOutcomeVars[0]];
 		this.gridData = null;
 		this.gridDataAll = null;
+
+		// sorting index, initialized to -1 to indicate no default sort
+		this.sortIndex = -1;
+		this.sortAscending = true; 
 	}
 
 	parameters = () => {
@@ -301,11 +305,11 @@ class multiverseMatrix {
 		let outcomeData = this.outcomes.map(x => x['data'])
 		// get the estimate data for the outcomes
 		let estimateData = this.outcomes.map(x => x['estimate'])
-			
-		const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, false);
-
-		this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
-
+		
+		if (this.sortIndex!=-1){
+			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
+		}
 	}
 }
 
