@@ -8,6 +8,7 @@ import { state, selected, multi_param, exclude_options, join_options } from './s
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
 import sortByOutcome from './helpers/sortByOutcome.js';
+import HeirarchalSort from './helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
 
 // CSS Styles
@@ -124,9 +125,11 @@ class multiverseMatrix {
 	}
 
 	parameters = () => {
+
 		// get the parameters from the first row as this is a rectangular dataset
 		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
+
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -310,6 +313,9 @@ class multiverseMatrix {
 			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
 			this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
 		}
+
+		var HS = new HeirarchalSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
+		console.log(HS.test_sort_order)
 	}
 }
 

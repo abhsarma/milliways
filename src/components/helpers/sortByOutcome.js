@@ -34,6 +34,8 @@
 		outcomeDataSortingList.push(list)
 	}
 
+	console.log(estimateData)
+
 
 
 
