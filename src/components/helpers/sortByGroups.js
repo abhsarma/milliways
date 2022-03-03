@@ -1,3 +1,5 @@
+import { children } from "svelte/internal"
+
 /**
  * 
  * @param {array} gridData Multiverse grid data
@@ -17,32 +19,51 @@ class HeirarchalSort {
         this.estimateData = estimateData
         this.ascending = ascending
         this.parameters = Object.entries(parameters).map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
-        this.test_sort_order = ['certainty']
+        this.currentPartitions = []
         this.outcomeIndex = outcomeIndex // the index of the outcome we are currently sorting on, dafualts to panel 1
 
-        // -- LOGS -- //
-        console.log("Parameters")
-        console.log(this.parameters)
+        // // -- LOGS -- //
+        // console.log("Parameters")
+        // console.log(this.parameters)
 
-        console.log("Grid Data")
-        console.log(this.gridData)
+        // console.log("Grid Data")
+        // console.log(this.gridData)
         
-        console.log("Estimate Data")
-        console.log(this.estimateData)
+        // console.log("Estimate Data")
+        // console.log(this.estimateData)
 
-        console.log("Outcome Data")
-        console.log(this.outcomeData)
+        // console.log("Outcome Data")
+        // console.log(this.outcomeData)
 
-        this.PartitionOnParameter('certainty', this.gridData, this.outcomeData, this.estimateData)
         
     }
 
-    getCurrentSortOrder = () => {
-        return this.test_sort_order;
+
+    ParitionOnParameter = (parameter) => {        
+        if (this.currentPartitions.length == 0){ // if this is the first partition we are making
+            var partitionChildren = this.PartitionHelper(parameter, this.gridData, this.outcomeData, this.estimateData)
+            this.currentPartitions.push(parameter)
+            this.root['partitionParameter'] = parameter
+            this.root.children = partitionChildren
+            console.log(this.root)
+        }
+        else if (this.currentPartitions.length == 1){
+            this.root.children.forEach(child => {
+                child.children = this.PartitionHelper(parameter, child.g_dat, child.o_dat, child.e_dat)
+                this.currentPartitions.push(parameter)
+                child['partitionParameter'] = parameter
+                delete child.g_dat
+                delete child.o_dat
+                delete child.e_dat
+            });
+        }
+        console.log(this.root)
     }
+
+
 
     // function takes in a parameter, and splits a group of grid data into n sub categories
-    PartitionOnParameter = (partitionParameter, g_dat, o_dat, e_dat) => {
+    PartitionHelper = (partitionParameter, g_dat, o_dat, e_dat) => {
         // if the parameter is not  aparameter in this universe
        var parameterOptions;
        this.parameters.forEach(p => {
@@ -58,7 +79,6 @@ class HeirarchalSort {
        parameterOptions.forEach((option) => {
            // initialize child node
             var childNode = {
-                partitionParameter: partitionParameter,
                 parameterOption: option,
                 estimate: null,
             }
@@ -111,8 +131,9 @@ class HeirarchalSort {
             children.push(childNode)
        })
 
-       console.log('----- CHILDREN ----')
-       console.log(children)
+    //    console.log('----- CHILDREN ----')
+    //    console.log(children)
+       return children
     }
 
 }

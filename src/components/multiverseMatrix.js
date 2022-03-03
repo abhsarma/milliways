@@ -315,7 +315,9 @@ class multiverseMatrix {
 		}
 
 		var HS = new HeirarchalSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
-		console.log(HS.test_sort_order)
+		HS.ParitionOnParameter('certainty')
+		HS.ParitionOnParameter('cycle_length')
+
 	}
 }
 
