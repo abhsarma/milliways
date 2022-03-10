@@ -1,3 +1,5 @@
+import sortByOutcome from "./sortByOutcome"
+
 /**
  * 
  * @param {array} gridData Multiverse grid data
@@ -43,7 +45,7 @@ class HeirarchalSort {
     }
 
     // this function constructs the tree
-    PartitionOnParameters = (parameterPartitions, node = this.root, ) => {
+    CreateSortingTree = (parameterPartitions, node = this.root, ) => {
 
         // if we have already executed all partitions, return
         if (parameterPartitions.length == 0) {
@@ -52,26 +54,26 @@ class HeirarchalSort {
 
         // gather the data from the node
         const {g_dat, o_dat, e_dat} = node;
-
-        console.log(parameterPartitions)
-        console.log()
         
         // exectue the parititon on the node's children
         const partitionParameter = parameterPartitions.shift()
         node['partitionParameter'] = partitionParameter
 
         const partitionChildren = this.PartitionHelper(partitionParameter, g_dat, o_dat, e_dat)
-        console.log('CHILDREN')
-        console.log(partitionChildren)
 
         node.children = partitionChildren
 
         node.children = node.children.map((childNode) => {
-            return this.PartitionOnParameters(parameterPartitions, childNode)
-            // console.log(temp)
+            return this.CreateSortingTree(parameterPartitions, childNode)
         })
  
         return node
+    }
+
+    ReconstructGridData = () => {
+        // stack data structure
+        // keep putting nodes on the stack in order of estimate until we get to the leaf
+        // proceed to pop and reconstruct the gridData 
     }
 
     // function takes in a parameter, and splits a group of grid data into n sub categories

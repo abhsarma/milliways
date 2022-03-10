@@ -315,7 +315,7 @@ class multiverseMatrix {
 		}
 
 		var HS = new HeirarchalSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
-		HS.PartitionOnParameters(['certainty', 'cycle_length', 'menstrual_calculation'])
+		HS.CreateSortingTree(['certainty', 'cycle_length', 'menstrual_calculation'])
 		console.log(HS.root)
 		// HS.ParitionOnParameter('certainty')
 		// HS.ParitionOnParameter('cycle_length')
