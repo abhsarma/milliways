@@ -1,11 +1,10 @@
-import { children } from "svelte/internal"
-
 /**
  * 
  * @param {array} gridData Multiverse grid data
  * @param {array} outcomeData Multiverse outcome data
  * @param {array} estimateData Multiverse estimate data
  * @param {boolean} ascending Boolean for ascending or descending
+ * @param {array} parameters the list of parameters
  * @param {boolean} outcomeIndex Index of the outcome we are sorting on
  * 
  * 
@@ -13,12 +12,19 @@ import { children } from "svelte/internal"
  */
 class HeirarchalSort {
     constructor(gridData, outcomeData, estimateData, ascending, parameters, outcomeIndex=0){
-        this.root = {}
+        this.root = {
+            e_dat: estimateData,
+            o_dat: outcomeData,
+            g_dat: gridData
+        }
+
         this.gridData = gridData
         this.outcomeData = outcomeData
         this.estimateData = estimateData
         this.ascending = ascending
+        
         this.parameters = Object.entries(parameters).map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
+
         this.currentPartitions = []
         this.outcomeIndex = outcomeIndex // the index of the outcome we are currently sorting on, dafualts to panel 1
 
@@ -34,33 +40,39 @@ class HeirarchalSort {
 
         // console.log("Outcome Data")
         // console.log(this.outcomeData)
+    }
 
+    // this function constructs the tree
+    PartitionOnParameters = (parameterPartitions, node = this.root, ) => {
+
+        // if we have already executed all partitions, return
+        if (parameterPartitions.length == 0) {
+            return node;
+        }
+
+        // gather the data from the node
+        const {g_dat, o_dat, e_dat} = node;
+
+        console.log(parameterPartitions)
+        console.log()
         
+        // exectue the parititon on the node's children
+        const partitionParameter = parameterPartitions.shift()
+        node['partitionParameter'] = partitionParameter
+
+        const partitionChildren = this.PartitionHelper(partitionParameter, g_dat, o_dat, e_dat)
+        console.log('CHILDREN')
+        console.log(partitionChildren)
+
+        node.children = partitionChildren
+
+        node.children = node.children.map((childNode) => {
+            return this.PartitionOnParameters(parameterPartitions, childNode)
+            // console.log(temp)
+        })
+ 
+        return node
     }
-
-
-    ParitionOnParameter = (parameter) => {        
-        if (this.currentPartitions.length == 0){ // if this is the first partition we are making
-            var partitionChildren = this.PartitionHelper(parameter, this.gridData, this.outcomeData, this.estimateData)
-            this.currentPartitions.push(parameter)
-            this.root['partitionParameter'] = parameter
-            this.root.children = partitionChildren
-            console.log(this.root)
-        }
-        else if (this.currentPartitions.length == 1){
-            this.root.children.forEach(child => {
-                child.children = this.PartitionHelper(parameter, child.g_dat, child.o_dat, child.e_dat)
-                this.currentPartitions.push(parameter)
-                child['partitionParameter'] = parameter
-                delete child.g_dat
-                delete child.o_dat
-                delete child.e_dat
-            });
-        }
-        console.log(this.root)
-    }
-
-
 
     // function takes in a parameter, and splits a group of grid data into n sub categories
     PartitionHelper = (partitionParameter, g_dat, o_dat, e_dat) => {
