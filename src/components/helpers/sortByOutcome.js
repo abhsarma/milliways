@@ -34,11 +34,6 @@
 		outcomeDataSortingList.push(list)
 	}
 
-	console.log(estimateData)
-
-
-
-
 	// sort each of the outcomes according to the sorting factor
 	for (let i=0; i<outcomeDataSortingList.length; i++){
 		if (ascending) {

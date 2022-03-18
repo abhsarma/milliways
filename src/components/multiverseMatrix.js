@@ -309,17 +309,16 @@ class multiverseMatrix {
 		// get the estimate data for the outcomes
 		let estimateData = this.outcomes.map(x => x['estimate'])
 		
-		if (this.sortIndex!=-1){
-			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
-			this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
-		}
+		// if (this.sortIndex!=-1){
+		// 	const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+		// 	this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
+		// }
 
 		var HS = new HeirarchalSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
-		HS.CreateSortingTree(['certainty', 'cycle_length', 'menstrual_calculation'])
-		console.log(HS.root)
-		// HS.ParitionOnParameter('certainty')
-		// HS.ParitionOnParameter('cycle_length')
-
+		HS.CreateSortingTree(['certainty'])
+		// HS.CreateSortingTree(['certainty', 'cycle_length'])
+		const {g_dat, o_dat, e_dat} = HS.ReconstructGridData()
+		this.gridData, this.outcomes, this.estimateData = g_dat, o_dat, e_dat
 	}
 }
 

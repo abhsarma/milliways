@@ -10,7 +10,7 @@ import sortByOutcome from "./sortByOutcome"
  * @param {boolean} outcomeIndex Index of the outcome we are sorting on
  * 
  * 
- * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
+ * @return {any}
  */
 class HeirarchalSort {
     constructor(gridData, outcomeData, estimateData, ascending, parameters, outcomeIndex=0){
@@ -45,7 +45,7 @@ class HeirarchalSort {
     }
 
     // this function constructs the tree
-    CreateSortingTree = (parameterPartitions, node = this.root, ) => {
+    CreateSortingTree = (parameterPartitions, node = this.root) => {
 
         // if we have already executed all partitions, return
         if (parameterPartitions.length == 0) {
@@ -71,14 +71,67 @@ class HeirarchalSort {
     }
 
     ReconstructGridData = () => {
-        // stack data structure
-        // keep putting nodes on the stack in order of estimate until we get to the leaf
-        // proceed to pop and reconstruct the gridData 
+        // dfs initialization
+        var stack = []
+        stack.push(this.root)
+        var currNode
+        var ascending = this.ascending;
+        var iteration = 0
+
+        // new data
+        var g_dat = [];
+        var o_dat = this.outcomeData.map(o => []);
+        var e_dat = this.estimateData.map(e => []);;
+        
+        // while there are nodes left for us to process
+        while (stack.length){
+            // LOGS
+            console.log("ITERATION ", iteration)
+
+            // console.log("Grid Data")
+            // console.log(g_dat)
+        
+            // console.log("Estimate Data")
+            // console.log(e_dat)
+
+            // console.log("Outomce Data")
+            // console.log(o_dat)
+            
+            // get the node at the top of the stack
+            currNode = stack.shift()
+            // case 1 it is a parent node
+            if (currNode.children){
+                // organize the children in descending fashion
+                var sortedChildren = currNode.children.sort((a, b) => a.estimate > b.estimate ? -1 : 1)
+
+                // if ascending, flip the order of the child nodes
+                if (ascending){
+                    sortedChildren = sortedChildren.reverse();
+                }
+                // add the children to the stack
+                stack = stack.concat(sortedChildren)
+            } else { // case 2 it is a child node
+                const {gridData, outcomeData, estimateData} = sortByOutcome(currNode.g_dat, currNode.o_dat, currNode.e_dat, ascending, this.outcomeIndex);
+                // concat the grid Darta
+                g_dat = g_dat.concat(gridData)
+                // concat the outcomeData
+                o_dat = outcomeData.map((outcomeArray, index) => {
+                    return o_dat[index].concat(outcomeArray)
+                })
+                // concat the estimateData
+                e_dat = estimateData.map((estimateArray, index) => {
+                    return e_dat[index].concat(estimateArray)
+                })
+                console.log(g_dat, o_dat, e_dat)
+            }
+            iteration +=1
+        }
+        return {g_dat, o_dat, e_dat}
     }
 
     // function takes in a parameter, and splits a group of grid data into n sub categories
     PartitionHelper = (partitionParameter, g_dat, o_dat, e_dat) => {
-        // if the parameter is not  aparameter in this universe
+        // if the parameter is not a parameter in this universe
        var parameterOptions;
        this.parameters.forEach(p => {
            if (p.parameter == partitionParameter) {
@@ -129,7 +182,7 @@ class HeirarchalSort {
             // console.log(childOutcomeData)
 
             
-            // aggregate estiamte data 
+            // aggregate estimate data 
             var total = 0;
             var count = 0;
 
