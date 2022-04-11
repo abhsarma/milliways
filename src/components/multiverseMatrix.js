@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
-import { state, selected, multi_param, exclude_options, join_options } from './stores.js';
+import { state, selected, multi_param, exclude_options, join_options, option_order_scale } from './stores.js';
 
 // CSS Styles
 export const parameters = css`
@@ -50,6 +50,7 @@ let selected_value;
 let selected_parameters;
 let options_to_exclude;
 let options_to_join;
+let x_scale_options;
 let vis_type = CDF;
 
 state.subscribe(value => {
@@ -63,6 +64,8 @@ multi_param.subscribe(value => {
 });
 exclude_options.subscribe(value => options_to_exclude = value);
 join_options.subscribe(value => options_to_join = value);
+option_order_scale.subscribe(value => x_scale_options = value);
+
 
 // Event handler functions 
 function handleMouseenter(event, d) {
@@ -351,7 +354,6 @@ class multiverseMatrix {
 					.map( i => ({"parameter": i[0], "option": i[1]}) );
 		let combine = combineJoinOptions(toJoin);
 
-
 		let size = g_data.length;
 
 		// we need to update the term and the associated data for creating CDFs
@@ -585,17 +587,18 @@ function drawColNames(params, y, x1) {
 			let parent_class = d3.select(this.parentNode).attr('class').split(' ');
 			let parameter = parent_class[1];
 			let option_set = params[parameter];
+			// instead of defining it this way, it might be better to index each join operator
+			// and then use that index to reference the x_scale_options[parameter].domain()
+			// that we have created
+
 
 			const optionJoin = new OptionJoin({ 
-				target: node,
-				props: {
-					option1: option_set[i],
-					option2: option_set[i+1]
-				}
+				target: node
 			})
 
 			optionJoin.$on('message', event => {
-				let option_pair = [option_set[i], option_set[i+1]];
+				let option_order = x_scale_options[parameter].domain()
+				let option_pair = [option_set[option_order[i]], option_set[option_order[i+1]]];
 				if (event.detail.text) {
 					options_to_join.push({'parameter': parameter, 'options': option_pair});
 				} else {
@@ -689,7 +692,9 @@ export function drawMatrixGrid(data, params, yscale, x1) {
 				exit => exit.remove()
 			)
 			.attr("x", 0)
-			.attr("y", (d, i) => yscale(i) + namingDim - (iconSize + cell.padding) )
+			.attr("y", (d, i) => {
+				return yscale(i) + namingDim - (iconSize + cell.padding)
+			} )
 			.attr("width", cell.width)
 			.attr("height", yscale.bandwidth())
 			.attr("class", function(d, i) {
@@ -784,17 +789,20 @@ export function CDF (data, i, size, yscale, term) {
 		.selectAll(".universe")
 		.data(data)
 		.join(
-			enter => enterCDF(enter, yscale, area),
+			enter => enterCDF(enter, yscale, area, term),
 			update => updateCDF(update, area),
 			exit => exitCDF(exit)
 		)
 }
 
 // helper function called by CDF
-function enterCDF(enter, yscale, area) {
+function enterCDF(enter, yscale, area, term) {
 	enter.append('g')
-		.attr("class", (d, i) => `universe universe-${i}`)
-		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
+		.attr("class", (d, i) => `universe universe-${i} ${term}`)
+		.attr("transform", (d, i) => {
+			// console.log(i, yscale.domain());
+			return `translate(0, ${yscale(i)})`
+		})
 		.call( g => 
 			g.append("path")
 				.datum(d => d)
