@@ -10,7 +10,6 @@
  * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
  */
  function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
-
 	// Sorting Factor --> The estimate value of the outcome that we are sorting on
 
 	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
@@ -21,7 +20,7 @@
 	// Add the sorting factor (the outcome that we are sorting on) to the gridData
 	let gridDataSortingList = []
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
-		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[outcomeIndex][i]})
+		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[i]})
 	}
 
 	// Add the sorting factor (the outcome that we are sorting on) to each outcome 
@@ -29,13 +28,10 @@
 	for (let i =0; i< outcomeData.length; i++){
 		var list = []
 		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
-			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[i][j], 'sortingFactor': estimateData[outcomeIndex][j]})
+			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': estimateData[j]})
 		}
 		outcomeDataSortingList.push(list)
 	}
-
-
-
 
 	// sort each of the outcomes according to the sorting factor
 	for (let i=0; i<outcomeDataSortingList.length; i++){
@@ -63,22 +59,19 @@
 			return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
 		});
 	}
-	
 
-	// Reassign gridData to contain sorted values
-	for (var k = 0; k < gridDataSortingList.length; k++) {
-		gridData[k] = gridDataSortingList[k].gridData;
-	}
+	// Reassign g_data to contain sorted values
+	let g_data = gridDataSortingList.map(k => k.gridData);
 
-	// Reassign outcomeData and estimateData to contain sorted values
-	for (var k = 0; k < outcomeDataSortingList.length; k++) {
-		for (var j = 0; j<outcomeDataSortingList[k].length; j++) {
-			outcomeData[k][j] = outcomeDataSortingList[k][j].outcomeData
-			estimateData[k][j] = outcomeDataSortingList[k][j].estimateData
-		}
-	}
+	// Reassign o_data to contain sorted values
+	let o_data = outcomeDataSortingList.map(k => k.map(j => j.outcomeData));
 
-	return {gridData, outcomeData, estimateData}
+	// store e_data to contain sorting factors
+	let e_data = outcomeDataSortingList.map(k => k.map(j => j.estimateData));
+
+
+	return {g_data, o_data, e_data}
 }
 
 export default sortByOutcome;
+

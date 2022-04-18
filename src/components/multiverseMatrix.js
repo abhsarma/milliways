@@ -8,6 +8,7 @@ import { state, selected, multi_param, exclude_options, join_options } from './s
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
 import sortByOutcome from './helpers/sortByOutcome.js';
+import sortByGroup from './helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
 
 // CSS Styles
@@ -124,9 +125,11 @@ class multiverseMatrix {
 	}
 
 	parameters = () => {
+
 		// get the parameters from the first row as this is a rectangular dataset
 		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
+
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -200,6 +203,7 @@ class multiverseMatrix {
 
 		this.outcomes[i].data = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
+		// this.estimateData = e_data_processed;
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
@@ -288,9 +292,10 @@ class multiverseMatrix {
 
 		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
-		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data)	
+		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
 		this.outcomes[index].data = o_data_processed;
 		this.outcomes[index].estimate = e_data_processed;
+		// this.estimateData = e_data_processed;
 	}
 
 	updateHandler(join, exclude) {
@@ -300,16 +305,46 @@ class multiverseMatrix {
 		// call update otucomes
 		for (let i in this.outcomes) {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
-		}		
-	
-		let outcomeData = this.outcomes.map(x => x['data'])
-		// get the estimate data for the outcomes
-		let estimateData = this.outcomes.map(x => x['estimate'])
-		
-		if (this.sortIndex!=-1){
-			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
-			this.gridData, this.outcomes, this.estimateData = g_data, o_data, e_data
 		}
+
+		let estimateData, outcomeData = this.outcomes.map(d => d.data);
+
+		if (this.sortIndex != -1){
+			estimateData = this.outcomes[this.sortIndex].estimate; // data to be sorted by
+
+			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			this.gridData = g_data;
+			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+
+			let temp = this.outcomes.map((d, i) => {
+				d.data = o_data[i];
+				d.estimate = e_data[i];
+				return d;
+			});
+
+			this.outcomes = temp;
+		} else {
+			estimateData = this.outcomes[0].estimate; // data to be sorted by
+		}
+
+		const {g_data, o_data, e_data} = sortByGroup(['relationship_status', 'fertile'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		this.gridData = g_data;
+		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+
+		let temp = this.outcomes.map((d, i) => {
+			d.data = o_data[i];
+			d.estimate = e_data[i];
+			return d;
+		});
+
+		this.outcomes = temp;
+
+		// var HS = new GroupedSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
+		// HS.CreateSortingTree(['certainty'])
+		// HS.CreateSortingTree(['certainty', 'cycle_length'])
+		// const {g_dat, o_dat, e_dat} = HS.ReconstructGridData()
+		// this.gridData, this.outcomes, this.estimateData = g_dat, o_dat, e_dat
 	}
 }
 
