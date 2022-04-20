@@ -5,7 +5,7 @@
 	import * as data from '../static/data/data2.json';
 	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
-	import Toggle from './components/toggle-button.svelte'
+	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 	import { exclude_options, join_options, option_order_scale } from './components/stores.js';
@@ -78,8 +78,7 @@
 								.range( [0, colWidth] );
 	})
 
-	$: drawOutcomes(m.outcomes, m.size, y);
-	$: update(options_to_join, options_to_exclude);
+	$: update(m.outcomes, m.size, y, options_to_join, options_to_exclude);
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
@@ -113,11 +112,17 @@
 
 	});
 
-	function update(join, exclude) {
+	function update(outcomes, size, y, join, exclude) {
 		// call updateHandler
 		m.updateHandler(join, exclude)
+
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
-		drawOutcomes(m.outcomes, m.size, y);
+
+		drawOutcomes(outcomes, size, y);
+	}
+
+	function sortDirecitonCallback(event){
+		m.sortIndex = event.detail
 	}
 
 	let drag = d3.drag()
@@ -252,8 +257,6 @@
 	}
 </style>
 
-<!-- <div bind:this={el} class="chart"></div> -->
-
 <main>
 	<div id="leftDiv"></div>
 	<div class = "container">
@@ -261,9 +264,9 @@
 			<div class="col-sm-8">
 				<h1 style="margin: {header1.top}px 0px">Multiverse Visualisation</h1>
 			</div>
-			<div class="col-sm-3">
+			<!-- div class="col-sm-3">
 				<Toggle/>
-			</div>
+			</div> -->
 		</div>
 	</div>
 	<div class="button-wrapper">
@@ -275,12 +278,17 @@
 		<div class="vis-container" style="height: {windowHeight};">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
-					i              = {i}
-					allOutcomeVars = {m.allOutcomeVars}
-					bind:w         = {w1}
-					bind:h         = {h}
-					bind:term      = {outcome.var}
-					on:change	   = {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
+					i              		= {i}
+					allOutcomeVars 		= {m.allOutcomeVars}
+					bind:w         		= {w1}
+					bind:h         		= {h}
+					bind:term      		= {outcome.var}
+					bind:sortIndex 		= {m.sortIndex}
+					bind:sortAscending 	= {m.sortAscending}
+					on:change	   		= {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
+					on:setSortIndex 	= {sortDirecitonCallback}
+					on:changeSortDirection = {() => {m.sortAscending = !m.sortAscending}}
+					on:remove			= {(m.outcomes.splice(i,1))}
 				/>
 			{/each}
 		</div>

@@ -1,9 +1,15 @@
- import { css, cx } from '@emotion/css'
+import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, selected, multi_param, exclude_options, join_options, option_order_scale } from './stores.js';
+
+//helpers
+import combineJoinOptions from './helpers/combineJoinOptions'
+import sortByOutcome from './helpers/sortByOutcome.js';
+import sortByGroup from './helpers/sortByGroups.js';
+import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
 
 // CSS Styles
 export const parameters = css`
@@ -86,58 +92,11 @@ function any_common(arr) {
 	let new_arr = arr.forEach((d, i) => {
 		let new_arr = [...arr];
 		let common = new_arr.splice(i, 1).map(x => d.map(item => x.includes(item))).reduce((a, b) => (a||b))
-		console.log(common)
 		return common
 	})
 
 	// console.log(new_arr);
 	return (new_arr);
-}
-
-// console.log(any_common([[1, 2], [3, 4], [12, 0], [5, 72, 9, 15]]))
-
-function _combineJoinOptionsHelper(input) {
-	let dict = {};                                              // (key:value) => (option:index in combined)
-	let combined = [];                                          // holds the arrays of options to be joined (including disregarded ones)
-	for (let [opt1, opt2] of input) {
-		let ind1 = dict[opt1], ind2 = dict[opt2];               // the indices of where the join array is in combined
-		if (opt1 in dict && opt2 in dict) {
-			combined[dict[opt1]].push(...combined[dict[opt2]]); // combine the two arrays (puts all elements of opt2's array into opt1's)
-			for (let opt of combined[dict[opt2]])               // change the index of the elements opt2's array to be the new combined array
-				dict[opt] = dict[opt1];
-		} else if (opt1 in dict) {                              // aka (opt1 in dict && !(opt2 in dict))
-			combined[ind1].push(opt2);                          // put opt2 in the array that opt1 is in
-			dict[opt2] = dict[opt1];                            // add opt2 to the dictionary, set index of opt2 to the index of opt1
-		} else if (opt2 in dict) {                              // aka (opt2 in dict && !(opt1 in dict))
-			combined[ind2].push(opt1);                          // put opt1 in the array that opt2 is in
-			dict[opt1] = dict[opt2];                            // add opt1 to the dictionary, set index of opt1 to the index of opt2
-		} else {
-			combined.push([opt1, opt2]);                        // create a new array with opt1 and opt2
-			dict[opt1] = combined.length-1;                     // set index of opt1 to the new array
-			dict[opt2] = combined.length-1;                     // set index of opt2 to the new array
-		}
-	}
-	let indices = [...new Set(Object.values(dict))];            // to get a unique array of indices
-	let ret = [];                                               // holds the arrays of options to be joined (not including disregarded ones)
-	for (let i of indices) {                                    // places the relevant arrays into ret
-		ret.push(combined[i]);
-	}
-	return ret;
-}
-
-export function combineJoinOptions(input_array) {
-	let arr = JSON.parse(JSON.stringify(input_array));
-	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
-	let new_arr = {};
-	
-	for (let i in params) {
-		let input = arr.filter(d => (d['parameter'] == params[i]))
-						.map(d => d['options']);
-		let output = _combineJoinOptionsHelper(input) // recurseCombine(input);
-		new_arr[params[i]] = output
-	}
-
-	return Object.entries(new_arr);
 }
 
 function which_idx(option_list, curr_options) {
@@ -148,49 +107,6 @@ function which_idx(option_list, curr_options) {
 			return null;
 		}
 	}).filter(i => (i != null))
-}
-
-function sortByOutcome(gridData, outcomeData, ascending = false) {
-	let o_data = d3.rollups(
-			outcomeData.map((d, i) => ([i, d].flat())), 
-			v => {
-				v[0].shift()
-				return d3.median(v[0], x => ((x[1] + x[2])/2))
-			}, 
-			d => d[0]);
-
-	let order = o_data.map(d => d[1]);
-	let g_data = gridData.map((d,i) => Object.assign({}, {orderBy: order[i], ...d}))
-
-	if (ascending) {
-		// we need to sort by descending here as values with higher mean estimate would have a lower 
-		// cumulative probability density value at the median
-		o_data.sort((a, b) => d3.descending(a[1], b[1]));
-		g_data.sort((a, b) => d3.descending(a.orderBy, b.orderBy));
-	} else {
-		o_data.sort((a, b) => d3.ascending(a[1], b[1]));
-		g_data.sort((a, b) => d3.ascending(a.orderBy, b.orderBy));
-	}
-
-	return [g_data, o_data];
-}
-
-
-function sortInGroups(gridData, outcomeData, ascending = false) {
-	let group = new Array(outcomeData.length).fill(0, 0, 70).fill(1, 70, 140).fill(2, 140, 210)
-
-	let o_data = d3.rollups(
-			outcomeData.map((d, i) => ([i, d].flat())), 
-			v => {
-				v[0].shift()
-				return d3.median(v[0], x => ((x[1] + x[2])/2))
-			}, 
-			d => d[0])
-		.map((d, i) => d.concat(group[i]));
-
-	let grouped_data = d3.groups(o_data, d => d[2])
-		.map(d => d[1].sort((a, b) => d3.descending(a[1], b[1])))
-		.flat(1);
 }
 
 class multiverseMatrix {
@@ -205,12 +121,18 @@ class multiverseMatrix {
 		this.outcomes = []; //[this.allOutcomeVars[0]];
 		this.gridData = null;
 		this.gridDataAll = null;
+
+		// sorting index, initialized to -1 to indicate no default sort
+		this.sortIndex = -1;
+		this.sortAscending = true; 
 	}
 
 	parameters = () => {
+
 		// get the parameters from the first row as this is a rectangular dataset
 		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
+
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -284,6 +206,7 @@ class multiverseMatrix {
 
 		this.outcomes[i].data = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
+		// this.estimateData = e_data_processed;
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
@@ -371,9 +294,10 @@ class multiverseMatrix {
 
 		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
-		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data)	
+		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
 		this.outcomes[index].data = o_data_processed;
 		this.outcomes[index].estimate = e_data_processed;
+		// this.estimateData = e_data_processed;
 	}
 
 	updateHandler(join, exclude) {
@@ -383,95 +307,51 @@ class multiverseMatrix {
 		// call update otucomes
 		for (let i in this.outcomes) {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
-		}		
-	
-		// sort accordingly
+		}
+
+		let estimateData, outcomeData = this.outcomes.map(d => d.data);
+
+		if (this.sortIndex != -1){
+			estimateData = this.outcomes[this.sortIndex].estimate; // data to be sorted by
+
+			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			this.gridData = g_data;
+			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+
+			let temp = this.outcomes.map((d, i) => {
+				d.data = o_data[i];
+				d.estimate = e_data[i];
+				return d;
+			});
+
+			this.outcomes = temp;
+		} else {
+			estimateData = this.outcomes[0].estimate; // data to be sorted by
+		}
+
+		const {g_data, o_data, e_data} = sortByGroup(['relationship_status', 'fertile'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		this.gridData = g_data;
+		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+
+		let temp = this.outcomes.map((d, i) => {
+			d.data = o_data[i];
+			d.estimate = e_data[i];
+			return d;
+		});
+
+		this.outcomes = temp;
+
+		// var HS = new GroupedSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
+		// HS.CreateSortingTree(['certainty'])
+		// HS.CreateSortingTree(['certainty', 'cycle_length'])
+		// const {g_dat, o_dat, e_dat} = HS.ReconstructGridData()
+		// this.gridData, this.outcomes, this.estimateData = g_dat, o_dat, e_dat
 	}
 }
 
 export default multiverseMatrix
 
-/**
- * function which processes the result of exclusion and combinations of options on outcomes (CDF and estimate); returns the processed outcomeData (CDF) and estimateData (point estimate) objects
- * 
- * @param {object} g_data Multiverse grid data
- * @param {object} o_data Multiverse outcome data
- * @param {array} option_list 2D array of parameters and their options
- * @param {object} combine 2D array containing [paramter, [options_to_join]]
- * @param {array} exclude List of objects containing {parameter, option} to exclude
- * @param {object} e_data DOESNT EXIST RIGHT NOW --> Multiverse estimate data
- * 
- * 
- * @return {object} an object containing processed outcome and estimate data arrays: {o_data, e_data}
- **/
-export function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combine, e_data) {
-	let size = g_data.length;
-	let o_data_processed = o_data
-	let e_data_processed = e_data
-	const average = (array) => array.reduce((a, b) => a + b) / array.length;
-	
-	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-							.flat()
-							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
-	// if there are any options to exclude
-	if (exclude.length > 0) {
-		let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
-
-		g_data = g_data.filter( (i, n) => toFilter[n] );
-		o_data_processed = o_data.filter( (i, n) => toFilter[n] );
-		e_data_processed = e_data.filter( (i, n) => toFilter[n] );
-	}
-
-	if (combine.length > 0) {
-		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
-							.flat()
-							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
-		let grouping_vector = g_data.map((d, i) => {
-			let options = Object.values(d).flat();
-			let idx = option_list.map(x => which_idx(x, options)).flat();
-			let g = groups
-				.map(x => {
-					let includes = options.map(d => x['group'].includes(d)) // .reduce((a, b) => (a || b));
-					return [includes.indexOf(true), x['id']];
-				})
-
-			g.forEach(x => {
-				if (x[0] > -1) {
-					idx[x[0]] = size + x[1]
-				}
-			})
-
-			return JSON.stringify(idx);
-		});
-
-		o_data_processed = d3.groups(
-			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-			).map(d => d[1].map(x => {
-				delete x.group;
-				return Object.values(x).flat();
-			}))
-			.map(x => {
-				let mod = d3.rollups(x.flat(), v => {
-					return [d3.min(v, d => d[1]), d3.max(v, d => d[1])]
-				}, d => d[0]);
-				return mod
-			})
-			.map(x => x.map(p => p.flat()))
-
-		e_data_processed = d3.groups(
-			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
-				d => d.group
-			).map(d => d[1].map(x => {
-				delete x.group;
-				return Object.values(x).flat();
-			})).map(x => average(x.flat()));
-	}
-
-	return {e_data_processed, o_data_processed};
-}
 
 /**
  * function for processing array containing CDF information 
