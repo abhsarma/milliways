@@ -2,7 +2,7 @@
 	import 'bootstrap-grid/dist/grid.min.css';
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data2.json';
+	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes } from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
@@ -17,7 +17,7 @@
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 
-	let dragging = {};
+	let option_dragging = {}, parameter_dragging = {};
 	let target, trigger;
 
 	let m = new multiverseMatrix(data.default); 
@@ -31,9 +31,12 @@
 	// const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
 
-	let order = {
-		name: d3.range(cols).sort(function(a, b) { return a - b; })
-  	};
+	let order = {};
+	let parameter_order = Object.keys(params);
+  	Object.keys(params).forEach(function(d, i) {
+  		let n = Object.values(params)[i].length;
+		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
+	});
 
 	const accum_options = Object.values(params).map( d => d.length )
 		.reduce( (acc, val, index) => {
@@ -71,11 +74,16 @@
 			}, [])
 		)
 
+	console.log(accum_options);
+	console.log(x_scale_params.domain(), x_scale_params.range());
+
 	const colWidth = d3.max(Object.values(params).map(d => d.length)) * (cell.width + cell.padding);
 	Object.keys(params).forEach(function(d, i) {
+		let n = Object.values(params)[i].length;
+
 		x_scale_options[d] = d3.scaleBand()
-								.domain( d3.range(d3.max(Object.values(params).map(d => d.length))) )
-								.range( [0, colWidth] );
+								.domain( d3.range(n) )
+								.range( [0, n * (cell.width + cell.padding)] );
 	})
 
 	$: update(m.outcomes, m.size, y, options_to_join, options_to_exclude);
@@ -84,11 +92,12 @@
 
 	onMount(() => {
 		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
+
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 
-		// console.log(x_scale_params(Object.keys(params)[1]), x_scale_params(Object.keys(params)[2]), x_scale_params(Object.keys(params)[3]))
+		d3.selectAll(".option-value").call(drag_options);
 
-		d3.selectAll(".option-value").call(drag);
+		d3.selectAll(".parameter").call(drag_parameters);
 		// drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params, x2)
 
 		let isSyncingLeftScroll = false;
@@ -125,21 +134,21 @@
 		m.sortIndex = event.detail
 	}
 
-	let drag = d3.drag()
+	let drag_options = d3.drag()
 		.subject(function(event, d) {
 			return {x: x_scale_params(d[0].parameter) + x_scale_options[d[0].parameter](d[0].index)}
-			// return {x: x(d[0].x)}; 
 		})
 		.on("start", function(event, d) {
 			target = event.sourceEvent.target.tagName;
+			// console.log(options_to_join);
+
 			if (target == "DIV") {
 				trigger = event.sourceEvent.target.className.split(" ")[0];
 				if (trigger == "option-label") {
-					dragging[d[0].index] = x_scale_options[d[0].parameter](d[0].index);
+					option_dragging[d[0].index] = x_scale_options[d[0].parameter](d[0].index);
 
 					// print all the other joined options to the one that is being interacted with
 					// console.log(d, options_to_join.map(d => d.options), options_to_join.map(d => d.parameter));
-					console.log(dragging);
 
 					// Move the column that is moving on the front
 					let sel = d3.select(this);
@@ -148,16 +157,16 @@
 			}
 		})
 		.on("drag", function(event, d) {
+			// console.log(d[0].parameter)
+
 			if (trigger == "option-label" & target == "DIV") {
-				dragging[d[0].index] = Math.min(
+				option_dragging[d[0].index] = Math.min(
 					x_scale_options[d[0].parameter].range()[1] + x_scale_options[d[0].parameter].bandwidth(),
 					Math.max(-x_scale_options[d[0].parameter].bandwidth(), (event.x - x_scale_params(d[0].parameter)))
 				);
 
-				order.name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
-				// console.log(order.name)
-				// order.name = [2, 0, 1, 3, 4];
-				x_scale_options[d[0].parameter].domain(order.name);
+				order[d[0].parameter].name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
+				x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
 				option_order_scale.update(v => v=x_scale_options);
 
 				d3.selectAll(`g.option-value.${d[0].parameter}`).attr("transform", function(d, i) { 
@@ -166,8 +175,55 @@
 			}
 		})
 		.on("end", function(event, d) {
-			delete dragging[d[0].index];
+			delete option_dragging[d[0].index];
+			// console.log(d[0].index, x_scale_options[d[0].parameter].domain(), x_scale_options[d[0].parameter].range(), x_scale_options[d[0].parameter](d[0].index));
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
+		});
+
+	let drag_parameters = d3.drag()
+		.subject(function(event, d) {
+			return {x: x_scale_params(d)}
+		})
+		.on("start", function(event, d) {
+			target = event.sourceEvent.target.tagName;
+			console.log(x_scale_params.range());
+			if (target == "DIV") {
+				trigger = event.sourceEvent.target.className.split(" ")[1];
+				// console.log(trigger);
+				if (trigger == "parameter-name") {
+					parameter_dragging[d] = x_scale_params(d);
+
+					// Move the column that is moving on the front
+					let sel = d3.select(this);
+					sel.moveToFront();
+				}
+			}
+		})
+		.on("drag", function(event, d) {
+			if (trigger == "parameter-name" & target == "DIV") {
+				parameter_dragging[d] = event.x;
+
+				// Math.min(
+				// 	x_scale_options[d[0].parameter].range()[1] + x_scale_options[d[0].parameter].bandwidth(),
+				// 	Math.max(-x_scale_options[d[0].parameter].bandwidth(), (event.x - x_scale_params(d[0].parameter)))
+				// );
+
+				parameter_order.sort(function(a, b) { return pPosition(a) - pPosition(b); });
+
+				x_scale_params.domain(parameter_order);
+				// probably need to update x_scale_params.range()
+				
+				d3.selectAll(`g.parameter`).select('foreignObject')
+					.attr("x", d => pPosition(d));
+				d3.selectAll(`g.parameter-col`)
+					.attr("transform", function(d, i) { 
+						return `translate(${pPosition(d)}, ${y(0)})`; 
+					});
+			}
+		})
+		.on("end", function(event, d) {
+			delete parameter_dragging[d[0].index];
+			transition(d3.select(this).select('foreignObject').attr("x", x_scale_params(d)));
 		});
 
 	d3.selection.prototype.moveToFront = function() {
@@ -177,8 +233,13 @@
 	}
 
 	function cPosition(p, d) {
-	  	var v = dragging[d];
+	  	var v = option_dragging[d];
 	  	return v == null ? x_scale_options[p](d) : v;
+	}
+
+	function pPosition(d) {
+	  	var v = parameter_dragging[d];
+	  	return v == null ? x_scale_params(d) : v;
 	}
 
 	function transition(g) {

@@ -314,7 +314,8 @@ class multiverseMatrix {
 		if (this.sortIndex != -1){
 			estimateData = this.outcomes[this.sortIndex].estimate; // data to be sorted by
 
-			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			// const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 			this.gridData = g_data;
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
 
@@ -328,19 +329,6 @@ class multiverseMatrix {
 		} else {
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
 		}
-
-		const {g_data, o_data, e_data} = sortByGroup(['relationship_status', 'fertile'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
-		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
-		this.gridData = g_data;
-		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
-
-		let temp = this.outcomes.map((d, i) => {
-			d.data = o_data[i];
-			d.estimate = e_data[i];
-			return d;
-		});
-
-		this.outcomes = temp;
 
 		// var HS = new GroupedSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
 		// HS.CreateSortingTree(['certainty'])
@@ -470,7 +458,6 @@ function drawColNames(params, y, x1) {
 			// instead of defining it this way, it might be better to index each join operator
 			// and then use that index to reference the x_scale_options[parameter].domain()
 			// that we have created
-
 
 			const optionJoin = new OptionJoin({ 
 				target: node
