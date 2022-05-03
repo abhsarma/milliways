@@ -326,8 +326,7 @@ class multiverseMatrix {
 		} else {
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
 		}
-
-		const {g_data, o_data, e_data} = sortByGroup(['relationship_status', 'fertile'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		const {g_data, o_data, e_data} = sortByGroup([], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 		this.gridData = g_data;
 		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
@@ -422,6 +421,71 @@ function drawParameterNames(params, xscale) {
 		let xpos = (i == 0) ? 0 : groupPadding*i + col_idx[i]*(cell.width+cell.padding) - (i-1)*cell.padding;
 		let w = (cell.width + cell.padding/2) * options.map(d => d.length)[i]
 	})
+}
+
+
+export function drawHierarchalSortDivider(params, w2,h) {
+	let maxBarPosition = w2-15
+	let minBarPosition = 5
+
+	let plot = d3.select(".grid").select("svg");
+
+	// TODO: Get these values to not be hard coded, but to be dynamically generated
+	const hard_coded = [minBarPosition,128,216,340,536, maxBarPosition]
+
+	function findClosestDivision(x_value) {
+		var nearest = hard_coded.reduce(function(prev, curr) {
+			return (Math.abs(curr - x_value) < Math.abs(prev - x_value) ? curr : prev);
+	  });
+	  return nearest
+	}
+
+	function dragstarted() {
+		hierarchalBar.attr("stroke", "black");
+	}
+	
+	function dragged(event, d) {
+		if (event.x > minBarPosition && event.x < maxBarPosition) {
+			hierarchalBar.raise().attr("x1", event.x);
+			hierarchalBar.raise().attr("x2", event.x);
+		}
+	}
+
+	function dragended(event, d) {
+		// TODO Find the width between each category, and replace 6 with half of that value
+		var nearestDivision = findClosestDivision(event.x);
+		d3.select(this).transition()
+				.attr("x1", hierarchalBar.raise().attr("x1"))
+				.attr("x2", hierarchalBar.raise().attr("x2"))
+			.transition()
+				.attr("x1", nearestDivision + 6)
+				.attr("x2", nearestDivision + 6)
+
+		console.log("PARAMS: ", Object.keys(params))
+
+		var heirarchalParameters = Object.keys(params).slice(hard_coded.indexOf(nearestDivision))
+		return
+	}
+
+	var drag = d3.drag()
+		.on("start", dragstarted)
+		.on("drag", dragged)
+		.on("end", dragended)
+
+	var hierarchalBar = plot.append("line")
+		.attr("x1", maxBarPosition)
+		.attr("y1", 0)
+		.attr("x2", maxBarPosition) 
+		.attr("y2", h)
+		.style("stroke", "black")
+		.style("stroke-width", 5)
+		.call(drag)
+		.on("click", clicked)
+
+   function clicked(event, d){
+		if (event.defaultPrevented) return; // dragged
+   }
+
 }
 
 /**

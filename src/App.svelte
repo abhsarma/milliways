@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes } from './components/multiverseMatrix.js';
+	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes, drawHierarchalSortDivider} from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
@@ -73,6 +73,7 @@
 	onMount(() => {
 		drawGridNames(m.gridData, m.parameters(), y, x_params);
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options)
+		drawHierarchalSortDivider(params, w2, h)
 		// drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x2)
 
 		let isSyncingLeftScroll = false;
