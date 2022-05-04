@@ -48,7 +48,7 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 		// console.log(partitioned_g_data, partitioned_o_data, partitioned_e_data);
 
 		// update groups to remove partition parameter
-		groups = groups.splice(1, 1);
+		groups = groups.slice(1, groups.length);
 
 		// call sortByGroups on each partition
 		let groupedSortResult = partitions.map((d, i) => {
