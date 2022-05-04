@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
-import { state, selected, multi_param, exclude_options, join_options } from './stores.js';
+import { state, selected, multi_param, exclude_options, join_options, groupParams } from './stores.js';
 
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
@@ -56,6 +56,7 @@ let selected_value;
 let selected_parameters;
 let options_to_exclude;
 let options_to_join;
+let sortByGroupParams;
 let vis_type = CDF;
 
 state.subscribe(value => {
@@ -67,6 +68,7 @@ selected.subscribe(value => {
 multi_param.subscribe(value => {
 	selected_parameters = value;
 });
+groupParams.subscribe(value => sortByGroupParams = value)
 exclude_options.subscribe(value => options_to_exclude = value);
 join_options.subscribe(value => options_to_join = value);
 
@@ -326,7 +328,8 @@ class multiverseMatrix {
 		} else {
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
 		}
-		const {g_data, o_data, e_data} = sortByGroup([], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+		console.log("Calling sort by groups with:", sortByGroupParams)
+		const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 		this.gridData = g_data;
 		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
@@ -424,7 +427,7 @@ function drawParameterNames(params, xscale) {
 }
 
 
-export function drawHierarchalSortDivider(params, w2,h) {
+export function drawSortByGroupsDivider(params, w2,h) {
 	let maxBarPosition = w2-15
 	let minBarPosition = 5
 
@@ -461,9 +464,11 @@ export function drawHierarchalSortDivider(params, w2,h) {
 				.attr("x1", nearestDivision + 6)
 				.attr("x2", nearestDivision + 6)
 
-		console.log("PARAMS: ", Object.keys(params))
+		// console.log("PARAMS: ", Object.keys(params))
 
-		var heirarchalParameters = Object.keys(params).slice(hard_coded.indexOf(nearestDivision))
+		sortByGroupParams = Object.keys(params).slice(hard_coded.indexOf(nearestDivision)).reverse()
+		groupParams.update(arr => arr = sortByGroupParams)
+		// console.log(sortByGroupParams)
 		return
 	}
 

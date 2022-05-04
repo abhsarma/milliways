@@ -3,17 +3,19 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes, drawHierarchalSortDivider} from './components/multiverseMatrix.js';
+	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
-	import { exclude_options, join_options } from './components/stores.js';
+	import { exclude_options, join_options, groupParams } from './components/stores.js';
 
 	let options_to_exclude;
 	let options_to_join;
+	let sortByGroupParams;
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
+	groupParams.subscribe(value => sortByGroupParams = value)
 
 	let m = new multiverseMatrix(data.default); 
 	m.initializeData();
@@ -66,14 +68,14 @@
 		.domain(d3.range(d3.max(Object.values(params).map(d => d.length))))
 		.range( [0, colWidth] );
 
-	$: update(m.outcomes, m.size, y, options_to_join, options_to_exclude);
+	$: update(m.outcomes, m.size, y, options_to_join, options_to_exclude, sortByGroupParams);
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
 		drawGridNames(m.gridData, m.parameters(), y, x_params);
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x_options)
-		drawHierarchalSortDivider(params, w2, h)
+		drawSortByGroupsDivider(params, w2, h)
 		// drawMatrixGrid(m.gridData, m.parameters(), y, x_params, x2)
 
 		let isSyncingLeftScroll = false;
@@ -96,7 +98,7 @@
 		}
 	});
 
-	function update(outcomes, size, y, join, exclude) {
+	function update(outcomes, size, y, join, exclude, sortByGroupParams) {
 		// call updateHandler
 		m.updateHandler(join, exclude)
 
