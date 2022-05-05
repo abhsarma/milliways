@@ -483,7 +483,8 @@ export function drawSortByGroupsDivider(params, w2,h) {
 		.attr("x2", maxBarPosition) 
 		.attr("y2", h)
 		.style("stroke", "black")
-		.style("stroke-width", 5)
+		.style("stroke-width", 7)
+		.style("cursor", "pointer")
 		.call(drag)
 		.on("click", clicked)
 
