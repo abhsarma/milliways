@@ -18,7 +18,8 @@ const mean = (array) => array.reduce((a, b) => a + b) / array.length;
  * 
  * @return {gridData, outcomeData, estimateData}
  */
-function sortByGroup(groups, gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
+function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
+	var groups = [...sortByGroupParams]
 	if (groups.length == 0) {
 		// base (non-recursive) case
 		// when there are no groups: groups == []
@@ -47,7 +48,7 @@ function sortByGroup(groups, gridData, outcomeData, estimateData, ascending = fa
 		// console.log(partitioned_g_data, partitioned_o_data, partitioned_e_data);
 
 		// update groups to remove partition parameter
-		groups = groups.splice(1, 1);
+		groups = groups.slice(1, groups.length);
 
 		// call sortByGroups on each partition
 		let groupedSortResult = partitions.map((d, i) => {
@@ -71,9 +72,6 @@ function sortByGroup(groups, gridData, outcomeData, estimateData, ascending = fa
 				return ((a.sortingFactor > b.sortingFactor) ? -1 : ((a.sortingFactor == b.sortingFactor) ? 0 : 1));
 			})
 		}
-
-		console.log(groupedSortResult);
-
 
 		// Step 4:
 		// We will transform the groupedSortResult data structure into 
