@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
 
+const mean = (array) => array.reduce((a, b) => a + b) / array.length;
+
 function which_option_index(option_list, curr_options) {
 	return option_list.map((d, i) => {
 		if (curr_options.includes(d)) {
@@ -28,7 +30,6 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 	let size = g_data.length;
 	let o_data_processed = o_data
 	let e_data_processed = e_data
-	const average = (array) => array.reduce((a, b) => a + b) / array.length;
 	
 	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
@@ -87,7 +88,15 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			).map(d => d[1].map(x => {
 				delete x.group;
 				return Object.values(x).flat();
-			})).map(x => average(x.flat()));
+			}).flat())
+
+		// e_data_processed = d3.groups(
+		// 	e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
+		// 		d => d.group
+		// 	).map(d => d[1].map(x => {
+		// 		delete x.group;
+		// 		return Object.values(x).flat();
+		// 	})).map(x => average(x.flat()));
 	}
 
 	return {e_data_processed, o_data_processed};

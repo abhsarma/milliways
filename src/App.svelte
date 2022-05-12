@@ -26,7 +26,6 @@
 	const params = m.parameters();
 
 	let svg;
-	// let vis = drawCDF;
 	const windowHeight = (window.innerHeight - 170) + "px";
 	// const size = m.size;
 	const cols = [...Object.keys(m.parameters())].length;
@@ -117,6 +116,7 @@
 			isSyncingRightScroll = false;
 		}
 
+		// d3.select("foreignObject.option-join.mc_option1").select("button").node().click() // use this to toggle states
 	});
 
 	function update(outcomes, size, y, join, exclude) {
@@ -167,6 +167,17 @@
 			}
 		})
 		.on("end", function(event, d) {
+			// gives whether any options for the current parameter (parameter within which dragging interaction is taking place)
+			// are "joined"
+			let current_param_joined = options_to_join
+											.filter(x => (x.parameter == d[0].parameter))
+											.map(d => d.options);
+
+			if (current_param_joined.length) {
+				options_to_join = options_to_join.filter( i => !i['options'].includes(d[0].option) );
+				join_options.update(arr => arr = options_to_join);
+			}
+
 			delete option_dragging[d[0].index];
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
 		});

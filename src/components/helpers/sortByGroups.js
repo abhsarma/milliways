@@ -42,10 +42,11 @@ function sortByGroup(groups, gridData, outcomeData, estimateData, ascending = fa
 
 		// make the partitions;
 		let [partitioned_g_data, partitioned_o_data, partitioned_e_data] = makePartitions(groups, gridData, outcomeData, estimateData);
+
 		// Step 2: On each partition, we will call SortByGroup, and pass as first argument G = groups / {partition_parameter}
 
 		// update groups to remove partition parameter
-		groups = groups.splice(1, 1);
+		groups = groups.slice(1, groups.length);
 
 		// call sortByGroups on each partition
 		let groupedSortResult = partitions.map((d, i) => {
