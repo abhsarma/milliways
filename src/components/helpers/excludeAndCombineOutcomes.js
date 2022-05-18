@@ -1,7 +1,5 @@
 import * as d3 from 'd3';
 
-const mean = (array) => array.reduce((a, b) => a + b) / array.length;
-
 function which_option_index(option_list, curr_options) {
 	return option_list.map((d, i) => {
 		if (curr_options.includes(d)) {
@@ -11,7 +9,6 @@ function which_option_index(option_list, curr_options) {
 		}
 	}).filter(i => (i != null))
 }
-
 
 /**
  * function which processes the result of exclusion and combinations of options on outcomes (CDF and estimate); returns the processed outcomeData (CDF) and estimateData (point estimate) objects

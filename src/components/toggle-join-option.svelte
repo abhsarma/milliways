@@ -3,20 +3,47 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as d3 from 'd3';
 	import { text, iconSize, header1, namingDim, cell } from './dimensions.js'
+	import { join_options, option_order_scale } from './stores.js';
 
-	// export let option1;
-	// export let option2;
-	let selected = false;
+	import { arrayEqual, any } from './helpers/arrayMethods.js'
+
+	export let parameter;
+	export let option_set;
+	export let index;
+
+	// function which returns true if any of the elements of an array contain true
+	// input: array of booleans
+	
+
+	let options_to_join;
+	let x_scale_options;
+
+	join_options.subscribe(value => options_to_join = value);
+	option_order_scale.subscribe(value => x_scale_options = value);
+
+	$: option_order = x_scale_options[parameter].domain();
+	$: option_pair = [option_set[option_order[index]], option_set[option_order[index+1]]];
+	$: selected = any(...options_to_join.map(d => arrayEqual(d.options, option_pair)));
 
 	const dispatch = createEventDispatcher();
 
 	function handleMouseClick() {
-		selected = !selected;
+		if (!selected) {
+			options_to_join.push({'parameter': parameter, 'options': option_pair, 'indices': [index, index+1]});
+		} else {
+			options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
+		}
+		join_options.update(arr => arr = options_to_join);
+
+		// console.log(option_pair, options_to_join);
 
 		dispatch('message', {
 			text: selected
 		});
 	}
+
+	// state has to be figured out independently
+	// $: console.log(options_to_join);
 
 	export const iconStyle = css`
 		fill: #777777;

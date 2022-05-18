@@ -1,4 +1,4 @@
-const mean = (array) => array.reduce((a, b) => a + b) / array.length;
+import { mean } from './arrayMethods.js'
 
 /**
  * 
@@ -24,7 +24,7 @@ const mean = (array) => array.reduce((a, b) => a + b) / array.length;
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
 		let e;
 		if (estimateData[i].length === undefined) e = estimateData[i]
-			else e = mean(estimateData[i])
+			else e = mean(...estimateData[i])
 		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': e})
 	}
 
@@ -35,7 +35,7 @@ const mean = (array) => array.reduce((a, b) => a + b) / array.length;
 		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
 			let e;
 				if (estimateData[j].length === undefined) e = estimateData[j]
-					else e = mean(estimateData[j])
+					else e = mean(...estimateData[j])
 			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': e})
 		}
 		outcomeDataSortingList.push(list)

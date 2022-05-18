@@ -3,13 +3,14 @@ import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
-import { state, selected, multi_param, exclude_options, join_options, option_order_scale } from './stores.js';
+import { state, multi_param, exclude_options, join_options, option_order_scale } from './stores.js';
 
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
 import sortByOutcome from './helpers/sortByOutcome.js';
 import sortByGroup from './helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
+import { arrayEqual, mean } from './helpers/arrayMethods.js'
 
 // CSS Styles
 export const parameters = css`
@@ -52,21 +53,16 @@ export const selected_option = css`
 
 // Stores
 let state_value;
-let selected_value;
 let selected_parameters;
 let options_to_exclude;
 let options_to_join;
 let x_scale_options;
 let vis_type = CDF;
-const average = (...x) => x.reduce((a, b) => a + b) / x.length;
 
 const optionJoin = [];
 
 state.subscribe(value => {
 	state_value = value;
-});
-selected.subscribe(value => {
-	selected_value = value;
 });
 multi_param.subscribe(value => {
 	selected_parameters = value;
@@ -440,7 +436,7 @@ function drawColNames(params, y, x1) {
 		// .attr( "transform", d => `translate(${x1(d.parameter)}, ${y(0)})`)
 		// .attr("text-anchor", "end");
 
-	parameterCols.selectAll("g.join-options")
+	parameterCols.selectAll("foreignObject")
 		.data((d, i) => options[i].slice(0, -1))
 		.join("foreignObject")
 		.attr("class", (d, i) => `option-join ${d}`)
@@ -451,26 +447,34 @@ function drawColNames(params, y, x1) {
 			let node = d3.select(this).node();
 			let parent_class = d3.select(this.parentNode).attr('class').split(' ');
 			let parameter = parent_class[1];
-			let option_set = params[parameter];
+			// let option_set = params[parameter];
+			// let option_order = x_scale_options[parameter].domain()
+
+			// $: console.log(option_set, option_order);
+
 			// instead of defining it this way, it might be better to index each join operator
 			// and then use that index to reference the x_scale_options[parameter].domain()
 			// that we have created
 
 			optionJoin[i] = new OptionJoin({ 
-				target: node
-			})
-
-
-			optionJoin[i].$on('message', event => {
-				let option_order = x_scale_options[parameter].domain()
-				let option_pair = [option_set[option_order[i]], option_set[option_order[i+1]]];
-				if (event.detail.text) {
-					options_to_join.push({'parameter': parameter, 'options': option_pair});
-				} else {
-					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
+				target: node,
+				props: {
+					parameter: parameter,
+					index: i,
+					option_set: params[parameter]
 				}
-				join_options.update(arr => arr = options_to_join);
 			})
+
+			// optionJoin[i].$on('message', event => {
+			// 	let option_order = x_scale_options[parameter].domain()
+			// 	let option_pair = [option_set[option_order[i]], option_set[option_order[i+1]]];
+			// 	if (event.detail.text) {
+			// 		options_to_join.push({'parameter': parameter, 'options': option_pair});
+			// 	} else {
+			// 		options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
+			// 	}
+			// 	join_options.update(arr => arr = options_to_join);
+			// })
 		});
 
 	// optionJoin[3].on("");
@@ -705,14 +709,15 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 
 			g.append("circle")
 				.datum((d, i) => {
+					console.lo
 					if (estimate[i].length === undefined) return estimate[i]
-						else return average(...estimate[i])
+						else return mean(...estimate[i])
 				})
 				.attr("fill", "red")
 				.attr("stroke", "red")
 				.attr("cx", d => xscale(d))
 				.attr("cy", y(0.5))
-				.attr("r", 1)
+				.attr("r", 0.5)
 		})
 }
 
@@ -726,7 +731,6 @@ function updateCDF(update, estimate, area, line, xscale, y) {
 
 			g.select("path.median")
 				.datum((d, i) => {
-					console.log(estimate)
 					if (estimate[i].length === undefined) return [[Math.min(estimate[i]), 0.5], [Math.max(estimate[i]), 0.5]] 
 						else return [[Math.min(...estimate[i]), 0.5], [Math.max(...estimate[i]), 0.5]]
 				})
@@ -735,11 +739,10 @@ function updateCDF(update, estimate, area, line, xscale, y) {
 			g.select('circle')
 				.datum((d, i) => {
 					if (estimate[i].length === undefined) return estimate[i]
-						else return average(...estimate[i])
+						else return mean(...estimate[i])
 				})
 				.attr("cx", d => xscale(d))
 				.attr("cy", y(0.5))
-				.attr("r", 1)
 		})
 }
 

@@ -1,8 +1,6 @@
 import sortByOutcome from "./sortByOutcome"
 import * as d3 from 'd3';
-
-const mean = (array) => array.reduce((a, b) => a + b) / array.length;
-
+import { mean } from './arrayMethods.js'
 
 /* {groups, grid_data, outcome_data, estimate_data} -> {grid_data, outcome_data, estimtae_data} */
 
@@ -53,7 +51,7 @@ function sortByGroup(groups, gridData, outcomeData, estimateData, ascending = fa
 			let {g_data, o_data, e_data} = sortByGroup(groups, partitioned_g_data[i], partitioned_o_data[i], partitioned_e_data[i], ascending, outcomeIndex);
 			return {g_data, o_data, e_data}
 		}).map(d => {
-			d.sortingFactor = mean(d.e_data[outcomeIndex]);
+			d.sortingFactor = mean(...d.e_data[outcomeIndex]);
 			return d
 		})
 

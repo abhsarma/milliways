@@ -10,6 +10,8 @@
 	import Vis from './components/Vis.svelte';
 	import { exclude_options, join_options, option_order_scale } from './components/stores.js';
 
+	import { arrayEqual, whichDiff, any } from './components/helpers/arrayMethods.js'
+
 	let options_to_exclude;
 	let options_to_join;
 	let x_scale_options;
@@ -17,7 +19,7 @@
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 
-	let option_dragging = {}, parameter_dragging = {};
+	let option_dragging = {}, previous_option_order = {}, parameter_dragging = {};
 	let target, trigger;
 
 	let m = new multiverseMatrix(data.default); 
@@ -79,6 +81,7 @@
 		let n = Object.values(params)[i].length;
 
 		x_scale_options[d] = d3.scaleBand()
+								// .domain( Object.values(params)[i] )
 								.domain( d3.range(n) )
 								.range( [0, n * (cell.width + cell.padding)] );
 	})
@@ -132,12 +135,14 @@
 		m.sortIndex = event.detail
 	}
 
+	// drag options within each parameter
 	let drag_options = d3.drag()
 		.subject(function(event, d) {
 			return {x: x_scale_params(d[0].parameter) + x_scale_options[d[0].parameter](d[0].index)}
 		})
 		.on("start", function(event, d) {
 			target = event.sourceEvent.target.tagName;
+			previous_option_order[d[0].index] = x_scale_options[d[0].parameter].domain();
 
 			if (target == "DIV") {
 				trigger = event.sourceEvent.target.className.split(" ")[0];
@@ -167,21 +172,32 @@
 			}
 		})
 		.on("end", function(event, d) {
-			// gives whether any options for the current parameter (parameter within which dragging interaction is taking place)
-			// are "joined"
-			let current_param_joined = options_to_join
+				// step 1: check if the order of the options (within the current parameter) has changed at all
+				// if (!arrayEqual(previous_option_order[d[0].index], order[d[0].parameter].name)) { 
+				let current_param_joined = options_to_join
 											.filter(x => (x.parameter == d[0].parameter))
-											.map(d => d.options);
+											.map(d => d.indices).flat();
 
-			if (current_param_joined.length) {
-				options_to_join = options_to_join.filter( i => !i['options'].includes(d[0].option) );
-				join_options.update(arr => arr = options_to_join);
-			}
+				// step 1: which option indices have changed?
+				let diff_indices = whichDiff(previous_option_order[d[0].index], order[d[0].parameter].name);
+
+				// step 2: check if drag has impacted the positions of any of the joined parameters
+				if (any(...diff_indices.map(d => current_param_joined.includes(d)).flat())) {
+					// step 3: un-join...by updating options_to_join and the store
+
+					// step 3.1 remove the current dragged option, if it is *joined*
+					//options_to_join.filter( i => !i['options'].includes(d[0].option) );
+
+					// step 3.2 remove all options which are impacted by the drag
+					options_to_join = options_to_join.filter(d => !any(...diff_indices.map(x => d['indices'].includes(x))))
+					join_options.update(arr => arr = options_to_join);
+				}
 
 			delete option_dragging[d[0].index];
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
 		});
 
+	// drag parameters
 	let drag_parameters = d3.drag()
 		.subject(function(event, d) {
 			return {x: x_scale_params(d)}
