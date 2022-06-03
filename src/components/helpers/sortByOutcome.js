@@ -1,5 +1,3 @@
-import { mean } from './arrayMethods.js'
-
 /**
  * 
  * @param {array} gridData Multiverse grid data
@@ -22,10 +20,7 @@ import { mean } from './arrayMethods.js'
 	// Add the sorting factor (the outcome that we are sorting on) to the gridData
 	let gridDataSortingList = []
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
-		let e;
-		if (estimateData[i].length === undefined) e = estimateData[i]
-			else e = mean(...estimateData[i])
-		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': e})
+		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[i]})
 	}
 
 	// Add the sorting factor (the outcome that we are sorting on) to each outcome 
@@ -33,10 +28,7 @@ import { mean } from './arrayMethods.js'
 	for (let i =0; i< outcomeData.length; i++){
 		var list = []
 		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
-			let e;
-				if (estimateData[j].length === undefined) e = estimateData[j]
-					else e = mean(...estimateData[j])
-			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': e})
+			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': estimateData[j]})
 		}
 		outcomeDataSortingList.push(list)
 	}
@@ -76,6 +68,7 @@ import { mean } from './arrayMethods.js'
 
 	// store e_data to contain sorting factors
 	let e_data = outcomeDataSortingList.map(k => k.map(j => j.estimateData));
+
 
 	return {g_data, o_data, e_data}
 }

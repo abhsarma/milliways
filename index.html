@@ -1,28 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<style>
-h1.intro {
-  color: blue;
-}
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+	<style>
+		.bar {
+			float: left;
+			width: 30px;
+			margin-right: 20px;
+			background-color: #F4F5F7;
+			border: 1px solid #C5C5C5;
+		}
 
-p.important {
-  color: green;
-}
-</style>
+		#chart {
+
+			height:  300px;
+			width:  500px;
+		}
+	</style>
 </head>
+
 <body>
-
-<h1 class="intro">Header 1</h1>
-<p>A paragraph.</p>
-<p class="important">Note that this is an important paragraph. :)</p>
-
-<p class="B=W">This is a highlighted paragraph. :)</p>
-
+  <div>
+  	<div id="chart">
+  </div>
+  <button onclick="updateBars()">Update!</button>
 </body>
-<script>
-  d3.select(".B\\=W")
-    .style("background-color", "green");
+
+<script type="text/javascript">
+  var numbers = [[], [], [], [], [], [], []];
+
+  function update(nums) {
+	selection = d3.select("#chart")
+		.selectAll(".bar")
+		.data(nums)
+		.join(
+			enter => enter.append("div")
+				.style('opacity', 1),
+			update => update,
+			exit => exit.remove()
+		)
+		.attr("class", "bar")
+		.style("height", function(d){ 
+			return 100 + "px"; 
+		})
+		.style("margin-top", function(d){ 
+			return  0 + "px"; 
+		})
+		.style('background-color', 'orange')
+	}
+
+	// d3.select("div#chart").on("click", function(e, i){
+	// 	numbers.splice(i, 1);
+	// 	update();
+	// });
+
+	updateBars(n = null);
+
+	function updateBars(n  = 5) {
+		let sample;
+		if (n != null) {
+			x = Math.ceil(Math.random() * n);
+			sample = _.sampleSize(numbers, x);
+		} else {
+			sample = numbers
+		}
+
+		console.log(sample);
+		update(sample);
+	}
+
+// var numbers = [15, 8, 42, 4, 32].map(d => 2*d);
+
+// function update() {
+// var selection = d3.select("#chart")
+//   .selectAll(".bar")
+//   .data(numbers)
+
+// selection
+//   .enter()
+//   .append("div")
+//   .attr("class", "bar")
+//   .style("height", function(d){ 
+//     return d + "px"; 
+//   })
+//   .style("margin-top", function(d){ 
+//     return (200 - d) + "px"; 
+//   })
+//   .on("click", function(e, i){
+//     numbers.splice(i, 1);
+//     update();
+//   });
+
+// selection.exit().remove();
+// };
+
+// update();
+
+// function addNum(x) {
+// numbers = numbers.concat(x);
+// update();
+// }
 </script>
 </html>
