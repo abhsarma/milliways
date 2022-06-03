@@ -311,10 +311,12 @@ class multiverseMatrix {
 
 		let estimateData, outcomeData = this.outcomes.map(d => d.data);
 
-		if (this.sortIndex != -1){
-			estimateData = this.outcomes[this.sortIndex].estimate; // data to be sorted by
+		// TODO: Refactor
+		if (this.sortIndex == -1){
 
-			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, this.sortIndex);
+			estimateData = this.outcomes[0].estimate; // data to be sorted by
+
+			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 			this.gridData = g_data;
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
 
@@ -327,20 +329,21 @@ class multiverseMatrix {
 			this.outcomes = temp;
 		} else {
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
+			console.log("Calling sort by groups with:", sortByGroupParams)
+			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortIndex);
+			// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+			this.gridData = g_data;
+			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+
+			let temp = this.outcomes.map((d, i) => {
+				d.data = o_data[i];
+				d.estimate = e_data[i];
+				return d;
+			});
+			this.outcomes = temp;
 		}
-		console.log("Calling sort by groups with:", sortByGroupParams)
-		const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending, 0);
-		// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
-		this.gridData = g_data;
-		// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
 
-		let temp = this.outcomes.map((d, i) => {
-			d.data = o_data[i];
-			d.estimate = e_data[i];
-			return d;
-		});
-
-		this.outcomes = temp;
+		
 
 		// var HS = new GroupedSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
 		// HS.CreateSortingTree(['certainty'])

@@ -59,6 +59,9 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 			return d
 		})
 
+		console.log('GROUP SORT RESULT for ', partition_parameter)
+		console.log(groupedSortResult.map( d => d.sortingFactor))
+
 		// Step 3:
 		// We will then concatenate the N partitioned data structures into a single data structure
 		// when concatenating the data structures, we will need to ensure the right order...
