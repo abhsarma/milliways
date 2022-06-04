@@ -466,7 +466,7 @@ function drawColNames(params, y, x1) {
 			optionJoin.$on('message', event => {
 				let option_pair = [options[i], options[i+1]];
 				if (event.detail.text) {
-					options_to_join.push({'parameter': param, 'options': option_pair});
+					options_to_join.push({'parameter': parameter, 'options': option_pair});
 				} else {
 					options_to_join = options_to_join.filter(i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)));
 				}
