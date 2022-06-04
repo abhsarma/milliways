@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
-import { state, selected, multi_param, exclude_options, join_options, groupParams } from './stores.js';
+import { state, exclude_options, join_options, groupParams } from './stores.js';
 
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
@@ -52,8 +52,6 @@ export const selected_option = css`
 
 // Stores
 let state_value;
-let selected_value;
-let selected_parameters;
 let options_to_exclude;
 let options_to_join;
 let sortByGroupParams;
@@ -61,12 +59,6 @@ let vis_type = CDF;
 
 state.subscribe(value => {
 	state_value = value;
-});
-selected.subscribe(value => {
-	selected_value = value;
-});
-multi_param.subscribe(value => {
-	selected_parameters = value;
 });
 groupParams.subscribe(value => sortByGroupParams = value)
 exclude_options.subscribe(value => options_to_exclude = value);
