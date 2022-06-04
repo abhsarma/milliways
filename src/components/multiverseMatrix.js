@@ -4,6 +4,7 @@ import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, heade
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, exclude_options, join_options, groupParams } from './stores.js';
+import { arrayEqual, mean } from './helpers/arrayMethods.js'
 
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
@@ -308,20 +309,20 @@ class multiverseMatrix {
 
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
 
-			const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, 0);
-			this.gridData = g_data;
-			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
+			// const {g_data, o_data, e_data} = sortByOutcome(this.gridData, outcomeData, estimateData, this.sortAscending, 0);
+			// this.gridData = g_data;
+			// // if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
 
-			let temp = this.outcomes.map((d, i) => {
-				d.data = o_data[i];
-				d.estimate = e_data[i];
-				return d;
-			});
+			// let temp = this.outcomes.map((d, i) => {
+			// 	d.data = o_data[i];
+			// 	d.estimate = e_data[i];
+			// 	return d;
+			// });
 
-			this.outcomes = temp;
+			// this.outcomes = temp;
 		} else {
 			estimateData = this.outcomes[0].estimate; // data to be sorted by
-			console.log("Calling sort by groups with:", sortByGroupParams)
+			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortIndex);
 			// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 			this.gridData = g_data;
@@ -334,14 +335,6 @@ class multiverseMatrix {
 			});
 			this.outcomes = temp;
 		}
-
-		
-
-		// var HS = new GroupedSort(this.gridData, outcomeData, estimateData, this.sortAscending, this.parameters())
-		// HS.CreateSortingTree(['certainty'])
-		// HS.CreateSortingTree(['certainty', 'cycle_length'])
-		// const {g_dat, o_dat, e_dat} = HS.ReconstructGridData()
-		// this.gridData, this.outcomes, this.estimateData = g_dat, o_dat, e_dat
 	}
 }
 
@@ -622,50 +615,6 @@ function drawColNames(params, param, x2) {
 		.text(d => d);
 }
 
-// /**
-//  * function for drawing the Option names of the decision grid
-//  * 
-//  * @param {object of arrays} params Multiverse parameters and corresponding options
-//  * @param {string} param A D3 scale definition for y position of each universe
-//  * @param {x2} x A D3 scale definition for x position of each option
-//  **/
-// function drawColOptions(data, params, param, grid_node, yscale, x1, x2) {
-// 	let plot = grid_node.select("svg");
-// 	let options = params[param];
-// 	let ypos;
-
-// 	if (state_value == 0) {
-// 		ypos = 4 * cell.padding;
-// 	} else {
-// 		ypos = namingDim + 4 * cell.padding;
-// 	}
-
-// 	let optionCell = plot.append("g")
-// 		.attr("class", "option-value")
-// 		.attr("transform",  `translate(${x1(param)}, ${ypos})`)
-// 		.selectAll("g")
-// 		.data(data)
-// 		.join("g")
-// 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
-// 		.attr("class", function (d, i) {
-// 			return d[param].join(" ")
-// 		})
-
-// 	optionCell.selectAll("rect")
-// 		.data(options)
-// 		.join("rect")
-// 		.attr("x", (d, i) => x2(i) )
-// 		.attr("width", cell.width)
-// 		.attr("height", yscale.bandwidth())
-// 		.attr("class", function(d, i) {
-// 			let parent_class = d3.select(this.parentNode).attr("class").split(' ');
-// 			if (parent_class.includes(d)) {
-// 				return `${options_container} ${selected_option} ${d}`
-// 			}
-// 			return `${options_container} ${d}`
-// 		});
-// }
-
 /**
  * function for drawing the decision grid (indicating the configuration for each universe in the multiverse)
  * 
@@ -752,7 +701,8 @@ export function drawOutcomes (outcomes, size, yscale) {
 	for (let i in outcomes) {
 		let data = outcomes[i].data;
 		let term = outcomes[i].var;
-		CDF(data, i, size, yscale, term);
+		let estimate = outcomes[i].estimate;
+		CDF(data, estimate, i, size, yscale, term);
 	}
 }
 
@@ -765,7 +715,7 @@ export function drawOutcomes (outcomes, size, yscale) {
  * @param {function} yscale A D3 scale definition for y position of each universe
  * @param {string} term Coefficient name
  **/
-export function CDF (data, i, size, yscale, term) {
+export function CDF (data, estimate, i, size, yscale, term) {
 	let results_plot = d3.select('svg#vis-' + i);
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	let ypos;
@@ -809,8 +759,19 @@ export function CDF (data, i, size, yscale, term) {
 		.attr("stroke", "#d0d0d0")
 		.attr("stroke-width", 2);
 
-	let xAxis = d3.axisTop(xscale)
-		.ticks(5);
+	let xAxis = d3.select(`g.outcomePanel.plot-${i}`);
+
+	if (xAxis.select('.x-axis').node()) {
+		xAxis.select(".x-axis")
+			.call(d3.axisTop(xscale).ticks(5))
+			.style("font-size", "12px");
+	} else {
+		xAxis.append('g')
+			.attr("class", "x-axis")
+			.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
+			.call(d3.axisTop(xscale).ticks(5))
+			.style("font-size", "12px");
+	}
 		
 	let area = d3.area()
 		.curve(d3.curveLinear)
@@ -818,41 +779,85 @@ export function CDF (data, i, size, yscale, term) {
 		.y0(d => y(d[1]))
 		.y1(d => y(d[2]))
 
+	let line = d3.line()
+		.x(d => xscale(d[0]))
+		.y(d => y(d[1]));
+
 	// add a group for each universe
 	let panelPlot = d3
 		.select(`g.outcomePanel.plot-${i}`)
 		.selectAll(".universe")
 		.data(data)
 		.join(
-			enter => enterCDF(enter, yscale, area),
-			update => updateCDF(update, area),
+			enter => enterCDF(enter, estimate, term, area, line, xscale, yscale, y),
+			update => updateCDF(update, estimate, area, line, xscale, y),
 			exit => exitCDF(exit)
 		)
 }
 
 // helper function called by CDF
-function enterCDF(enter, yscale, area) {
+function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 	enter.append('g')
-		.attr("class", (d, i) => `universe universe-${i}`)
+		.attr("class", (d, i) => `universe universe-${i} ${term}`)
 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
-		.call( g => 
-			g.append("path")
-				.datum(d => d)
-				.attr("fill", "steelblue")
-				.attr("stroke", "steelblue")
-				.attr("stroke-width", 1.5)
-				.attr("d", area)
+		.call( g => {
+				g.append("path")
+					.attr("class", "cdf")
+					.datum((d, i) => d)
+					.attr("fill", "steelblue")
+					.attr("stroke", "steelblue")
+					.attr("stroke-width", 1.5)
+					.attr("d", area)
+
+				g.append("path")
+					.attr("class", "median")
+					.datum((d, i) => {
+						if (estimate[i].length === undefined) return [[Math.min(estimate[i]), 0.5], [Math.max(estimate[i]), 0.5]]
+							else return [[Math.min(...estimate[i]), 0.5], [Math.max(...estimate[i]), 0.5]]
+					})
+					.attr("fill", "red")
+					.attr("stroke", "red")
+					.attr("stroke-width", 2)
+					.attr("d", line)
+
+				g.append("circle")
+					.datum((d, i) => {
+						console.lo
+						if (estimate[i].length === undefined) return estimate[i]
+							else return mean(...estimate[i])
+					})
+					.attr("fill", "red")
+					.attr("stroke", "red")
+					.attr("cx", d => xscale(d))
+					.attr("cy", y(0.5))
+					.attr("r", 0.5)
+			}
 		)
 }
 
 // helper function called by CDF
-function updateCDF(update, area) {
+function updateCDF(update, estimate, area, line, xscale, y) {
 	update
-		.call(g => 
-			g.select('path')
-				.datum(d => d)
+		.call(g => {
+			g.select('path.cdf')
+				.datum((d, i) => d)
 				.attr("d", area)
-	)
+
+			g.select("path.median")
+				.datum((d, i) => {
+					if (estimate[i].length === undefined) return [[Math.min(estimate[i]), 0.5], [Math.max(estimate[i]), 0.5]] 
+						else return [[Math.min(...estimate[i]), 0.5], [Math.max(...estimate[i]), 0.5]]
+				})
+				.attr("d", line)
+
+			g.select('circle')
+				.datum((d, i) => {
+					if (estimate[i].length === undefined) return estimate[i]
+						else return mean(...estimate[i])
+				})
+				.attr("cx", d => xscale(d))
+				.attr("cy", y(0.5))
+		})
 }
 
 // helper function called by CDF

@@ -1,7 +1,6 @@
 import sortByOutcome from "./sortByOutcome"
 import * as d3 from 'd3';
-
-const mean = (array) => array.reduce((a, b) => a + b) / array.length;
+import { mean } from './arrayMethods.js'
 
 
 /* {groups, grid_data, outcome_data, estimate_data} -> {grid_data, outcome_data, estimtae_data} */
@@ -45,8 +44,6 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 		let [partitioned_g_data, partitioned_o_data, partitioned_e_data] = makePartitions(groups, gridData, outcomeData, estimateData);
 		// Step 2: On each partition, we will call SortByGroup, and pass as first argument G = groups / {partition_parameter}
 
-		// console.log(partitioned_g_data, partitioned_o_data, partitioned_e_data);
-
 		// update groups to remove partition parameter
 		groups = groups.slice(1, groups.length);
 
@@ -55,12 +52,9 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 			let {g_data, o_data, e_data} = sortByGroup(groups, partitioned_g_data[i], partitioned_o_data[i], partitioned_e_data[i], ascending, outcomeIndex);
 			return {g_data, o_data, e_data}
 		}).map(d => {
-			d.sortingFactor = mean(d.e_data[outcomeIndex]);
+			d.sortingFactor = mean(...d.e_data[outcomeIndex]);
 			return d
 		})
-
-		console.log('GROUP SORT RESULT for ', partition_parameter)
-		console.log(groupedSortResult.map( d => d.sortingFactor))
 
 		// Step 3:
 		// We will then concatenate the N partitioned data structures into a single data structure

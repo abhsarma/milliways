@@ -28,7 +28,6 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 	let size = g_data.length;
 	let o_data_processed = o_data
 	let e_data_processed = e_data
-	const average = (array) => array.reduce((a, b) => a + b) / array.length;
 	
 	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
@@ -87,7 +86,7 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			).map(d => d[1].map(x => {
 				delete x.group;
 				return Object.values(x).flat();
-			})).map(x => average(x.flat()));
+			}).flat())
 	}
 
 	return {e_data_processed, o_data_processed};
