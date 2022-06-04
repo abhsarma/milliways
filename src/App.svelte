@@ -9,6 +9,7 @@
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 	import { exclude_options, join_options, groupParams } from './components/stores.js';
+	import { colors } from './components/colorPallete.js';
 
 	let options_to_exclude;
 	let options_to_join;
@@ -110,6 +111,13 @@
 	function sortDirecitonCallback(event){
 		m.sortIndex = event.detail
 	}
+
+	// defining color variables for use in CSS
+	document.documentElement.style.setProperty('--activeColor', colors.active)
+	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--grayColor', colors.gray)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	console.log(colors.hover);
 </script>
 
 <style>
@@ -118,7 +126,7 @@
 	}
 
 	h1 {
-		color: #ff3e00;
+		color: var(--activeColor) !important;
 		text-transform: uppercase;
 		font-family: 'Avenir Next';
 		font-size: 32px;
@@ -127,7 +135,7 @@
 	}
 
 	svg {
-		background-color: #f7f7f7;
+		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
 	}
@@ -149,15 +157,15 @@
 
 	svg.add-vis-icon {
 		/*position: sticky;*/
-		fill: #777777;
+		fill: var(--grayColor) !important;
 	}
 
 	.button-wrapper button:hover, button:active {
-		background-color: lightgreen;
+		background-color: var(--hoverColor) !important;
 	}
 
 	.button-wrapper button:hover > svg.add-vis-icon {
-		background-color: lightgreen;
+		background-color: var(--hoverColor) !important;
 	}
 
 	.main-content {
@@ -197,7 +205,7 @@
 	</div>
 	<div class="button-wrapper">
 		<button on:click={() => { m.initializeOutcomeData(options_to_join, options_to_exclude); m=m; }}>
-			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#777777"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.active}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>
 	</div>
 	<div class="main-content">

@@ -5,6 +5,7 @@ import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, exclude_options, join_options, groupParams } from './stores.js';
 import { arrayEqual, mean } from './helpers/arrayMethods.js'
+import { colors } from './colorPallete.js';
 
 //helpers
 import combineJoinOptions from './helpers/combineJoinOptions'
@@ -44,11 +45,11 @@ export const selected_style = css`
 `;
 
 export const options_container = css`
-	fill: #ABB7C4;
+	fill: ${colors.inactive};
 `;
 
 export const selected_option = css`
-	fill: #FF602B;
+	fill: ${colors.active};
 `;
 
 // Stores
@@ -756,7 +757,7 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		)
 		.attr("y1", margin.top)
 		.attr("y2", height - margin.bottom)
-		.attr("stroke", "#d0d0d0")
+		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
 
 	let xAxis = d3.select(`g.outcomePanel.plot-${i}`);
@@ -804,8 +805,8 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 				g.append("path")
 					.attr("class", "cdf")
 					.datum((d, i) => d)
-					.attr("fill", "steelblue")
-					.attr("stroke", "steelblue")
+					.attr("fill", `${colors.secondary}`)
+					.attr("stroke", `${colors.secondary}`)
 					.attr("stroke-width", 1.5)
 					.attr("d", area)
 
@@ -815,8 +816,8 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 						if (estimate[i].length === undefined) return [[Math.min(estimate[i]), 0.5], [Math.max(estimate[i]), 0.5]]
 							else return [[Math.min(...estimate[i]), 0.5], [Math.max(...estimate[i]), 0.5]]
 					})
-					.attr("fill", "red")
-					.attr("stroke", "red")
+					.attr("fill", `${colors.primary}`)
+					.attr("stroke", `${colors.primary}`)
 					.attr("stroke-width", 2)
 					.attr("d", line)
 
@@ -826,8 +827,8 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 						if (estimate[i].length === undefined) return estimate[i]
 							else return mean(...estimate[i])
 					})
-					.attr("fill", "red")
-					.attr("stroke", "red")
+					.attr("fill", `${colors.primary}`)
+					.attr("stroke", `${colors.primary}`)
 					.attr("cx", d => xscale(d))
 					.attr("cy", y(0.5))
 					.attr("r", 0.5)
@@ -894,7 +895,7 @@ export function CI (data, results_node, size, yscale) {
 		.attr("y1", margin.top)
 		.attr("x2", xscale(0) )
 		.attr("y2", height - margin.bottom)
-		.attr("stroke", "#d0d0d0")
+		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
 
 	let xAxis = d3.axisTop(xscale)
@@ -922,7 +923,7 @@ export function CI (data, results_node, size, yscale) {
 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
 		.attr("x2", xscale.range()[1] )
 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("stroke", "#e0e0e0")
+		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 1);
 
 	// Add interval lines
@@ -932,7 +933,7 @@ export function CI (data, results_node, size, yscale) {
 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
 		.attr("x2", d => xscale(d['conf.high']) )
 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("stroke", "#333333")
+		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
 
 	// Add point estimates
@@ -941,6 +942,5 @@ export function CI (data, results_node, size, yscale) {
 		.attr("cx", d => xscale(d['estimate']))
 		.attr("cy", (d, i) => yscale(i) + yscale.bandwidth() / 2)
 		.attr("r", 4)
-		.attr("fill", "#333333");
+		.attr("fill", `${colors.gray}`);
 }
-
