@@ -458,8 +458,9 @@ function drawColNames(params, y, x1) {
 			const optionJoin = new OptionJoin({ 
 				target: node,
 				props: {
-					option1: options[i],
-					option2: options[i+1]
+					parameter: parameter,
+					index: i,
+					option_set: params[parameter]
 				}
 			})
 
