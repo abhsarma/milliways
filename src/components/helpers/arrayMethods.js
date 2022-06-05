@@ -15,3 +15,5 @@ export const any = (...x) => {
 			return x.some((x)=> (x == true))
 		} else x //throw "expected array of booleans"
 	}
+
+export const is2dArray = (array) =>  array.every(item => Array.isArray(item));

@@ -322,9 +322,11 @@ class multiverseMatrix {
 
 			// this.outcomes = temp;
 		} else {
-			estimateData = this.outcomes[0].estimate; // data to be sorted by
-			// console.log("Calling sort by groups with:", sortByGroupParams)
+			estimateData = this.outcomes[0].estimate;
+
+			console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortIndex);
+
 			// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
 			this.gridData = g_data;
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]

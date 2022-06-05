@@ -117,7 +117,6 @@
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--grayColor', colors.gray)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
-	console.log(colors.hover);
 </script>
 
 <style>
