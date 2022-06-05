@@ -142,12 +142,6 @@
 		m.sortIndex = event.detail
 	}
 
-	// defining color variables for use in CSS
-	document.documentElement.style.setProperty('--activeColor', colors.active)
-	document.documentElement.style.setProperty('--bgColor', colors.background)
-	document.documentElement.style.setProperty('--grayColor', colors.gray)
-	document.documentElement.style.setProperty('--hoverColor', colors.hover)
-
 	let drag_options = d3.drag()
 		.subject(function(event, d) {
 			console.log(d);
@@ -224,6 +218,12 @@
 	function transition(g) {
 		return g.transition().duration(500);
 	}
+
+	// defining color variables for use in CSS
+	document.documentElement.style.setProperty('--activeColor', colors.active)
+	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--grayColor', colors.gray)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 <style>

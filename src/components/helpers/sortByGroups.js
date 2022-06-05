@@ -1,9 +1,9 @@
 import sortByOutcome from "./sortByOutcome"
 import * as d3 from 'd3';
-import { mean } from './arrayMethods.js'
+import { mean, is2dArray } from './arrayMethods.js'
 
 
-/* {groups, grid_data, outcome_data, estimate_data} -> {grid_data, outcome_data, estimtae_data} */
+/* {groups, grid_data, outcome_data, estimate_data} -> {grid_data, outcome_data, estimate_data} */
 
 /** 
  * 
@@ -52,7 +52,12 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 			let {g_data, o_data, e_data} = sortByGroup(groups, partitioned_g_data[i], partitioned_o_data[i], partitioned_e_data[i], ascending, outcomeIndex);
 			return {g_data, o_data, e_data}
 		}).map(d => {
-			d.sortingFactor = mean(...d.e_data[outcomeIndex]);
+			if (is2dArray(d.e_data[outcomeIndex])) {
+				d.sortingFactor = mean(...d.e_data[outcomeIndex].map(x => mean(...x)));
+			} else {
+				d.sortingFactor = mean(...d.e_data[outcomeIndex])
+			}
+			
 			return d
 		})
 
