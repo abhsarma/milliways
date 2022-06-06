@@ -122,9 +122,6 @@
 		// call updateHandler
 		m.updateHandler(join, exclude);
 
-		size = m.gridData.length
-		y.domain(d3.range(size))
-
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 
 		drawOutcomes(outcomes, size, y);

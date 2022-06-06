@@ -540,7 +540,6 @@ function drawColNames(params, y, x1) {
 export function drawMatrixGrid(data, params, yscale, x1, x2) {
 	let plot = d3.select('.grid').select('svg');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
-	console.log(yscale.domain());
 
 	let optionCols = d3.selectAll(`g.parameter-col`).selectAll(`g.option-value`)
 
@@ -577,7 +576,6 @@ export function drawMatrixGrid(data, params, yscale, x1, x2) {
  * @param {function} yscale A D3 scale definition for y position of each universe
  **/
 export function drawOutcomes (outcomes, size, yscale) {
-	console.log(size);
 	for (let i in outcomes) {
 		let data = outcomes[i].data;
 		let term = outcomes[i].var;
@@ -702,7 +700,6 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 
 				g.append("circle")
 					.datum((d, i) => {
-						console.lo
 						if (estimate[i].length === undefined) return estimate[i]
 							else return mean(...estimate[i])
 					})
