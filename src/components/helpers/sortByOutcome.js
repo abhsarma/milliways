@@ -23,10 +23,9 @@ import { mean } from './arrayMethods.js'
 	let gridDataSortingList = []
 	// console.log(estimateData)
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
-		// gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': estimateData[i]})
 		let e;
-		if (Array.isArray(estimateData[i])) e = estimateData[i]
-			else e = mean(...estimateData[i])
+		if (Array.isArray(estimateData[i])) e = mean(...estimateData[i])
+			else e = estimateData[i];
 		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': e})
 	}
 
