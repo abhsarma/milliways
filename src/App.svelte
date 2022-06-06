@@ -122,6 +122,8 @@
 		// call updateHandler
 		m.updateHandler(join, exclude);
 
+		size = m.gridData.length;
+
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 
 		drawOutcomes(outcomes, size, y);
