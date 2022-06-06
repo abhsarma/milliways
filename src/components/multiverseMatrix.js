@@ -303,11 +303,12 @@ class multiverseMatrix {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
 		}
 
-		let estimateData, outcomeData = this.outcomes.map(d => d.data);
+		let outcomeData = this.outcomes.map(d => d.data);
+		let estimateData;
 
-		// TODO: Refactor
 		if (this.sortIndex != -1) {
-			estimateData = this.outcomes[this.sortIndex].estimate;
+			estimateData = this.outcomes.map(d => d.estimate)
+			// estimateData = this.outcomes[this.sortIndex].estimate;
 
 			console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortIndex);
@@ -316,7 +317,6 @@ class multiverseMatrix {
 			this.gridData = g_data;
 
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]
-
 			let temp = this.outcomes.map((d, i) => {
 				d.data = o_data[i];
 				d.estimate = e_data[i];
@@ -557,7 +557,7 @@ export function drawMatrixGrid(data, params, yscale, x1, x2) {
 /**
  * wrapper function for drawing the outcome CDF for (one or more) coefficient(s) per universe
  * 
- * @param {array of object} outcomes Each object contains: (1) a field for CDFs, and (2) estimate for each universe
+ * @param {array of object} outcomes updateHandlerEach object contains: (1) a field for CDFs, and (2) estimate for each universe
  * @param {integer} size # of universes in the multiverse
  * @param {function} yscale A D3 scale definition for y position of each universe
  **/

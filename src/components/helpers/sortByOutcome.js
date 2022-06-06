@@ -12,8 +12,6 @@ import { mean } from './arrayMethods.js'
  * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
  */
  function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
-	// Sorting Factor --> The estimate value of the outcome that we are sorting on
-
 	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
 	if (!outcomeData.length){
 		return {gridData, outcomeData, estimateData}
@@ -24,8 +22,8 @@ import { mean } from './arrayMethods.js'
 	// console.log(estimateData)
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
 		let e;
-		if (Array.isArray(estimateData[i])) e = mean(...estimateData[i])
-			else e = estimateData[i];
+		if (Array.isArray(estimateData[outcomeIndex][i])) e = mean(...estimateData[outcomeIndex][i])
+			else e = estimateData[outcomeIndex][i];
 		gridDataSortingList.push({'gridData': gridData[i], 'sortingFactor': e})
 	}
 
@@ -34,11 +32,10 @@ import { mean } from './arrayMethods.js'
 	for (let i =0; i< outcomeData.length; i++){
 		var list = []
 		for (let j=0; j< outcomeData[outcomeIndex].length; j++) {
-			// list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': estimateData[j]})
 			let e;
-				if (estimateData[j].length === undefined) e = estimateData[j]
-					else e = mean(...estimateData[j])
-			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[j], 'sortingFactor': e})
+				if (estimateData[outcomeIndex][j].length === undefined) e = estimateData[outcomeIndex][j]
+					else e = mean(...estimateData[outcomeIndex][j])
+			list.push({'outcomeData': outcomeData[i][j], 'estimateData':estimateData[i][j], 'sortingFactor': e})
 		}
 		outcomeDataSortingList.push(list)
 	}
@@ -78,7 +75,6 @@ import { mean } from './arrayMethods.js'
 
 	// store e_data to contain sorting factors
 	let e_data = outcomeDataSortingList.map(k => k.map(j => j.estimateData));
-
 
 	return {g_data, o_data, e_data}
 }

@@ -98,7 +98,7 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 						)
 						.map(d => d.flat(1))
 
-		// estiamte data
+		// estimate data
 		// the structure is similar to that of o_data, so we follow the same steps
 		let e_data = d3.transpose( 
 							groupedSortResult.map(d => d.e_data) 
@@ -134,7 +134,7 @@ function makePartitions(groups, g_data, o_data, e_data) {
 		})
 	)
 
-	// need to take a slightly different approach when it comes to o_data
+	// need to take a slightly different approach when it comes to o_data and e_data
 	// let o = [outcomes_var1], [outcomes_var2]
 	// [o] -> [o | g == g1, o | g == g2, o | g == g3, ...]
 	let partitioned_o_data = partition_indices.map(x =>
@@ -148,10 +148,12 @@ function makePartitions(groups, g_data, o_data, e_data) {
 	)
 
 	let partitioned_e_data = partition_indices.map(x =>
-		x.map(k => {
-			return e_data.map((d, i) => {
-				if (k == i) return d
-			}).filter(x => x !== undefined)[0]
+		e_data.map(y => {
+			return x.map(k => {
+				return y.map((d, i) => {
+					if (k == i) return d
+				}).filter(x => x !== undefined)[0]
+			})
 		})
 	)
 
