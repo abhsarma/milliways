@@ -591,7 +591,7 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		.range([margin.left, outVisWidth]);
 	
 	let y = d3.scaleLinear()
-		.domain(d3.extent( data.map(d => d.map(x => x[1])).flat() ))
+		.domain([0, 0.5])
 		.range([(yscale.step() - cell.padding), 0]);
 
 	if (state_value == 0) {
@@ -628,20 +628,50 @@ export function CDF (data, estimate, i, size, yscale, term) {
 	if (xAxis.select('.x-axis').node()) {
 		xAxis.select(".x-axis")
 			.call(d3.axisTop(xscale).ticks(5))
+			.call(g => g.selectAll(".tick line") //.clone()
+				.attr("y2", height - margin.bottom)
+				.attr("stroke-opacity", 0.1)
+			)
 			.style("font-size", "12px");
 	} else {
 		xAxis.append('g')
 			.attr("class", "x-axis")
 			.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
 			.call(d3.axisTop(xscale).ticks(5))
+			.call(g => g.selectAll(".tick line").clone()
+				.attr("y2", height - margin.bottom)
+				.attr("stroke-opacity", 0.1)
+			)
 			.style("font-size", "12px");
 	}
-		
+
 	let area = d3.area()
 		.curve(d3.curveLinear)
 		.x(d => xscale(d[0]))
 		.y0(d => y(d[1]))
 		.y1(d => y(d[2]))
+		// .y0(d => {
+		// 	// by construction: d[2] > d[1]
+		// 	if (d[2] <= 0.5) { return y(d[1]) }
+		// 	else {
+		// 		if (d[1] >= 0.5) { return y(1 - d[1]) }
+		// 		else {
+		// 			console.log(d);
+		// 			if (d[1] < (1 - d[2])) { return y(0.5) }
+		// 			else { return y(1 - d[2]) }
+		// 		}
+		// 	}
+		// })
+		// .y1((d, i) => {
+		// 	if (d[2] <= 0.5) { return y(d[2]) }
+		// 	else {
+		// 		if (d[1] >= 0.5) { return y(1 - d[2]) }
+		// 		else {
+		// 			if (d[1] < (1 - d[2])) { return y(d[1]) }
+		// 			else { return y(0.5) }
+		// 		}
+		// 	}
+		// })
 
 	let line = d3.line()
 		.x(d => xscale(d[0]))
@@ -844,11 +874,8 @@ export function drawSortByGroupsDivider(params, w2,h) {
 				.attr("x1", nearestDivision + 6)
 				.attr("x2", nearestDivision + 6)
 
-		// console.log("PARAMS: ", Object.keys(params))
-
 		sortByGroupParams = Object.keys(params).slice(hard_coded.indexOf(nearestDivision)).reverse()
 		groupParams.update(arr => arr = sortByGroupParams)
-		// console.log(sortByGroupParams)
 		return
 	}
 

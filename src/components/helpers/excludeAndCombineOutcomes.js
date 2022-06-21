@@ -10,6 +10,17 @@ function which_option_index(option_list, curr_options) {
 	}).filter(i => (i != null))
 }
 
+function calculate_mirror_CDF(d1, d2) {
+	if (d1 > 0.5 & d2 > 0.5) { d1 = (1 - d1); d2 = (1 - d2)}
+	else {
+		if (d2 > 0.5 & (1 - d2) > d1) { d2 = 0.5 }
+		else if (d2 > 0.5 & (1 - d2) < d1) { d2 = (1 - d2); d1 = 0.5}
+	}
+
+	if (d1 < d2) { return [d1, d2] }
+	else { return [d2, d1] }
+}
+
 
 /**
  * function which processes the result of exclusion and combinations of options on outcomes (CDF and estimate); returns the processed outcomeData (CDF) and estimateData (point estimate) objects
@@ -71,14 +82,16 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			).map(d => d[1].map(x => {
 				delete x.group;
 				return Object.values(x).flat();
-			}))
-			.map(x => {
+			})).map(x => {
 				let mod = d3.rollups(x.flat(), v => {
-					return [d3.min(v, d => d[1]), d3.max(v, d => d[1])]
+					return calculate_mirror_CDF(...[d3.min(v, d => d[1]), d3.max(v, d => d[1])]);
+					// return [d3.min(v, d => d[1]), d3.max(v, d => d[1])]
 				}, d => d[0]);
 				return mod
 			})
 			.map(x => x.map(p => p.flat()))
+
+		// console.log(o_data_processed);
 
 		e_data_processed = d3.groups(
 			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
@@ -87,6 +100,12 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 				delete x.group;
 				return Object.values(x).flat();
 			}).flat())
+	} else {
+		o_data_processed = o_data_processed.map( d => d.map( x => {
+			if (x[1] > 0.5) { x[1] = (1 - x[1]) }
+			if (x[2] > 0.5) { x[2] = (1 - x[2]) }	
+			return x
+		}) )
 	}
 
 	return {e_data_processed, o_data_processed};
