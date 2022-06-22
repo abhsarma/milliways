@@ -8,17 +8,20 @@
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
-	import { exclude_options, join_options, groupParams, option_order_scale } from './components/stores.js';
+	import { exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
 	import { colors } from './components/colorPallete.js';	
 	import { arrayEqual, whichDiff, any } from './components/helpers/arrayMethods.js'
+	// import { optionDragStart, optionDragged, optionDragEnd } from './components/helpers/dragOptions.js'
 
 	let options_to_exclude;
 	let options_to_join;
+	let x_scale_params;
 	let x_scale_options;
 	let sortByGroupParams;
 
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
+	const pos_unsub = param_order_scale.subscribe(value => x_scale_params=value);
 	const oos_unsub = option_order_scale.subscribe(value => x_scale_options=value);
 	const gp_unsub = groupParams.subscribe(value => sortByGroupParams = value);
 
@@ -53,7 +56,7 @@
 		.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
 		.padding(0.1);
 
-	let x_scale_params = d3.scaleOrdinal()
+	x_scale_params = d3.scaleOrdinal()
 		.domain(Object.keys(params))
 		.range(
 			Object.values(param_n_options)
@@ -92,11 +95,12 @@
 
 	onMount(() => {
 		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
-		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params)
-		drawSortByGroupsDivider(params, w2, h)
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
+		drawSortByGroupsDivider(params, x_scale_params, h);
 
 		d3.selectAll(".option-value").call(drag_options);
 		d3.selectAll(".parameter").call(drag_parameters);
+		d3.select("line.groupedSortDivider").call(dragSortDivider)
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -143,7 +147,10 @@
 		return g.transition().duration(500);
 	}
 
-	// drag options within each parameter
+	/**
+	// defines drag interaction to re-order 
+	//  options within each parameter
+	**/
 	let drag_options = d3.drag()
 		.subject(function(event, d) {
 			return {x: x_scale_params(d[0].parameter) + x_scale_options[d[0].parameter](d[0].index)}
@@ -172,7 +179,7 @@
 
 				order[d[0].parameter].name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
 				x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
-				option_order_scale.update(v => v=x_scale_options);
+				option_order_scale.update(v => v = x_scale_options);
 
 				d3.selectAll(`g.option-value.${d[0].parameter}`).attr("transform", function(d, i) { 
 					return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
@@ -211,7 +218,10 @@
 		return v == null ? x_scale_options[p](d) : v;
 	}
 
-	// drag parameters
+	/**
+	// defines drag interaction to re-order 
+	// parameters (while keeping options in the same order)
+	**/
 	let drag_parameters = d3.drag()
 		.subject(function(event, d) {
 			return {x: x_scale_params(d)}
@@ -263,6 +273,8 @@
 
 				x_scale_params.domain(parameter_order.map(d => d[0]));
 				x_scale_params.range(param_order_range);
+				param_order_scale.update(v => v = x_scale_params);
+
 				
 				d3.selectAll(`g.parameter`).select('foreignObject')
 					.attr("x", d => pPosition(d));
@@ -272,6 +284,18 @@
 		})
 		.on("end", function(event, d) {
 			delete parameter_dragging[d];
+
+			let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+			let dividerPositionIndex = d3.select("line.groupedSortDivider").attr("class").split(" ")[1]
+
+			d3.select("line.groupedSortDivider")
+				.transition()
+				.attr("x1", boundaries[dividerPositionIndex])
+				.attr("x2", boundaries[dividerPositionIndex])
+
+			sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
+			groupParams.update(arr => arr = sortByGroupParams)
+
 			transition(d3.select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${y(0)})`));
 			transition(d3.select(this).select('foreignObject').attr("x", x_scale_params(d)));
 		});
@@ -280,6 +304,57 @@
 	function pPosition(d) {
 	  	var v = parameter_dragging[d];
 	  	return v == null ? x_scale_params(d) : v;
+	}
+
+	/**
+	// defines drag interaction for the groupedSortDivider
+	// which defines input to the groupedSortFunction
+	**/
+	let dragSortDivider = d3.drag()
+		// .subject(function(event, d) {} )
+		.on("start", dividerDragStarted)
+		.on("drag", dividerDragged)
+		.on("end", dividerDragEnded)
+
+
+	function findClosestDivision(x_value) {
+		let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+		var nearest = boundaries.reduce(function(prev, curr) {
+			return (Math.abs(curr - x_value) < Math.abs(prev - x_value) ? curr : prev);
+	  });
+	  return nearest
+	}
+
+	function dividerDragStarted(event, d) { return null }
+	
+	function dividerDragged(event, d) {
+		let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+		let minBarPosition = boundaries[0];
+		let maxBarPosition = boundaries[boundaries.length - 1];
+
+		if (event.x > minBarPosition && event.x < maxBarPosition) {
+			d3.select(this).raise().attr("x1", event.x);
+			d3.select(this).raise().attr("x2", event.x);
+		}
+	}
+
+	function dividerDragEnded(event, d) {
+		let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+		let nearestDivision = findClosestDivision(event.x);
+		let dividerPositionIndex = boundaries.indexOf(nearestDivision);
+
+		d3.select(this)
+			.attr("class", `groupedSortDivider ${dividerPositionIndex}`)
+			.transition()
+			.attr("x1", nearestDivision)
+			.attr("x2", nearestDivision)
+
+		sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
+		groupParams.update(arr => arr = sortByGroupParams)
+	}
+	
+	function dividerClicked(event, d){
+		if (event.defaultPrevented) return; // dragged
 	}
 
 	// defining color variables for use in CSS

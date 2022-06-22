@@ -57,14 +57,12 @@ let state_value;
 let options_to_exclude;
 let options_to_join;
 let sortByGroupParams;
-let x_scale_options;
 let vis_type = CDF;
 
 state.subscribe(value => state_value = value);
 groupParams.subscribe(value => sortByGroupParams = value)
 exclude_options.subscribe(value => options_to_exclude = value);
 join_options.subscribe(value => options_to_join = value);
-option_order_scale.subscribe(value => x_scale_options = value);
 
 // Event handler functions 
 function handleMouseenter(event, d) {
@@ -176,17 +174,21 @@ class multiverseMatrix {
 			id: this.outcomes.length === 0 ? 0 : this.outcomes[this.outcomes.length-1].id + 1
 		});
 
-		if (graph == CI) {
-			this.outcomes[i].data = this.data.map(function(d) { 
-				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-				))
-			});
-		} else {
-			let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
-			o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
-			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
-		}
+		let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
+		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
+		// We only support mirrored CDFs at this point, but in the future we may consider supporting other chart types
+		// if (graph == CI) {
+		// 	this.outcomes[i].data = this.data.map(function(d) { 
+		// 		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+		// 			i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+		// 		))
+		// 	});
+		// } else {
+		// 	let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
+		// 	o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
+		// }
 
 		const {e_data_processed, o_data_processed} = excludeAndCombineOutcomes(
 			this.gridData, 
@@ -273,18 +275,22 @@ class multiverseMatrix {
 
 		let size = g_data.length;
 
+		let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
+		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
+
 		// we need to update the term and the associated data for creating CDFs
-		if (graph == CI) {
-			o_data = this.data.map(function(d) { 
-				return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-					i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-				))
-			});
-		} else {
-			let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
-			o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
-			e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
-		}
+		// if (graph == CI) {
+		// 	o_data = this.data.map(function(d) { 
+		// 		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
+		// 			i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
+		// 		))
+		// 	});
+		// } else {
+		// 	let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
+		// 	o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
+		// }
 
 		let option_list = Object.entries(this.parameters()).map(d => d[1]);
 
@@ -650,28 +656,6 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		.x(d => xscale(d[0]))
 		.y0(d => y(d[1]))
 		.y1(d => y(d[2]))
-		// .y0(d => {
-		// 	// by construction: d[2] > d[1]
-		// 	if (d[2] <= 0.5) { return y(d[1]) }
-		// 	else {
-		// 		if (d[1] >= 0.5) { return y(1 - d[1]) }
-		// 		else {
-		// 			console.log(d);
-		// 			if (d[1] < (1 - d[2])) { return y(0.5) }
-		// 			else { return y(1 - d[2]) }
-		// 		}
-		// 	}
-		// })
-		// .y1((d, i) => {
-		// 	if (d[2] <= 0.5) { return y(d[2]) }
-		// 	else {
-		// 		if (d[1] >= 0.5) { return y(1 - d[2]) }
-		// 		else {
-		// 			if (d[1] < (1 - d[2])) { return y(d[1]) }
-		// 			else { return y(0.5) }
-		// 		}
-		// 	}
-		// })
 
 	let line = d3.line()
 		.x(d => xscale(d[0]))
@@ -758,144 +742,99 @@ function exitCDF(exit) {
 	exit.call(g => g.remove())
 }
 
-export function CI (data, results_node, size, yscale) {
-	let results_plot = results_node.select("svg")
-	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	const width = parameters.length * (cell.width + cell.padding); // to fix
-	let ypos;
-
-	// d3.select("g.outcomePanel").remove();
-
-	let xscale = d3.scaleLinear()
-		.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
-		.range([margin.left, outVisWidth + margin.left]);
-
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
-
-	let outcomePlot = results_plot.append("g")
-		.attr("class", `outcomePanel`)
-		.attr( "transform",
-			`translate(0,  ${ypos})`)
-
-	outcomePlot.append("line")
-		.attr("class", "zero-line")
-		.attr("x1", xscale(0) )
-		.attr("y1", margin.top)
-		.attr("x2", xscale(0) )
-		.attr("y2", height - margin.bottom)
-		.attr("stroke", `${colors.gray}`)
-		.attr("stroke-width", 2);
-
-	let xAxis = d3.axisTop(xscale)
-		.ticks(5);
-
-	outcomePlot.append("g")
-		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
-		.call(xAxis)
-		.style("font-size", "12px");
-
-	// add a group for each universe
-	let panelPlot = outcomePlot.selectAll("g")
-		.data(data)
-		.join(
-			enter => enter.append('g'),
-			update => update,
-			exit => exit.remove()
-		)
-		.attr("class", "universe");
-
-	// Add reference lines
-	panelPlot.append("line")
-		.attr("class", "pointrange")
-		.attr("x1", xscale.range()[0] )
-		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("x2", xscale.range()[1] )
-		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("stroke", `${colors.gray}`)
-		.attr("stroke-width", 1);
-
-	// Add interval lines
-	panelPlot.append("line")
-		.attr("class", "pointrange")
-		.attr("x1", d => xscale(d['conf.low']) )
-		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("x2", d => xscale(d['conf.high']) )
-		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-		.attr("stroke", `${colors.gray}`)
-		.attr("stroke-width", 2);
-
-	// Add point estimates
-	panelPlot.append("circle")
-		.attr("class", "mean")
-		.attr("cx", d => xscale(d['estimate']))
-		.attr("cy", (d, i) => yscale(i) + yscale.bandwidth() / 2)
-		.attr("r", 4)
-		.attr("fill", `${colors.gray}`);
-}
-
-export function drawSortByGroupsDivider(params, w2,h) {
-	let maxBarPosition = w2-15
-	let minBarPosition = 5
-
-	let plot = d3.select(".grid").select("svg");
-
-	// TODO: Get these values to not be hard coded, but to be dynamically generated
-	const hard_coded = [minBarPosition,128,216,340,536, maxBarPosition]
-
-	function findClosestDivision(x_value) {
-		var nearest = hard_coded.reduce(function(prev, curr) {
-			return (Math.abs(curr - x_value) < Math.abs(prev - x_value) ? curr : prev);
-	  });
-	  return nearest
-	}
-
-	function dragstarted() {
-		hierarchalBar.attr("stroke", "black");
-	}
+export function drawSortByGroupsDivider(params, xscale, h) {
+	let dividerWidth = 6;
+	let boundaries = xscale.range().map( d => (d - (groupPadding/2)) );
 	
-	function dragged(event, d) {
-		if (event.x > minBarPosition && event.x < maxBarPosition) {
-			hierarchalBar.raise().attr("x1", event.x);
-			hierarchalBar.raise().attr("x2", event.x);
-		}
-	}
-
-	function dragended(event, d) {
-		// TODO Find the width between each category, and replace 6 with half of that value
-		var nearestDivision = findClosestDivision(event.x);
-		d3.select(this).transition()
-				.attr("x1", hierarchalBar.raise().attr("x1"))
-				.attr("x2", hierarchalBar.raise().attr("x2"))
-			.transition()
-				.attr("x1", nearestDivision + 6)
-				.attr("x2", nearestDivision + 6)
-
-		sortByGroupParams = Object.keys(params).slice(hard_coded.indexOf(nearestDivision)).reverse()
-		groupParams.update(arr => arr = sortByGroupParams)
-		return
-	}
-
-	var drag = d3.drag()
-		.on("start", dragstarted)
-		.on("drag", dragged)
-		.on("end", dragended)
-
-	var hierarchalBar = plot.append("line")
-		.attr("x1", maxBarPosition)
+	let groupedSortDivider = d3.select(".grid")
+		.select("svg")
+		.append('line')
+		.attr("class", `groupedSortDivider ${boundaries.length - 1}`)
+		.attr("x1", boundaries[boundaries.length - 1])
 		.attr("y1", 0)
-		.attr("x2", maxBarPosition) 
+		.attr("x2", boundaries[boundaries.length - 1]) 
 		.attr("y2", h)
 		.style("stroke", "black")
-		.style("stroke-width", 7)
+		.style("stroke-width", dividerWidth)
 		.style("cursor", "pointer")
-		.call(drag)
-		.on("click", clicked)
-
-   function clicked(event, d){
-		if (event.defaultPrevented) return; // dragged
-   }
 }
+
+
+// export function CI (data, results_node, size, yscale) {
+// 	let results_plot = results_node.select("svg")
+// 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
+// 	const width = parameters.length * (cell.width + cell.padding); // to fix
+// 	let ypos;
+
+// 	// d3.select("g.outcomePanel").remove();
+
+// 	let xscale = d3.scaleLinear()
+// 		.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
+// 		.range([margin.left, outVisWidth + margin.left]);
+
+// 	if (state_value == 0) {
+// 		ypos = 4 * cell.padding;
+// 	} else {
+// 		ypos = namingDim + 4 * cell.padding;
+// 	}
+
+// 	let outcomePlot = results_plot.append("g")
+// 		.attr("class", `outcomePanel`)
+// 		.attr( "transform",
+// 			`translate(0,  ${ypos})`)
+
+// 	outcomePlot.append("line")
+// 		.attr("class", "zero-line")
+// 		.attr("x1", xscale(0) )
+// 		.attr("y1", margin.top)
+// 		.attr("x2", xscale(0) )
+// 		.attr("y2", height - margin.bottom)
+// 		.attr("stroke", `${colors.gray}`)
+// 		.attr("stroke-width", 2);
+
+// 	let xAxis = d3.axisTop(xscale)
+// 		.ticks(5);
+
+// 	outcomePlot.append("g")
+// 		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
+// 		.call(xAxis)
+// 		.style("font-size", "12px");
+
+// 	// add a group for each universe
+// 	let panelPlot = outcomePlot.selectAll("g")
+// 		.data(data)
+// 		.join(
+// 			enter => enter.append('g'),
+// 			update => update,
+// 			exit => exit.remove()
+// 		)
+// 		.attr("class", "universe");
+
+// 	// Add reference lines
+// 	panelPlot.append("line")
+// 		.attr("class", "pointrange")
+// 		.attr("x1", xscale.range()[0] )
+// 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
+// 		.attr("x2", xscale.range()[1] )
+// 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
+// 		.attr("stroke", `${colors.gray}`)
+// 		.attr("stroke-width", 1);
+
+// 	// Add interval lines
+// 	panelPlot.append("line")
+// 		.attr("class", "pointrange")
+// 		.attr("x1", d => xscale(d['conf.low']) )
+// 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
+// 		.attr("x2", d => xscale(d['conf.high']) )
+// 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
+// 		.attr("stroke", `${colors.gray}`)
+// 		.attr("stroke-width", 2);
+
+// 	// Add point estimates
+// 	panelPlot.append("circle")
+// 		.attr("class", "mean")
+// 		.attr("cx", d => xscale(d['estimate']))
+// 		.attr("cy", (d, i) => yscale(i) + yscale.bandwidth() / 2)
+// 		.attr("r", 4)
+// 		.attr("fill", `${colors.gray}`);
+// }
