@@ -13,7 +13,6 @@
 		}
 
 		#chart {
-
 			height:  300px;
 			width:  500px;
 		}
@@ -31,23 +30,23 @@
   var numbers = [[], [], [], [], [], [], []];
 
   function update(nums) {
-	selection = d3.select("#chart")
-		.selectAll(".bar")
-		.data(nums)
-		.join(
-			enter => enter.append("div")
-				.style('opacity', 1),
-			update => update,
-			exit => exit.remove()
-		)
-		.attr("class", "bar")
-		.style("height", function(d){ 
-			return 100 + "px"; 
-		})
-		.style("margin-top", function(d){ 
-			return  0 + "px"; 
-		})
-		.style('background-color', 'orange')
+		selection = d3.select("#chart")
+			.selectAll(".bar")
+			.data(nums)
+			.join(
+				enter => enter.append("div")
+					.style('opacity', 1),
+				update => update,
+				exit => exit.remove()
+			)
+			.attr("class", "bar")
+			.style("height", function(d){ 
+				return 100 + "px"; 
+			})
+			.style("margin-top", function(d){ 
+				return  0 + "px"; 
+			})
+			.style('background-color', 'orange')
 	}
 
 	// d3.select("div#chart").on("click", function(e, i){
@@ -69,37 +68,5 @@
 		console.log(sample);
 		update(sample);
 	}
-
-// var numbers = [15, 8, 42, 4, 32].map(d => 2*d);
-
-// function update() {
-// var selection = d3.select("#chart")
-//   .selectAll(".bar")
-//   .data(numbers)
-
-// selection
-//   .enter()
-//   .append("div")
-//   .attr("class", "bar")
-//   .style("height", function(d){ 
-//     return d + "px"; 
-//   })
-//   .style("margin-top", function(d){ 
-//     return (200 - d) + "px"; 
-//   })
-//   .on("click", function(e, i){
-//     numbers.splice(i, 1);
-//     update();
-//   });
-
-// selection.exit().remove();
-// };
-
-// update();
-
-// function addNum(x) {
-// numbers = numbers.concat(x);
-// update();
-// }
 </script>
 </html>
