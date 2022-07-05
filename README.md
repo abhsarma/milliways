@@ -24,3 +24,30 @@ npm run dev
 ```
 
 
+## Compilation
+
+Currently, we are working on an implementation which lets you compile this project into a standalone HTML file. To do this, run the following command:
+
+```
+npm run compile
+```
+
+To compile, we make use of the inliner npm library. However, inliner does not support `defer` scripts. So in the `public/index.html` file, move:
+
+```
+<head>
+    <script defer src="/build/bundle.js"></script>
+</head>
+```
+
+to **after** the `<body/>` tag:
+
+```
+	<body></body>
+	<script src="/build/bundle.js"></script>
+</html>
+```
+
+
+
+
