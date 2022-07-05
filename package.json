@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear --single --port 3000",
-    "compile": "npm run build && (npm run start & sleep 5) && (inliner http://localhost:3000/index.html > index-inlined.html) && killall -9 node"
+    "compile": "npm run build && (npm run start & sleep 5) && (inliner http://localhost:3000/index.html > template.html) && killall -9 node"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",

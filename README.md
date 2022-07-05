@@ -32,6 +32,10 @@ Currently, we are working on an implementation which lets you compile this proje
 npm run compile
 ```
 
+This will create a `template.html` file, which will work as a standalone HTML document.
+
+### Troubleshooting
+
 To compile, we make use of the inliner npm library. However, inliner does not support `defer` scripts. So in the `public/index.html` file, move:
 
 ```
@@ -43,8 +47,8 @@ To compile, we make use of the inliner npm library. However, inliner does not su
 to **after** the `<body/>` tag:
 
 ```
-	<body></body>
-	<script src="/build/bundle.js"></script>
+    <body></body>
+    <script src="/build/bundle.js"></script>
 </html>
 ```
 
