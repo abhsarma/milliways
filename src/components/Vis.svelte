@@ -11,6 +11,7 @@
 
 	// Stores
 	let state_value;
+
 	state.subscribe(value => state_value = value);
 
 	const dispatch = createEventDispatcher();
@@ -41,7 +42,6 @@
 	onMount(() => {
 		// this is used to make <Vis/> not blank on mount
 		dispatch("mount");
-		console.log("mount", allOutcomeVars, ypos);
 
 		// d3.select(".vis-button-container").node().classList.add(`${container}`);
 	});
@@ -66,8 +66,6 @@
 		top: 0;
 		z-index: 1;
 		flex:1
-		/* float: left; */
-		/* height: 38px; (default) */
 	}
 
 	.vis-button {
@@ -123,7 +121,6 @@
 					<option value={t}> {t} </option>
 				{/each}
 			</select>
-
 			{#if sortIndex == i} 
 				{#if sortAscending}
 					<button class="vis-button" id={"vis-"+i} on:click={()=> dispatch("changeSortDirection")}>

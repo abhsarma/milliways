@@ -3,22 +3,25 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data2.json';
-	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
+	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
-	import { exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
+	import { state, exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
 	import { colors } from './components/colorPallete.js';	
 	import { arrayEqual, whichDiff, any } from './components/helpers/arrayMethods.js'
 	// import { optionDragStart, optionDragged, optionDragEnd } from './components/helpers/dragOptions.js'
 
+	// Stores
+	let state_value;
 	let options_to_exclude;
 	let options_to_join;
 	let x_scale_params;
 	let x_scale_options;
 	let sortByGroupParams;
 
+	const s_unsub = state.subscribe(value => state_value = value);
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 	const pos_unsub = param_order_scale.subscribe(value => x_scale_params=value);
@@ -94,13 +97,18 @@
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
-		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
+		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
 		drawSortByGroupsDivider(params, x_scale_params, h);
 
-		d3.selectAll(".option-value").call(drag_options);
+		d3.selectAll(".option-headers").call(drag_options);
 		d3.selectAll(".parameter").call(drag_parameters);
 		d3.select("line.groupedSortDivider").call(dragSortDivider)
+
+		// let ypos = (state_value == 0 ? 4 * cell.padding : namingDim + 4 * cell.padding)
+
+		// d3.select("div.vis-button-group")
+		// 	.attr("height", `${ypos + y(0)}px`)
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -120,6 +128,21 @@
 			}
 			isSyncingRightScroll = false;
 		}
+
+		rightDiv.addEventListener('scroll', function(e) {
+			d3.select(".x-axis")
+				.attr("transform", `translate(0, ${this.scrollTop + y(0) - cell.padding})`);
+		}, false)
+
+		rightDiv.addEventListener('scroll', function(e) {
+			d3.select("g.parameter-name-container")
+				.selectAll("foreignObject")
+				.attr('y', 4 + this.scrollTop);
+			d3.selectAll("rect.parameter-name-bg, rect.option-header-bg, foreignObject.option-join")
+				.attr('y', this.scrollTop);
+			d3.selectAll("foreignObject.option-name")
+				.attr('y', iconSize + cell.padding + this.scrollTop);
+		}, false)
 	});
 
 	function update(outcomes, join, exclude, sortByGroupParams) {
@@ -180,8 +203,8 @@
 				order[d[0].parameter].name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
 				x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
 				option_order_scale.update(v => v = x_scale_options);
-
-				d3.selectAll(`g.option-value.${d[0].parameter}`).attr("transform", function(d, i) { 
+				
+				d3.selectAll(`g.option-value.${d[0].parameter},g.option-headers.${d[0].parameter}`).attr("transform", function(d, i) { 
 					return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
 				});
 			}
@@ -210,6 +233,7 @@
 
 			delete option_dragging[d[0].index];
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
+			transition(d3.select(`g.option-value.${d[0].parameter}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
 		});
 
 	// option positions
