@@ -2,7 +2,7 @@
 	import 'bootstrap-grid/dist/grid.min.css';
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data2.json';
+	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawGridNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
 	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'

@@ -1,72 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<script src="https://d3js.org/d3.v7.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-	<style>
-		.bar {
-			float: left;
-			width: 30px;
-			margin-right: 20px;
-			background-color: #F4F5F7;
-			border: 1px solid #C5C5C5;
-		}
-
-		#chart {
-			height:  300px;
-			width:  500px;
-		}
-	</style>
 </head>
-
 <body>
-  <div>
-  	<div id="chart">
-  </div>
-  <button onclick="updateBars()">Update!</button>
 </body>
 
 <script type="text/javascript">
-  var numbers = [[], [], [], [], [], [], []];
-
-  function update(nums) {
-		selection = d3.select("#chart")
-			.selectAll(".bar")
-			.data(nums)
-			.join(
-				enter => enter.append("div")
-					.style('opacity', 1),
-				update => update,
-				exit => exit.remove()
-			)
-			.attr("class", "bar")
-			.style("height", function(d){ 
-				return 100 + "px"; 
-			})
-			.style("margin-top", function(d){ 
-				return  0 + "px"; 
-			})
-			.style('background-color', 'orange')
-	}
-
-	// d3.select("div#chart").on("click", function(e, i){
-	// 	numbers.splice(i, 1);
-	// 	update();
-	// });
-
-	updateBars(n = null);
-
-	function updateBars(n  = 5) {
-		let sample;
-		if (n != null) {
-			x = Math.ceil(Math.random() * n);
-			sample = _.sampleSize(numbers, x);
-		} else {
-			sample = numbers
-		}
-
-		console.log(sample);
-		update(sample);
-	}
 </script>
 </html>
