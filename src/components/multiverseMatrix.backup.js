@@ -19,6 +19,7 @@ export const parameters = css`
 	font-family: 'Avenir Next';
 	text-transform: uppercase;
 	padding: 0px ${cell.padding/2 + "px"};
+	background-color: ${colors.background};
 	cursor: default;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -369,8 +370,7 @@ function formatCDFOutcomeData(data, term){
  * @param {function} x A D3 scale definition for x position of each parameter
  **/
 export function drawGridNames (gridData, params, yscale, x) {
-	drawParameterNames(params, x);
-	// drawOptionNames(params, yscale, x);
+	drawParameterNames(params, yscale, x);
 	drawColNames(params, yscale, x);
 }
 
@@ -382,14 +382,25 @@ export function drawGridNames (gridData, params, yscale, x) {
  * @param {function} yscale A D3 scale definition for y position of each universe
  * @param {function} x A D3 scale definition for x position of each parameter
  **/
-export function drawParameterNames(params, xscale) {
+export function drawParameterNames(params, y, xscale) {
 	let plot = d3.select(".grid").select("svg");
 
 	let options = Object.values(params);
 	let col_idx = [0, ...options.map(d => d.length).map((sum => value => sum += value)(0))];
 
-	let param_names = plot.append("g")
-		.selectAll("text")
+	let param_container = plot.append("g")
+		.attr("class", "parameter-name-container")
+
+	param_container.append("rect")
+		.attr("class", "parameter-name-bg")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("width", "100%")
+		.attr("height", y(0) + 1)
+		.attr("fill", colors.background)
+
+	let param_names = param_container
+		.selectAll("div.parameter")
 		.data(Object.keys(params))
 		.join("g")
 		.attr("class", d => `parameter ${d}`)
@@ -417,12 +428,12 @@ export function drawParameterNames(params, xscale) {
  * @param {string} param A D3 scale definition for y position of each universe
  * @param {x2} x A D3 scale definition for x position of each option
  **/
-function drawColNames(params, y, x1) {
+export function drawColNames(params, y, x1) {
 	let plot = d3.select('.grid').select('svg');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 	let ypos = 4 * cell.padding;
 	let parameter_list = Object.entries(params)
-		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}))
+		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
 
 	let options = parameter_list.map(d => d.options);
 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
@@ -431,13 +442,20 @@ function drawColNames(params, y, x1) {
 		.domain(d3.range(d3.max(options.map(d => d.length))))
 		.range( [0, colWidth] );
 
-	let parameterCols = plot.selectAll("g.parameter-col")
-		.data(param_names)
-		.join("g")
-		.attr("transform",  (d, i) => `translate(${x1(d)}, ${y(0)})`)
-		.attr("class", (d, i) => `parameter-col ${d}`)
+	let parameterCols = d3.selectAll(`g.parameter-col`);
 
-	parameterCols.selectAll("foreignObject")
+	// creates a background for the scroll:
+	parameterCols
+		.append("rect")
+		.attr("class", "option-header-bg")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("width", (d, i) => (x1.range()[i + 1] - x1.range()[i]))
+		.attr("height", 2*iconSize + 3*cell.padding + nameContainer.height + "px")
+		.style("fill", colors.background);
+
+	parameterCols
+		.selectAll("foreignObject")
 		.data((d, i) => options[i].slice(0, -1))
 		.join("foreignObject")
 		.attr("class", (d, i) => `option-join ${d}`)
@@ -469,15 +487,15 @@ function drawColNames(params, y, x1) {
 			})
 		});
 
-	let optionCols = parameterCols.selectAll('g')
+	let optionHeaders = parameterCols.selectAll('g.option-headers')
 		.data( (d, i) => (params[d].map((j, k) => [{parameter: d, option: j, index: k}])) )
 		.join('g')
 		.attr("class", function (d, i) {
-			return `option-value ${d[0].parameter} ${d[0].option}`
+			return `option-headers ${d[0].parameter} ${d[0].option}`
 		})
 		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
 
-	let optionNames = optionCols
+	let optionNames = optionHeaders
 		.append("foreignObject")
 		.attr("width", cell.width + cell.padding + "px" )
 		.attr("height", namingDim + "px")
@@ -529,11 +547,31 @@ function drawColNames(params, y, x1) {
  * @param {function} x1 A D3 scale definition for x position of each parameter
  * @param {function} x2 A D3 scale definition for x position of each option within each parameter
  **/
-export function drawMatrixGrid(data, params, yscale, x1, x2) {
+export function drawMatrixGrid(data, params, yscale, x1) {
 	let plot = d3.select('.grid').select('svg');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
+	let parameter_list = Object.entries(params)
+		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
 
-	let optionCols = d3.selectAll(`g.parameter-col`).selectAll(`g.option-value`)
+	let options = parameter_list.map(d => d.options);
+	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
+	let x2 = d3.scaleBand()
+		.domain(d3.range(d3.max(options.map(d => d.length))))
+		.range( [0, colWidth] );
+
+	let parameterCols = plot.selectAll("g.parameter-col")
+		.data(param_names)
+		.join("g")
+		.attr("transform", (d, i) => `translate(${x1(d)}, ${yscale(0)})`)
+		.attr("class", (d, i) => `parameter-col ${d}`)
+
+	let optionCols = parameterCols.selectAll('g.option-value')
+		.data( (d, i) => (params[d].map((j, k) => [{parameter: d, option: j, index: k}])) )
+		.join('g')
+		.attr("class", function (d, i) {
+			return `option-value ${d[0].parameter} ${d[0].option}`
+		})
+		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
 
 	optionCols.each((d, i) => {
 		let parameter = d[0].parameter;
@@ -629,28 +667,6 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
 
-	let xAxis = d3.select(`g.outcomePanel.plot-${i}`);
-
-	if (xAxis.select('.x-axis').node()) {
-		xAxis.select(".x-axis")
-			.call(d3.axisTop(xscale).ticks(5))
-			.call(g => g.selectAll(".tick line") //.clone()
-				.attr("y2", height - margin.bottom)
-				.attr("stroke-opacity", 0.1)
-			)
-			.style("font-size", "12px");
-	} else {
-		xAxis.append('g')
-			.attr("class", "x-axis")
-			.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
-			.call(d3.axisTop(xscale).ticks(5))
-			.call(g => g.selectAll(".tick line").clone()
-				.attr("y2", height - margin.bottom)
-				.attr("stroke-opacity", 0.1)
-			)
-			.style("font-size", "12px");
-	}
-
 	let area = d3.area()
 		.curve(d3.curveLinear)
 		.x(d => xscale(d[0]))
@@ -671,6 +687,36 @@ export function CDF (data, estimate, i, size, yscale, term) {
 			update => updateCDF(update, estimate, area, line, xscale, y),
 			exit => exitCDF(exit)
 		)
+
+	let xAxis = d3.select(`g.outcomePanel.plot-${i}`);
+
+	if (xAxis.select('.x-axis').node()) {
+		xAxis.select(".x-axis")
+			.call(d3.axisTop(xscale).ticks(5))
+			.call(g => g.selectAll(".tick line") //.clone()
+				.attr("y2", height - margin.bottom)
+				.attr("stroke-opacity", 0.1)
+			)
+			.style("font-size", "12px");
+	} else {
+		xAxis.append('g')
+			.attr("class", "x-axis")
+			.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
+			.append("rect")
+			.attr("x", 0)
+			.attr("y", -margin.top)
+			.attr("height", margin.top)
+			.attr("width", "100%")
+			.attr("fill", colors.background);
+
+		xAxis.select('.x-axis')
+			.call(d3.axisTop(xscale).ticks(5))
+			.call(g => g.selectAll(".tick line").clone()
+				.attr("y2", height - margin.bottom)
+				.attr("stroke-opacity", 0.1)
+			)
+			.style("font-size", "12px");
+	}
 }
 
 // helper function called by CDF
@@ -758,83 +804,3 @@ export function drawSortByGroupsDivider(params, xscale, h) {
 		.style("stroke-width", dividerWidth)
 		.style("cursor", "pointer")
 }
-
-
-// export function CI (data, results_node, size, yscale) {
-// 	let results_plot = results_node.select("svg")
-// 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-// 	const width = parameters.length * (cell.width + cell.padding); // to fix
-// 	let ypos;
-
-// 	// d3.select("g.outcomePanel").remove();
-
-// 	let xscale = d3.scaleLinear()
-// 		.domain(d3.extent(data.map(d => d["conf.low"]).concat(data.map(d => d["conf.high"]), 0)))
-// 		.range([margin.left, outVisWidth + margin.left]);
-
-// 	if (state_value == 0) {
-// 		ypos = 4 * cell.padding;
-// 	} else {
-// 		ypos = namingDim + 4 * cell.padding;
-// 	}
-
-// 	let outcomePlot = results_plot.append("g")
-// 		.attr("class", `outcomePanel`)
-// 		.attr( "transform",
-// 			`translate(0,  ${ypos})`)
-
-// 	outcomePlot.append("line")
-// 		.attr("class", "zero-line")
-// 		.attr("x1", xscale(0) )
-// 		.attr("y1", margin.top)
-// 		.attr("x2", xscale(0) )
-// 		.attr("y2", height - margin.bottom)
-// 		.attr("stroke", `${colors.gray}`)
-// 		.attr("stroke-width", 2);
-
-// 	let xAxis = d3.axisTop(xscale)
-// 		.ticks(5);
-
-// 	outcomePlot.append("g")
-// 		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
-// 		.call(xAxis)
-// 		.style("font-size", "12px");
-
-// 	// add a group for each universe
-// 	let panelPlot = outcomePlot.selectAll("g")
-// 		.data(data)
-// 		.join(
-// 			enter => enter.append('g'),
-// 			update => update,
-// 			exit => exit.remove()
-// 		)
-// 		.attr("class", "universe");
-
-// 	// Add reference lines
-// 	panelPlot.append("line")
-// 		.attr("class", "pointrange")
-// 		.attr("x1", xscale.range()[0] )
-// 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-// 		.attr("x2", xscale.range()[1] )
-// 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-// 		.attr("stroke", `${colors.gray}`)
-// 		.attr("stroke-width", 1);
-
-// 	// Add interval lines
-// 	panelPlot.append("line")
-// 		.attr("class", "pointrange")
-// 		.attr("x1", d => xscale(d['conf.low']) )
-// 		.attr("y1", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-// 		.attr("x2", d => xscale(d['conf.high']) )
-// 		.attr("y2", (d, i) => yscale(i) + yscale.bandwidth() / 2 )
-// 		.attr("stroke", `${colors.gray}`)
-// 		.attr("stroke-width", 2);
-
-// 	// Add point estimates
-// 	panelPlot.append("circle")
-// 		.attr("class", "mean")
-// 		.attr("cx", d => xscale(d['estimate']))
-// 		.attr("cy", (d, i) => yscale(i) + yscale.bandwidth() / 2)
-// 		.attr("r", 4)
-// 		.attr("fill", `${colors.gray}`);
-// }
