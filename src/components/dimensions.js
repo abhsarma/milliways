@@ -7,3 +7,5 @@ export const outVisWidth = 240;
 export const margin = {top: 40, right: 20, bottom: 15, left: 40};
 export const iconSize = 24;
 export const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;
+export const windowHeight = (window.innerHeight - 170);
+export const scrollbarWidth = 12;

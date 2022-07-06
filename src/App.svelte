@@ -2,9 +2,9 @@
 	import 'bootstrap-grid/dist/grid.min.css';
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data2.json';
+	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
-	import { cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1 } from './components/dimensions.js'
+	import { windowHeight, cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
@@ -38,7 +38,6 @@
 
 	let svg;
 
-	const windowHeight = (window.innerHeight - 170) + "px";
 	const cols = [...Object.keys(m.parameters())].length;
 
 	let order = {};
@@ -128,21 +127,6 @@
 			}
 			isSyncingRightScroll = false;
 		}
-
-		rightDiv.addEventListener('scroll', function(e) {
-			d3.select(".x-axis")
-				.attr("transform", `translate(0, ${this.scrollTop + y(0) - cell.padding})`);
-		}, false)
-
-		rightDiv.addEventListener('scroll', function(e) {
-			d3.select("g.parameter-name-container")
-				.selectAll("foreignObject")
-				.attr('y', 4 + this.scrollTop);
-			d3.selectAll("rect.parameter-name-bg, rect.option-header-bg, foreignObject.option-join")
-				.attr('y', this.scrollTop);
-			d3.selectAll("foreignObject.option-name")
-				.attr('y', iconSize + cell.padding + this.scrollTop);
-		}, false)
 	});
 
 	function update(outcomes, join, exclude, sortByGroupParams) {
@@ -204,7 +188,7 @@
 				x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
 				option_order_scale.update(v => v = x_scale_options);
 				
-				d3.selectAll(`g.option-value.${d[0].parameter},g.option-headers.${d[0].parameter}`).attr("transform", function(d, i) { 
+				d3.selectAll(`g.option-value.${d[0].parameter}, g.option-headers.${d[0].parameter}`).attr("transform", function(d, i) { 
 					return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
 				});
 			}
@@ -230,10 +214,9 @@
 					options_to_join = options_to_join.filter(d => !any(...diff_indices.map(x => d['indices'].includes(x))))
 					join_options.update(arr => arr = options_to_join);
 				}
-
 			delete option_dragging[d[0].index];
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
-			transition(d3.select(`g.option-value.${d[0].parameter}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
+			transition(d3.select(`g.option-value.${d[0].parameter}.${d[0].option}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
 		});
 
 	// option positions
@@ -402,7 +385,15 @@
 		display: inline-block;
 	}
 
-	svg {
+	svg.grid-headers {
+		background-color: var(--bgColor) !important;
+		display: inline-block;
+		float: left;
+		position: absolute;
+		box-shadow: 0px 4px 5px -2px #c0c0c0;
+	}
+
+	svg.grid-body {
 		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
@@ -477,7 +468,7 @@
 		</button>
 	</div>
 	<div class="main-content">
-		<div class="vis-container" style="height: {windowHeight};">
+		<div class="vis-container" style="height: {windowHeight}px;">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
 					i              		= {i}
@@ -495,8 +486,9 @@
 			{/each}
 		</div>
 		<div class="grid-container">
-			<div class="grid" style="height: {windowHeight}">
-				<svg bind:this={svg} height={h} width={w2}></svg>
+			<div class="grid" style="height: {windowHeight}px">
+				<svg class="grid-headers" bind:this={svg} height={186} width={w2 - scrollbarWidth}></svg>
+				<svg class="grid-body" bind:this={svg} height={h} width={w2}></svg>
 			</div>
 		</div>
 	</div>

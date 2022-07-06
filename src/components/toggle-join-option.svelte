@@ -26,7 +26,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	function handleMouseClick() {
+	function handleMouseClick() {		
 		if (!selected) {
 			options_to_join.push({'parameter': parameter, 'options': option_pair, 'indices': [index, index+1]});
 		} else {

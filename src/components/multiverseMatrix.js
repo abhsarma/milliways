@@ -1,6 +1,6 @@
 import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
-import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
+import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, exclude_options, join_options, groupParams, option_order_scale } from './stores.js';
@@ -59,11 +59,15 @@ let options_to_exclude;
 let options_to_join;
 let sortByGroupParams;
 let vis_type = CDF;
+// let x_scale_params;
+let x_scale_options;
 
 state.subscribe(value => state_value = value);
 groupParams.subscribe(value => sortByGroupParams = value)
 exclude_options.subscribe(value => options_to_exclude = value);
 join_options.subscribe(value => options_to_join = value);
+// param_order_scale.subscribe(value => x_scale_params=value);
+option_order_scale.subscribe(value => x_scale_options=value);
 
 // Event handler functions 
 function handleMouseenter(event, d) {
@@ -389,19 +393,8 @@ export function drawParameterNames(params, y, xscale) {
 	let options = Object.values(params);
 	let col_idx = [0, ...options.map(d => d.length).map((sum => value => sum += value)(0))];
 
-	let param_container = plot.append("g")
-		.attr("class", "parameter-name-container")
-
-	param_container.append("rect")
-		.attr("class", "parameter-name-bg")
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("width", "100%")
-		.attr("height", y(0) + 1)
-		.attr("fill", colors.background)
-
-	let param_names = param_container
-		.selectAll("div.parameter")
+	let param_names = plot.append("g")
+		.selectAll("text")
 		.data(Object.keys(params))
 		.join("g")
 		.attr("class", d => `parameter ${d}`)
@@ -427,11 +420,11 @@ export function drawParameterNames(params, y, xscale) {
  * 
  * @param {object of arrays} params Multiverse parameters and corresponding options
  * @param {string} param A D3 scale definition for y position of each universe
- * @param {x2} x A D3 scale definition for x position of each option
+ * @param {x1} x A D3 scale definition for x position of each parameter
  **/
-export function drawColNames(params, y, x1) {
-	let plot = d3.select('.grid').select('svg');
-	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
+export function drawColNames(params, yscale, x1) {
+	let plot = d3.select('.grid').select('svg.grid-headers');
+	let param_names = Object.keys(params)
 	let ypos = 4 * cell.padding;
 	let parameter_list = Object.entries(params)
 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
@@ -443,17 +436,11 @@ export function drawColNames(params, y, x1) {
 		.domain(d3.range(d3.max(options.map(d => d.length))))
 		.range( [0, colWidth] );
 
-	let parameterCols = d3.selectAll(`g.parameter-col`);
-
-	// creates a background for the scroll:
-	parameterCols
-		.append("rect")
-		.attr("class", "option-header-bg")
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("width", (d, i) => (x1.range()[i + 1] - x1.range()[i]))
-		.attr("height", 2*iconSize + 3*cell.padding + nameContainer.height + "px")
-		.style("fill", colors.background);
+	let parameterCols = plot.selectAll("g.parameter-col")
+		.data(param_names)
+		.join("g")
+		.attr("transform", (d, i) => `translate(${x1(d)}, ${yscale(0)})`)
+		.attr("class", (d, i) => `parameter-col ${d}`)
 
 	parameterCols
 		.selectAll("foreignObject")
@@ -549,16 +536,16 @@ export function drawColNames(params, y, x1) {
  * @param {function} x2 A D3 scale definition for x position of each option within each parameter
  **/
 export function drawMatrixGrid(data, params, yscale, x1) {
-	let plot = d3.select('.grid').select('svg');
+	let plot = d3.select('.grid').select('svg.grid-body');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 	let parameter_list = Object.entries(params)
 		.map(d => Object.assign({}, {parameter: d[0], options: d[1]}));
 
 	let options = parameter_list.map(d => d.options);
 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-	let x2 = d3.scaleBand()
-		.domain(d3.range(d3.max(options.map(d => d.length))))
-		.range( [0, colWidth] );
+	// let x2 = d3.scaleBand()
+	// 	.domain(d3.range(d3.max(options.map(d => d.length))))
+	// 	.range( [0, colWidth] );
 
 	let parameterCols = plot.selectAll("g.parameter-col")
 		.data(param_names)
@@ -569,16 +556,14 @@ export function drawMatrixGrid(data, params, yscale, x1) {
 	let optionCols = parameterCols.selectAll('g.option-value')
 		.data( (d, i) => (params[d].map((j, k) => [{parameter: d, option: j, index: k}])) )
 		.join('g')
-		.attr("class", function (d, i) {
-			return `option-value ${d[0].parameter} ${d[0].option}`
-		})
-		.attr("transform",  (d, i) => `translate(${x2(i)}, 0)`)
+		.attr("class", (d, i) => `option-value ${d[0].parameter} ${d[0].option}`)
+		.attr("transform", (d, i) => `translate(${x_scale_options[d[0].parameter](i)}, 0)`)
 
 	optionCols.each((d, i) => {
 		let parameter = d[0].parameter;
 		let option = d[0].option;
 
-		let optionNodes = d3.select(`g.${option}`)
+		let optionNodes = plot.select(`g.${option}`)
 			.selectAll(`rect.${option}`)
 			.data(data)
 			.join(
@@ -625,7 +610,6 @@ export function drawOutcomes (outcomes, size, yscale) {
  * @param {string} term Coefficient name
  **/
 export function CDF (data, estimate, i, size, yscale, term) {
-	let results_plot = d3.select('svg#vis-' + i);
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
 	let ypos;
 
@@ -645,12 +629,19 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		ypos = namingDim + 4 * cell.padding;
 	}
 
-	let outcomePlot = results_plot.append("g")
+	let outcomePlot = d3.select('svg.outcome-results.vis-' + i).selectAll(`g.outcomePanel.plot-${i}`)
+		.data([null])
+		.join("g")
 		.attr("class", `outcomePanel plot-${i}`)
-		.attr( "transform", `translate(0,  ${ypos})`)
+		.attr("transform", `translate(0,  ${ypos})`)
 
-	let intercept = d3
-		.select(`g.outcomePanel.plot-${i}`)
+	let axisPlot = d3.select(`svg.outcome-axis.vis-${i}`).selectAll(`g.outcome-headers.plot-${i}`)
+		.data([null])
+		.join("g")
+		.attr("class", `outcome-headers plot-${i}`)
+		.attr("transform", `translate(0,  ${ypos})`)
+
+	let intercept = axisPlot
 		.selectAll('.zero-line')
 		.data([data])
 		.join(
@@ -689,18 +680,18 @@ export function CDF (data, estimate, i, size, yscale, term) {
 			exit => exitCDF(exit)
 		)
 
-	let xAxis = d3.select(`g.outcomePanel.plot-${i}`);
+	// let xAxis = d3.select(`svg.outcome-axis.vis-${i}`);
 
-	if (xAxis.select('.x-axis').node()) {
-		xAxis.select(".x-axis")
+	if (axisPlot.select('.x-axis').node()) {
+		axisPlot.select(".x-axis")
 			.call(d3.axisTop(xscale).ticks(5))
 			.call(g => g.selectAll(".tick line") //.clone()
-				.attr("y2", height - margin.bottom)
+				.attr("y2", windowHeight - ypos - margin.bottom)
 				.attr("stroke-opacity", 0.1)
 			)
 			.style("font-size", "12px");
 	} else {
-		xAxis.append('g')
+		axisPlot.append('g')
 			.attr("class", "x-axis")
 			.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
 			.append("rect")
@@ -710,10 +701,10 @@ export function CDF (data, estimate, i, size, yscale, term) {
 			.attr("width", "100%")
 			.attr("fill", colors.background);
 
-		xAxis.select('.x-axis')
+		axisPlot.select('.x-axis')
 			.call(d3.axisTop(xscale).ticks(5))
 			.call(g => g.selectAll(".tick line").clone()
-				.attr("y2", height - margin.bottom)
+				.attr("y2", windowHeight - ypos - margin.bottom)
 				.attr("stroke-opacity", 0.1)
 			)
 			.style("font-size", "12px");
@@ -794,7 +785,7 @@ export function drawSortByGroupsDivider(params, xscale, h) {
 	let boundaries = xscale.range().map( d => (d - (groupPadding/2)) );
 	
 	let groupedSortDivider = d3.select(".grid")
-		.select("svg")
+		.select("svg.grid-body")
 		.append('line')
 		.attr("class", `groupedSortDivider ${boundaries.length - 1}`)
 		.attr("x1", boundaries[boundaries.length - 1])

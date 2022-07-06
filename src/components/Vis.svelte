@@ -2,7 +2,7 @@
 	import { css, cx } from '@emotion/css'
 	import * as d3 from 'd3';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
+	import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim, scrollbarWidth } from './dimensions.js'
 	import { state } from './stores.js';
 	import { colors } from './colorPallete.js';
 	
@@ -23,7 +23,6 @@
 	export let w; 
 	export let h;
 	export let term = allOutcomeVars[0];
-	export let scrollbarWidth = 12;
 
 	let ypos;
 	if (state_value == 0) {
@@ -36,19 +35,18 @@
 	export const container = css`
 		background-color: ${colors.background};
 		height: ${ypos}px;
+		width: ${w - scrollbarWidth}px;
 		position: absolute;
 	`;
 	
 	onMount(() => {
 		// this is used to make <Vis/> not blank on mount
 		dispatch("mount");
-
-		// d3.select(".vis-button-container").node().classList.add(`${container}`);
 	});
 </script>
 
 <style>
-	svg {
+	svg.outcome-results {
 		background-color: #f7f7f7;
 		float: left;
 		scrollbar-width: thin;
@@ -73,11 +71,7 @@
 		position: sticky;
 		top: 0;
 		z-index: 2;
-		/* float: right; */
-		/* width: 36px; */
 		height: 36px;
-		/* right: 0; */
-		/* margin: 0 0 0 -36px; */
 		border: none;
 		background-color: #f7f7f7;
 		flex:1;
@@ -111,10 +105,16 @@
 		background-color: #f7f7f7;
 		text-align: center;
 	}
+
+	svg.outcome-axis {
+		display: inline-block;
+		float: left;
+		position: absolute;
+	}
 </style>
 
 <div class="vis" id={"vis-"+i}>
-	<div class='vis-button-container'>
+	<div class={container}>
 		<div class='vis-button-group'>
 			<select class="vis-dropdown" id={"vis-"+i} bind:value={term} style="width:{w - 76 - scrollbarWidth}px;" on:change={() => dispatch("change")}>
 				{#each allOutcomeVars as t}
@@ -141,5 +141,6 @@
 			</button>
 		</div>
 	</div>
-	<svg id={"vis-"+i} bind:this={svg} height={h} width={w}></svg>
+	<svg class={"outcome-axis vis-"+i} bind:this={svg} height={windowHeight}px width={w - scrollbarWidth}></svg>
+	<svg class={"outcome-results vis-"+i} bind:this={svg} height={h} width={w}></svg>
 </div>
