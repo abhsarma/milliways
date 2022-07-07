@@ -1,6 +1,6 @@
 import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
-import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim } from './dimensions.js'
+import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim, gridNamesHeight } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
 import { state, exclude_options, join_options, groupParams, option_order_scale } from './stores.js';
@@ -12,6 +12,8 @@ import combineJoinOptions from './helpers/combineJoinOptions'
 import sortByOutcome from './helpers/sortByOutcome.js';
 import sortByGroup from './helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
+
+console.log(namingDim, gridNamesHeight);
 
 // CSS Styles
 export const parameters = css`
@@ -400,7 +402,7 @@ export function drawParameterNames(params, y, xscale) {
 		.attr("class", d => `parameter ${d}`)
 		.append("foreignObject")
 		.attr("x", d => xscale(d))
-		.attr("y", 4)
+		.attr("y", cell.padding)
 		.attr("width", (d, i) => (cell.width + cell.padding/2) * options.map(d => d.length)[i] )
 		.attr("height", cell.height + "px")
 		.append("xhtml:div")
@@ -781,20 +783,47 @@ function exitCDF(exit) {
 }
 
 export function drawSortByGroupsDivider(params, xscale, h) {
-	let dividerWidth = 6;
+	let dividerWidth = 3;
 	let boundaries = xscale.range().map( d => (d - (groupPadding/2)) );
 	
 	let groupedSortDivider = d3.select(".grid")
 		.select("svg.grid-body")
-		.append('line')
+		.append('g')
 		.attr("class", `groupedSortDivider ${boundaries.length - 1}`)
-		.attr("x1", boundaries[boundaries.length - 1])
-		.attr("y1", 0)
-		.attr("x2", boundaries[boundaries.length - 1]) 
-		.attr("y2", h)
-		.style("stroke", "black")
-		.style("stroke-width", dividerWidth)
 		.style("cursor", "pointer")
+		.attr("transform", `translate(${boundaries[boundaries.length - 1]}, 0)`)
+
+	groupedSortDivider.append('line')
+		.attr("x1", 0)
+		.attr("y1", gridNamesHeight)
+		.attr("x2", 0) 
+		.attr("y2", h)
+		.style("stroke", "#666666")
+		.style("stroke-width", dividerWidth)
+
+	let dividerAffordanceIcon = groupedSortDivider.append('g')
+		.attr("transform", `translate(0, ${(windowHeight + gridNamesHeight - (iconSize * 4/3))/2})`)
+		.attr("class", `groupedSortDividerIcon`)
+
+	dividerAffordanceIcon.append('path')
+		.attr('d', "M16,32L16,32c-5.3,0-9.6-4.3-9.6-9.6V9.6C6.4,4.3,10.7,0,16,0h0c5.3,0,9.6,4.3,9.6,9.6v12.8C25.6,27.7,21.3,32,16,32z")
+		.attr("transform", `translate(${-iconSize*4/6}, 0)`)
+		.attr("fill", "#666")
+
+	dividerAffordanceIcon.append('path')
+		.attr('d', "M20.92,11.67H10.91c-0.55,0-1-0.45-1-1v-0.01c0-0.55,0.45-1,1-1h10.01c0.55,0,1,0.45,1,1v0.01C21.91,11.22,21.47,11.67,20.92,11.67z")
+		.attr("transform", `translate(${-iconSize*4/6}, 0)`)
+		.attr("fill", "#fff")
+
+	dividerAffordanceIcon.append('path')
+		.attr('d', "M21,17H11c-0.55,0-1-0.45-1-1V16c0-0.55,0.45-1,1-1H21c0.55,0,1,0.45,1,1V16C22,16.55,21.55,17,21,17z")
+		.attr("transform", `translate(${-iconSize*4/6}, 0)`)
+		.attr("fill", "#fff")
+
+	dividerAffordanceIcon.append('path')
+		.attr('d', "M21.09,22.33H11.08c-0.55,0-1-0.45-1-1v-0.01c0-0.55,0.45-1,1-1h10.01c0.55,0,1,0.45,1,1v0.01C22.09,21.89,21.64,22.33,21.09,22.33z")
+		.attr("transform", `translate(${-iconSize*4/6}, 0)`)
+		.attr("fill", "#fff")
 }
 
 

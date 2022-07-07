@@ -4,7 +4,7 @@
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
-	import { windowHeight, cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth } from './components/dimensions.js'
+	import { windowHeight, cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth, matrixGridBuffer, gridNamesHeight } from './components/dimensions.js'
 	import Toggle from './components/toggle-names-button.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
@@ -96,18 +96,14 @@
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
+		console.log(windowHeight, gridNamesHeight)
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
 		drawSortByGroupsDivider(params, x_scale_params, h);
 
 		d3.selectAll(".option-headers").call(drag_options);
 		d3.selectAll(".parameter").call(drag_parameters);
-		d3.select("line.groupedSortDivider").call(dragSortDivider)
-
-		// let ypos = (state_value == 0 ? 4 * cell.padding : namingDim + 4 * cell.padding)
-
-		// d3.select("div.vis-button-group")
-		// 	.attr("height", `${ypos + y(0)}px`)
+		d3.select("g.groupedSortDivider").call(dragSortDivider)
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -126,7 +122,22 @@
 				leftDiv.scrollTop = this.scrollTop;
 			}
 			isSyncingRightScroll = false;
+
+			d3.select("g.groupedSortDivider")
+				.select("g.groupedSortDividerIcon")
+				.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
 		}
+
+		// leftDiv.addEventListener('scroll', function(e) {
+		// 	d3.select("g.groupedSortDivider")
+		// 		.select("g.groupedSortDividerIcon")
+		// 		.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
+		// }, false)
+		// rightDiv.addEventListener('scroll', function(e) {
+		// 	d3.select("g.groupedSortDivider")
+		// 		.select("g.groupedSortDividerIcon")
+		// 		.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
+		// }, false)
 	});
 
 	function update(outcomes, join, exclude, sortByGroupParams) {
@@ -293,12 +304,12 @@
 			delete parameter_dragging[d];
 
 			let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
-			let dividerPositionIndex = d3.select("line.groupedSortDivider").attr("class").split(" ")[1]
+			let dividerPositionIndex = d3.select("g.groupedSortDivider").attr("class").split(" ")[1]
 
-			d3.select("line.groupedSortDivider")
+			d3.select("g.groupedSortDivider")
 				.transition()
-				.attr("x1", boundaries[dividerPositionIndex])
-				.attr("x2", boundaries[dividerPositionIndex])
+				.attr("transform", `translate(${boundaries[dividerPositionIndex]}, 0)`)
+				// .attr("transform", boundaries[dividerPositionIndex])
 
 			sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
 			groupParams.update(arr => arr = sortByGroupParams)
@@ -340,8 +351,8 @@
 		let maxBarPosition = boundaries[boundaries.length - 1];
 
 		if (event.x > minBarPosition && event.x < maxBarPosition) {
-			d3.select(this).raise().attr("x1", event.x);
-			d3.select(this).raise().attr("x2", event.x);
+			d3.select(this).raise().attr("transform", `translate(${event.x}, 0)`);
+			d3.select(this).raise().attr("transform", `translate(${event.x}, 0)`);
 		}
 	}
 
@@ -353,8 +364,8 @@
 		d3.select(this)
 			.attr("class", `groupedSortDivider ${dividerPositionIndex}`)
 			.transition()
-			.attr("x1", nearestDivision)
-			.attr("x2", nearestDivision)
+			.attr("transform", `translate(${nearestDivision}, 0)` )
+			.attr("transform", `translate(${nearestDivision}, 0)` )
 
 		sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
 		groupParams.update(arr => arr = sortByGroupParams)
@@ -390,7 +401,7 @@
 		display: inline-block;
 		float: left;
 		position: absolute;
-		box-shadow: 0px 4px 5px -2px #c0c0c0;
+		/*box-shadow: 0px 4px 5px -2px #c0c0c0;*/
 	}
 
 	svg.grid-body {
@@ -487,8 +498,8 @@
 		</div>
 		<div class="grid-container">
 			<div class="grid" style="height: {windowHeight}px">
-				<svg class="grid-headers" bind:this={svg} height={186} width={w2 - scrollbarWidth}></svg>
-				<svg class="grid-body" bind:this={svg} height={h} width={w2}></svg>
+				<svg class="grid-headers" bind:this={svg} height={gridNamesHeight} width={w2}></svg>
+				<svg class="grid-body" bind:this={svg} height={h} width={w2 + matrixGridBuffer}></svg>
 			</div>
 		</div>
 	</div>

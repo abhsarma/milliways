@@ -9,3 +9,5 @@ export const iconSize = 24;
 export const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;
 export const windowHeight = (window.innerHeight - 170);
 export const scrollbarWidth = 12;
+export const matrixGridBuffer = 16;
+export const gridNamesHeight = cell.padding + cell.height + iconSize + namingDim; // yscale(0)
