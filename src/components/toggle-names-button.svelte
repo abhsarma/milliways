@@ -15,6 +15,12 @@
 			ypos = 4*cell.padding + 2*iconSize;
 
 			state.set(0);
+
+			d3.select("svg.grid-headers")
+				.transition()
+				.duration(t)
+				.attr("height", 188 - ypos);
+
 			d3.selectAll("div.option-label")
 				.transition()
 				.duration(t)
@@ -24,23 +30,26 @@
 			d3.selectAll("g.option-value")
 				.each(function(d){
 					let coords = d3.select(this).attr("transform").replace(/[a-z()\s]/g, '').split(",").map(x => +x);
+
 					d3.select(this)
 						.transition()
 						.duration(t)
 						.ease(d3.easeCubic)
-						.attr("transform", `translate(${coords[0]}, ${ypos})`)
+						.attr("transform", `translate(${coords[0]}, -${ypos})`)
 				})
 
-			d3.selectAll("g.outcomePanel")
-				.transition()
-				.duration(t)
-				.ease(d3.easeCubic)
-				.attr( "transform", `translate(0, ${ypos})`)
+			// d3.selectAll("g.outcomePanel")
+			// 	.transition()
+			// 	.duration(t)
+			// 	.ease(d3.easeCubic)
+			// 	.attr( "transform", `translate(0, -${ypos})`)
 
 		} else { 
-			ypos = namingDim + 4 * cell.padding;
-
 			state.set(1);
+
+			d3.select("svg.grid-headers")
+				.attr("height", 188);
+
 			d3.selectAll("div.option-label")
 				.transition()
 				.duration(t)
@@ -54,14 +63,14 @@
 						.transition()
 						.duration(t)
 						.ease(d3.easeCubic)
-						.attr("transform", `translate(${coords[0]}, ${ypos})`)
+						.attr("transform", `translate(${coords[0]}, 0)`)
 				})
 
-			d3.selectAll("g.outcomePanel")
-				.transition()
-				.duration(t)
-				.ease(d3.easeCubic)
-				.attr( "transform", `translate(0, ${ypos})`)
+			// d3.selectAll("g.outcomePanel")
+			// 	.transition()
+			// 	.duration(t)
+			// 	.ease(d3.easeCubic)
+			// 	.attr( "transform", `translate(0, ${ypos})`)
 		}
 	}
 </script>

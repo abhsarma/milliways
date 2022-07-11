@@ -205,26 +205,22 @@
 			}
 		})
 		.on("end", function(event, d) {
-				// step 1: check if the order of the options (within the current parameter) has changed at all
-				// if (!arrayEqual(previous_option_order[d[0].index], order[d[0].parameter].name)) { 
-				let current_param_joined = options_to_join
-											.filter(x => (x.parameter == d[0].parameter))
-											.map(d => d.indices).flat();
+			// step 1: check if the order of the options (within the current parameter) has changed at all
+			// if (!arrayEqual(previous_option_order[d[0].index], order[d[0].parameter].name)) { 
+			let current_param_joined = options_to_join
+										.filter(x => (x.parameter == d[0].parameter))
+										.map(d => d.indices).flat();
 
-				// step 1: which option indices have changed?
-				let diff_indices = whichDiff(previous_option_order[d[0].index], order[d[0].parameter].name);
+			// step 1: which option indices have changed?
+			let diff_indices = whichDiff(previous_option_order[d[0].index], order[d[0].parameter].name);
 
-				// step 2: check if drag has impacted the positions of any of the joined parameters
-				if (any(...diff_indices.map(d => current_param_joined.includes(d)).flat())) {
-					// step 3: un-join...by updating options_to_join and the store
-
-					// step 3.1 remove the current dragged option, if it is *joined*
-					//options_to_join.filter( i => !i['options'].includes(d[0].option) );
-
-					// step 3.2 remove all options which are impacted by the drag
-					options_to_join = options_to_join.filter(d => !any(...diff_indices.map(x => d['indices'].includes(x))))
-					join_options.update(arr => arr = options_to_join);
-				}
+			// step 2: un-join...by updating options_to_join and the store
+			options_to_join = options_to_join.filter(x => 
+				!((x.parameter == d[0].parameter) && // step 2.1 check if indices are correspond to the parameter being interacted with
+					any(...diff_indices.map(v => x.indices.includes(v)))) // step 2.2 if yes, remove the indices which differ in position
+			);
+			join_options.update(arr => arr = options_to_join);
+			
 			delete option_dragging[d[0].index];
 			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
 			transition(d3.select(`g.option-value.${d[0].parameter}.${d[0].option}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
@@ -376,6 +372,7 @@
 	}
 
 	// defining color variables for use in CSS
+	document.documentElement.style.setProperty('--white', colors.white)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--grayColor', colors.gray)
@@ -432,10 +429,12 @@
 
 	.button-wrapper button:hover, button:active {
 		background-color: var(--hoverColor) !important;
+		color: var(--white) !important;
 	}
 
 	.button-wrapper button:hover > svg.add-vis-icon {
 		background-color: var(--hoverColor) !important;
+		fill: var(--white) !important;
 	}
 
 	.main-content {
@@ -463,12 +462,12 @@
 
 <main>
 	<div id="leftDiv"></div>
-	<div class = "container">
+	<div class = "container-flex">
 		<div class="row">
-			<div class="col-sm-8">
-				<h1 style="margin: {header1.top}px 0px">Multiverse Visualisation</h1>
+			<div class="col-sm-7">
+				<h1 style="margin: {header1.top}px 72px">Multiverse Visualisation</h1>
 			</div>
-			<!-- div class="col-sm-3">
+			<!-- <div class="col-sm-3">
 				<Toggle/>
 			</div> -->
 		</div>
@@ -491,8 +490,8 @@
 					bind:sortAscending 	= {m.sortAscending}
 					on:change	   		= {() =>  { m.updateOutcomeData(i, outcome.var, options_to_join, options_to_exclude); m = m; }}
 					on:setSortIndex 	= {sortDirecitonCallback}
-					on:changeSortDirection = {() => {m.sortAscending = !m.sortAscending}}
-					on:remove			= {(m.outcomes.splice(i,1))}
+					on:changeSortDirection = {() => { m.sortAscending = !m.sortAscending }}
+					on:remove			= {() => { m.outcomes.splice(i,1); m = m; }}
 				/>
 			{/each}
 		</div>
