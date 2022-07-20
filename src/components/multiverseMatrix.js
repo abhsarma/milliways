@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css'
 import * as d3 from 'd3';
-import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim, gridNamesHeight } from './dimensions.js'
+import { windowHeight, cell, paramNameHeight, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim, gridNamesHeight } from './dimensions.js'
 import OptionToggle from './toggle-hide-option.svelte'
 import OptionJoin from './toggle-join-option.svelte'
-import { state, exclude_options, join_options, groupParams, option_order_scale } from './stores.js';
+import { gridCollapse, exclude_options, join_options, groupParams, option_order_scale } from './stores.js';
 import { arrayEqual, mean } from './helpers/arrayMethods.js'
 import { colors } from './colorPallete.js';
 
@@ -13,7 +13,6 @@ import sortByOutcome from './helpers/sortByOutcome.js';
 import sortByGroup from './helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './helpers/excludeAndCombineOutcomes.js';
 
-console.log(namingDim, gridNamesHeight);
 
 // CSS Styles
 export const parameters = css`
@@ -56,19 +55,17 @@ export const selected_option = css`
 `;
 
 // Stores
-let state_value;
+// let gridCollapse_value;
 let options_to_exclude;
 let options_to_join;
 let sortByGroupParams;
 let vis_type = CDF;
-// let x_scale_params;
 let x_scale_options;
 
-state.subscribe(value => state_value = value);
+// gridCollapse.subscribe(value => gridCollapse_value = value); // a store variable to control the size of the grid and corresponding outcome plot
 groupParams.subscribe(value => sortByGroupParams = value)
 exclude_options.subscribe(value => options_to_exclude = value);
 join_options.subscribe(value => options_to_join = value);
-// param_order_scale.subscribe(value => x_scale_params=value);
 option_order_scale.subscribe(value => x_scale_options=value);
 
 // Event handler functions 
@@ -321,9 +318,8 @@ class multiverseMatrix {
 
 		if (this.sortIndex != -1) {
 			estimateData = this.outcomes.map(d => d.estimate)
-			// estimateData = this.outcomes[this.sortIndex].estimate;
 
-			console.log("Calling sort by groups with:", sortByGroupParams)
+			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortIndex);
 
 			// const {g_data, o_data, e_data} = sortByGroup(['certainty'], this.gridData, outcomeData, estimateData, this.sortAscending, 0);
@@ -404,7 +400,7 @@ export function drawParameterNames(params, y, xscale) {
 		.attr("x", d => xscale(d))
 		.attr("y", cell.padding)
 		.attr("width", (d, i) => (cell.width + cell.padding/2) * options.map(d => d.length)[i] )
-		.attr("height", cell.height + "px")
+		.attr("height", paramNameHeight + "px")
 		.append("xhtml:div")
 		.attr("class", d => parameters + " parameter-name " + d.replace(/ /g, "_") )
 		.text(d => d)
@@ -537,7 +533,8 @@ export function drawColNames(params, yscale, x1) {
  * @param {function} x1 A D3 scale definition for x position of each parameter
  * @param {function} x2 A D3 scale definition for x position of each option within each parameter
  **/
-export function drawMatrixGrid(data, params, yscale, x1) {
+export function drawMatrixGrid(data, params, yscale, x1, gridState) {
+	// if (gridState) {cell.height = 4} else {cell.height = 24};
 	let plot = d3.select('.grid').select('svg.grid-body');
 	let param_names = Object.keys(params) //[ Object.keys(params)[0] ]
 	let parameter_list = Object.entries(params)
@@ -545,9 +542,6 @@ export function drawMatrixGrid(data, params, yscale, x1) {
 
 	let options = parameter_list.map(d => d.options);
 	let colWidth = d3.max(options.map(d => d.length)) * (cell.width + cell.padding);
-	// let x2 = d3.scaleBand()
-	// 	.domain(d3.range(d3.max(options.map(d => d.length))))
-	// 	.range( [0, colWidth] );
 
 	let parameterCols = plot.selectAll("g.parameter-col")
 		.data(param_names)
@@ -569,19 +563,25 @@ export function drawMatrixGrid(data, params, yscale, x1) {
 			.selectAll(`rect.${option}`)
 			.data(data)
 			.join(
-				enter => enter.append("rect").style('opacity', 1),
-				update => update,
+				enter => {
+					// console.log("on enter")
+					return enter.append("rect").style('opacity', 1)
+						.attr("x", 0)
+						.attr("width", cell.width)
+						.attr("height", yscale.bandwidth())
+				},
+				update => {
+					// console.log("on update")
+					return update
+				},
 				exit => exit.remove()
 			)
-			.attr("x", 0)
 			.attr("y", (d, i) => yscale(i) + namingDim - (iconSize + cell.padding))
-			.attr("width", cell.width)
-			.attr("height", yscale.bandwidth())
 			.attr("class", function(d, i) {
 				if (d[parameter].includes(option)) {
-					return `${options_container} ${selected_option} ${option}`
+					return `${options_container} ${selected_option} ${option} option-cell`
 				}
-				return `${options_container} ${option}`
+				return `${options_container} ${option} option-cell`
 			});
 	})
 }
@@ -611,9 +611,9 @@ export function drawOutcomes (outcomes, size, yscale) {
  * @param {function} yscale A D3 scale definition for y position of each universe
  * @param {string} term Coefficient name
  **/
-export function CDF (data, estimate, i, size, yscale, term) {
+export function CDF (data, estimate, i, size, yscale, term, gridState) {
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	let ypos;
+	let ypos = namingDim + 4 * cell.padding;
 
 	let domain = d3.extent(data.map(d => d.map(x => x[0])).flat())
 
@@ -624,12 +624,6 @@ export function CDF (data, estimate, i, size, yscale, term) {
 	let y = d3.scaleLinear()
 		.domain([0, 0.5])
 		.range([(yscale.step() - cell.padding), 0]);
-
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
 
 	let outcomePlot = d3.select('svg.outcome-results.vis-' + i).selectAll(`g.outcomePanel.plot-${i}`)
 		.data([null])
@@ -656,8 +650,9 @@ export function CDF (data, estimate, i, size, yscale, term) {
 					.attr("x2", xscale(0)),
 			exit => exit.remove()
 		)
-		.attr("y1", margin.top)
-		.attr("y2", height - margin.bottom)
+		.attr("y1", 0)
+		.attr("y2", windowHeight - ypos - margin.bottom)
+		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
 		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
 
@@ -677,12 +672,12 @@ export function CDF (data, estimate, i, size, yscale, term) {
 		.selectAll(".universe")
 		.data(data)
 		.join(
-			enter => enterCDF(enter, estimate, term, area, line, xscale, yscale, y),
-			update => updateCDF(update, estimate, area, line, xscale, y),
+			enter => enterCDF(enter, estimate, term, area, line, xscale, yscale, y, gridState),
+			update => updateCDF(update, estimate, area, line, xscale, yscale, y, gridState),
 			exit => exitCDF(exit)
 		)
-
-	// let xAxis = d3.select(`svg.outcome-axis.vis-${i}`);
+		// .transition()
+		// .duration(500)
 
 	if (axisPlot.select('.x-axis').node()) {
 		axisPlot.select(".x-axis")
@@ -714,11 +709,12 @@ export function CDF (data, estimate, i, size, yscale, term) {
 }
 
 // helper function called by CDF
-function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
+function enterCDF(enter, estimate, term, area, line, xscale, yscale, y, gridState) {
 	enter.append('g')
 		.attr("class", (d, i) => `universe universe-${i} ${term}`)
 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
 		.call( g => {
+				// if (!gridState) {
 				g.append("path")
 					.attr("class", "cdf")
 					.datum((d, i) => d)
@@ -726,6 +722,7 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 					.attr("stroke", `${colors.secondary}`)
 					.attr("stroke-width", 1.5)
 					.attr("d", area)
+				// }
 
 				g.append("path")
 					.attr("class", "median")
@@ -753,8 +750,9 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y) {
 }
 
 // helper function called by CDF
-function updateCDF(update, estimate, area, line, xscale, y) {
+function updateCDF(update, estimate, area, line, xscale, yscale, y, gridState) {
 	update
+		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
 		.call(g => {
 			g.select('path.cdf')
 				.datum((d, i) => d)

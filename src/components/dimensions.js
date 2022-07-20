@@ -1,5 +1,6 @@
-export const cell = { width: 32, height: 24, padding: 4 };
+export const cell = { width: 32, height: 2, heightCollapsed: 2, padding: 4 };
 export const nameContainer = { width: 32, height: 80, padding: 4 };
+export const paramNameHeight = 24;
 export const groupPadding = 20;
 export const header1 = {size: 14, top: 30, right: 0, bottom: 0, left: 0};
 export const text = 12;
@@ -10,4 +11,4 @@ export const namingDim = 2 * (iconSize + cell.padding) + nameContainer.height;
 export const windowHeight = (window.innerHeight - 170);
 export const scrollbarWidth = 12;
 export const matrixGridBuffer = 16;
-export const gridNamesHeight = cell.padding + cell.height + iconSize + namingDim; // yscale(0)
+export const gridNamesHeight = cell.padding + paramNameHeight + iconSize + namingDim; // yscale(0)

@@ -3,16 +3,17 @@
 	import * as d3 from 'd3';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { windowHeight, cell, nameContainer, iconSize, groupPadding, margin, outVisWidth, header1, namingDim, scrollbarWidth } from './dimensions.js'
-	import { state } from './stores.js';
+	import { gridCollapse } from './stores.js';
 	import { colors } from './colorPallete.js';
 	
 	// this is out of necessity, not really used in the <script>
 	let svg;
+	let ypos = namingDim + 4 * cell.padding;
 
 	// Stores
-	let state_value;
+	let gridCollapse_value;
 
-	state.subscribe(value => state_value = value);
+	gridCollapse.subscribe(value => gridCollapse_value = value);
 
 	const dispatch = createEventDispatcher();
 	
@@ -23,13 +24,6 @@
 	export let w; 
 	export let h;
 	export let term = allOutcomeVars[0];
-
-	let ypos;
-	if (state_value == 0) {
-		ypos = 4 * cell.padding;
-	} else {
-		ypos = namingDim + 4 * cell.padding;
-	}
 
 	// CSS Styles
 	export const container = css`
@@ -124,11 +118,11 @@
 			{#if sortIndex == i}
 				{#if sortAscending}
 					<button class="vis-button" id={"vis-"+i} on:click={()=> dispatch("changeSortDirection")}>
-						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>
 					</button>
 				{:else}
 					<button class="vis-button" id={"vis-"+i} on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", -1)}}>
-						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>
+						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>						
 					</button>
 				{/if}
 			{:else}

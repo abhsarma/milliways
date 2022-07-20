@@ -4,24 +4,24 @@
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
 	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
-	import { windowHeight, cell, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth, matrixGridBuffer, gridNamesHeight } from './components/dimensions.js'
-	import Toggle from './components/toggle-names-button.svelte'
+	import { windowHeight, cell, paramNameHeight, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth, matrixGridBuffer, gridNamesHeight } from './components/dimensions.js'
+	import ToggleSize from './components/toggle-gridSize.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
-	import { state, exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
+	import { gridCollapse, exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
 	import { colors } from './components/colorPallete.js';	
 	import { arrayEqual, whichDiff, any } from './components/helpers/arrayMethods.js'
 	// import { optionDragStart, optionDragged, optionDragEnd } from './components/helpers/dragOptions.js'
 
 	// Stores
-	let state_value;
 	let options_to_exclude;
 	let options_to_join;
 	let x_scale_params;
 	let x_scale_options;
 	let sortByGroupParams;
+	let gridCollapse_value;
 
-	const s_unsub = state.subscribe(value => state_value = value);
+	const gc_unsub = gridCollapse.subscribe(value => gridCollapse_value = value); // a store variable to control the size of the grid and corresponding outcome plot
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 	const j_unsub =  join_options.subscribe(value => options_to_join=value);
 	const pos_unsub = param_order_scale.subscribe(value => x_scale_params=value);
@@ -49,6 +49,7 @@
 	const param_n_options = Object.fromEntries(Object.entries(params).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 
+	$: if (gridCollapse_value) {cell.height = 1} else {cell.height = 24};
 	$: size = m.gridData.length; // not updating reactively
 	$: h = size * cell.height + namingDim + margin.top + 4 * cell.padding;
 	$: w1 = outVisWidth + margin.left; 
@@ -91,12 +92,11 @@
 								.range( [0, n * (cell.width + cell.padding)] );
 	})
 
-	$: update(m.outcomes, options_to_join, options_to_exclude, sortByGroupParams);
+	$: update(m.outcomes, options_to_join, options_to_exclude, sortByGroupParams, gridCollapse_value);
 
 	onDestroy(() => { e_unsub(); j_unsub(); });
 
 	onMount(() => {
-		console.log(windowHeight, gridNamesHeight)
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
 		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
 		drawSortByGroupsDivider(params, x_scale_params, h);
@@ -127,28 +127,39 @@
 				.select("g.groupedSortDividerIcon")
 				.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
 		}
-
-		// leftDiv.addEventListener('scroll', function(e) {
-		// 	d3.select("g.groupedSortDivider")
-		// 		.select("g.groupedSortDividerIcon")
-		// 		.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
-		// }, false)
-		// rightDiv.addEventListener('scroll', function(e) {
-		// 	d3.select("g.groupedSortDivider")
-		// 		.select("g.groupedSortDividerIcon")
-		// 		.attr("transform", `translate(0, ${this.scrollTop + (windowHeight + gridNamesHeight - (iconSize * 4/3))/2 })`);
-		// }, false)
 	});
 
-	function update(outcomes, join, exclude, sortByGroupParams) {
+	function update(outcomes, join, exclude, sortByGroupParams, gridState) {
 		// call updateHandler
-		m.updateHandler(join, exclude);
-
+		m.updateHandler(join, exclude); //m = m;
 		size = m.gridData.length;
 
-		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params);
+		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params, gridState);
 
-		drawOutcomes(outcomes, size, y);
+		drawOutcomes(outcomes, size, y, gridState);
+
+		if (gridState) {
+			d3.selectAll("path.cdf").style("visibility", "hidden");
+			d3.selectAll("rect.option-cell")
+				.transition()
+				.duration(500)
+				.ease(d3.easeQuad)
+				.attr("x", (cell.width - cell.width/4)/2)
+				// .attr("y", (d, i) => y(i) + namingDim - (iconSize + cell.padding))
+				.attr("width", cell.width/4)
+				.attr("height", y.bandwidth())
+
+		} else {
+			d3.selectAll("path.cdf").style("visibility", "visible");
+			d3.selectAll("rect.option-cell")
+				.transition()
+				.duration(500)
+				.ease(d3.easeQuad)
+				.attr("x", 0)
+				// .attr("y", (d, i) => y(i) + namingDim - (iconSize + cell.padding))
+				.attr("width", cell.width)
+				.attr("height", y.bandwidth())
+		}
 	}
 
 	function sortDirecitonCallback(event){
@@ -467,9 +478,9 @@
 			<div class="col-sm-7">
 				<h1 style="margin: {header1.top}px 72px">Multiverse Visualisation</h1>
 			</div>
-			<!-- <div class="col-sm-3">
-				<Toggle/>
-			</div> -->
+			<div class="col-sm-3">
+				<ToggleSize/>
+			</div>
 		</div>
 	</div>
 	<div class="button-wrapper">
@@ -496,8 +507,9 @@
 			{/each}
 		</div>
 		<div class="grid-container">
+			<!-- <div class="grid" clientHeight={windowHeight}> -->
 			<div class="grid" style="height: {windowHeight}px">
-				<svg class="grid-headers" bind:this={svg} height={gridNamesHeight} width={w2}></svg>
+				<svg class="grid-headers" height={gridNamesHeight} width={w2}></svg>
 				<svg class="grid-body" bind:this={svg} height={h} width={w2 + matrixGridBuffer}></svg>
 			</div>
 		</div>
