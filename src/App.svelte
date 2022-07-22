@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
-	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
+	import multiverseMatrix, {drawMatrixGrid, drawParameterNames, drawGridNames, drawColNames, drawOutcomes, line, area, drawSortByGroupsDivider} from './components/multiverseMatrix.js';
 	import { windowHeight, cell, paramNameHeight, groupPadding, outVisWidth, margin, namingDim, iconSize, header1, scrollbarWidth, matrixGridBuffer, gridNamesHeight } from './components/dimensions.js'
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import {scrollTop} from './components/scrollTop.js'
@@ -49,14 +49,14 @@
 	const param_n_options = Object.fromEntries(Object.entries(params).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 
-	$: if (gridCollapse_value) {cell.height = 1} else {cell.height = 24};
+	// $: if (gridCollapse_value) {cell.height = 1} else {cell.height = 24};
 	$: size = m.gridData.length; // not updating reactively
 	$: h = size * cell.height + namingDim + margin.top + 4 * cell.padding;
 	$: w1 = outVisWidth + margin.left; 
 	$: w2 = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
 	$: y = d3.scaleBand()
 		.domain(d3.range(size))
-		.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
+		.range([0, h - (margin.bottom + namingDim + cell.height) ])
 		.padding(0.1);
 
 	x_scale_params = d3.scaleOrdinal()
@@ -136,31 +136,77 @@
 
 		drawMatrixGrid(m.gridData, m.parameters(), y, x_scale_params, gridState);
 
-		drawOutcomes(outcomes, size, y, gridState);
-
+		let zy;
 		if (gridState) {
 			d3.selectAll("path.cdf").style("visibility", "hidden");
-			d3.selectAll("rect.option-cell")
-				.transition()
-				.duration(500)
-				.ease(d3.easeQuad)
-				.attr("x", (cell.width - cell.width/4)/2)
-				// .attr("y", (d, i) => y(i) + namingDim - (iconSize + cell.padding))
-				.attr("width", cell.width/4)
-				.attr("height", y.bandwidth())
+			zy = setZoom(0.1)
 
 		} else {
 			d3.selectAll("path.cdf").style("visibility", "visible");
-			d3.selectAll("rect.option-cell")
-				.transition()
-				.duration(500)
-				.ease(d3.easeQuad)
-				.attr("x", 0)
-				// .attr("y", (d, i) => y(i) + namingDim - (iconSize + cell.padding))
-				.attr("width", cell.width)
-				.attr("height", y.bandwidth())
+			zy = reset(1)
 		}
+
+		drawOutcomes(outcomes, size, zy, gridState);
 	}
+
+	/**
+	// defines semantic zoom operation when views are 
+	// toggled between overview and distribution
+	**/
+	function zoomed(event) {
+		y.range([0, h - (margin.bottom + namingDim + cell.height)].map(d => event.transform.applyY(d)));
+
+		d3.selectAll("g.parameter-col")
+			.selectAll("g.option-value")
+			.selectAll("rect.option-cell")
+			.attr("y", (d, i) => y(i))
+			.attr("height", y.bandwidth())
+
+		d3.selectAll("g.outcomePanel")
+			.selectAll("g.universe")
+			.attr("transform", (d, i) => `translate(0, ${y(i)})`)
+	}
+
+	let zoom = d3.zoom()
+		.scaleExtent([1, 10])
+		.interpolate(d3.interpolate)
+		.on("zoom", zoomed);
+
+	function setZoom(k) {
+		const tx = 0;
+		const ty = 0;
+
+		d3.select("svg.grid-body")
+			.transition()
+			.duration(750)
+			.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
+
+		d3.selectAll("rect.option-cell")
+			.attr("x", (cell.width - cell.width/4)/2)
+			.attr("width", cell.width/4)
+
+		// new y-scale
+		let zy = y.copy();
+		zy.range([0, h - (margin.bottom + namingDim + cell.height)].map(d => d3.zoomIdentity.translate(tx, ty).scale(k).applyY(d)));
+		return zy;
+	}
+
+	function reset(k) {
+		d3.select("svg.grid-body")
+			.transition()
+			.duration(750)
+			.call(zoom.transform, d3.zoomIdentity);
+
+		d3.selectAll("rect.option-cell")
+			.attr("x", 0)
+			.attr("width", cell.width)
+
+		// new y-scale
+		let zy = y.copy();
+		zy.range([0, h - (margin.bottom + namingDim + cell.height)].map(d => d3.zoomIdentity.applyY(d)))
+		return zy;
+	}
+
 
 	function sortDirecitonCallback(event){
 		m.sortIndex = event.detail
@@ -210,9 +256,8 @@
 				x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
 				option_order_scale.update(v => v = x_scale_options);
 				
-				d3.selectAll(`g.option-value.${d[0].parameter}, g.option-headers.${d[0].parameter}`).attr("transform", function(d, i) { 
-					return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
-				});
+				d3.selectAll(`g.option-value.${d[0].parameter}, g.option-headers.${d[0].parameter}`)
+					.attr("transform", (d, i) => `translate(${cPosition(d[0].parameter, d[0].index)}, 0)`);
 			}
 		})
 		.on("end", function(event, d) {
@@ -233,8 +278,10 @@
 			join_options.update(arr => arr = options_to_join);
 			
 			delete option_dragging[d[0].index];
-			transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
-			transition(d3.select(`g.option-value.${d[0].parameter}.${d[0].option}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
+			transition(d3.select(this))
+				.attr("transform", `translate(${x_scale_options[d[0].parameter](d[0].index)}, 0)`);
+			transition(d3.select(`g.option-value.${d[0].parameter}.${d[0].option}`))
+				.attr("transform", `translate(${x_scale_options[d[0].parameter](d[0].index)}, 0)`);
 		});
 
 	// option positions
@@ -303,8 +350,10 @@
 				
 				d3.selectAll(`g.parameter`).select('foreignObject')
 					.attr("x", d => pPosition(d));
-				d3.selectAll(`g.parameter-col`)
-					.attr("transform", d => `translate(${pPosition(d)}, ${y(0)})`);
+				d3.select("svg.grid-headers").selectAll(`g.parameter-col`)
+					.attr("transform", d => `translate(${pPosition(d)}, ${margin.top})`);
+				d3.select("svg.grid-body").selectAll(`g.parameter-col`)
+					.attr("transform", d => `translate(${pPosition(d)}, ${gridNamesHeight})`);
 			}
 		})
 		.on("end", function(event, d) {
@@ -321,7 +370,7 @@
 			sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
 			groupParams.update(arr => arr = sortByGroupParams)
 
-			transition(d3.select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${y(0)})`));
+			transition(d3.select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${margin.top})`));
 			transition(d3.select(this).select('foreignObject').attr("x", x_scale_params(d)));
 		});
 
