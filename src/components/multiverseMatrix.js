@@ -437,7 +437,7 @@ export function drawColNames(params, yscale, x1) {
 	let parameterCols = plot.selectAll("g.parameter-col")
 		.data(param_names)
 		.join("g")
-		.attr("transform", (d, i) => `translate(${x1(d)}, ${yscale(0)})`)
+		.attr("transform", (d, i) => `translate(${x1(d)}, ${margin.top})`)
 		.attr("class", (d, i) => `parameter-col ${d}`)
 
 	parameterCols
@@ -445,8 +445,8 @@ export function drawColNames(params, yscale, x1) {
 		.data((d, i) => options[i].slice(0, -1))
 		.join("foreignObject")
 		.attr("class", (d, i) => `option-join ${d}`)
-		.attr("width", 2*iconSize + "px" )
-		.attr("height", 2*iconSize + "px")
+		.attr("width", iconSize + "px" )
+		.attr("height", iconSize + "px")
 		.attr("x", (d, i) => (x2(i) + x2(i+1))/2)
 		.each(function(d, i) {
 			let node = d3.select(this).node();
@@ -488,6 +488,7 @@ export function drawColNames(params, yscale, x1) {
 		.attr("x", (d, i) => 0 )
 		.attr("y", iconSize + cell.padding + "px")
 		.attr("class", (d, i) => `option-name ${d[0].option}`)
+		.style("background-color", colors.background);
 
 	optionNames.each(function(d, i) {
 		let node = d3.select(`foreignObject.option-name.${d[0].option}`).node();
@@ -546,7 +547,7 @@ export function drawMatrixGrid(data, params, yscale, x1, gridState) {
 	let parameterCols = plot.selectAll("g.parameter-col")
 		.data(param_names)
 		.join("g")
-		.attr("transform", (d, i) => `translate(${x1(d)}, ${yscale(0)})`)
+		.attr("transform", (d, i) => `translate(${x1(d)}, ${gridNamesHeight})`)
 		.attr("class", (d, i) => `parameter-col ${d}`)
 
 	let optionCols = parameterCols.selectAll('g.option-value')
@@ -576,7 +577,7 @@ export function drawMatrixGrid(data, params, yscale, x1, gridState) {
 				},
 				exit => exit.remove()
 			)
-			.attr("y", (d, i) => yscale(i) + namingDim - (iconSize + cell.padding))
+			.attr("y", (d, i) => yscale(i))
 			.attr("class", function(d, i) {
 				if (d[parameter].includes(option)) {
 					return `${options_container} ${selected_option} ${option} option-cell`
@@ -602,6 +603,16 @@ export function drawOutcomes (outcomes, size, yscale) {
 	}
 }
 
+export let area = (x, y) => d3.area()
+		.curve(d3.curveLinear)
+		.x(d => x(d[0]))
+		.y0(d => y(d[1]))
+		.y1(d => y(d[2]))
+
+export let line = (x, y) => d3.line()
+		.x(d => x(d[0]))
+		.y(d => y(d[1]));
+
 /**
  * function for drawing the outcome CDF for (one or more) coefficient(s) per universe
  * 
@@ -613,14 +624,14 @@ export function drawOutcomes (outcomes, size, yscale) {
  **/
 export function CDF (data, estimate, i, size, yscale, term, gridState) {
 	const height = size * (cell.height + cell.padding); // to fix as D3 calculates padding automatically
-	let ypos = namingDim + 4 * cell.padding;
+	// let ypos = namingDim + 4 * cell.padding;
 
 	let domain = d3.extent(data.map(d => d.map(x => x[0])).flat())
 
 	let xscale = d3.scaleLinear()
 		.domain(d3.extent(data.map(d => d.map(x => x[0])).flat()))
 		.range([margin.left, outVisWidth]);
-	
+
 	let y = d3.scaleLinear()
 		.domain([0, 0.5])
 		.range([(yscale.step() - cell.padding), 0]);
@@ -629,13 +640,13 @@ export function CDF (data, estimate, i, size, yscale, term, gridState) {
 		.data([null])
 		.join("g")
 		.attr("class", `outcomePanel plot-${i}`)
-		.attr("transform", `translate(0,  ${ypos})`)
+		.attr("transform", `translate(0,  ${gridNamesHeight})`)
 
 	let axisPlot = d3.select(`svg.outcome-axis.vis-${i}`).selectAll(`g.outcome-headers.plot-${i}`)
 		.data([null])
 		.join("g")
 		.attr("class", `outcome-headers plot-${i}`)
-		.attr("transform", `translate(0,  ${ypos})`)
+		.attr("transform", `translate(0,  ${gridNamesHeight})`)
 
 	let intercept = axisPlot
 		.selectAll('.zero-line')
@@ -651,20 +662,10 @@ export function CDF (data, estimate, i, size, yscale, term, gridState) {
 			exit => exit.remove()
 		)
 		.attr("y1", 0)
-		.attr("y2", windowHeight - ypos - margin.bottom)
+		.attr("y2", windowHeight - gridNamesHeight - margin.bottom)
 		.attr("transform", `translate(0, ${yscale(0) - cell.padding})`)
 		.attr("stroke", `${colors.gray}`)
 		.attr("stroke-width", 2);
-
-	let area = d3.area()
-		.curve(d3.curveLinear)
-		.x(d => xscale(d[0]))
-		.y0(d => y(d[1]))
-		.y1(d => y(d[2]))
-
-	let line = d3.line()
-		.x(d => xscale(d[0]))
-		.y(d => y(d[1]));
 
 	// add a group for each universe
 	let panelPlot = d3
@@ -676,14 +677,12 @@ export function CDF (data, estimate, i, size, yscale, term, gridState) {
 			update => updateCDF(update, estimate, area, line, xscale, yscale, y, gridState),
 			exit => exitCDF(exit)
 		)
-		// .transition()
-		// .duration(500)
 
 	if (axisPlot.select('.x-axis').node()) {
 		axisPlot.select(".x-axis")
 			.call(d3.axisTop(xscale).ticks(5))
 			.call(g => g.selectAll(".tick line") //.clone()
-				.attr("y2", windowHeight - ypos - margin.bottom)
+				.attr("y2", windowHeight - gridNamesHeight - margin.bottom)
 				.attr("stroke-opacity", 0.1)
 			)
 			.style("font-size", "12px");
@@ -701,7 +700,7 @@ export function CDF (data, estimate, i, size, yscale, term, gridState) {
 		axisPlot.select('.x-axis')
 			.call(d3.axisTop(xscale).ticks(5))
 			.call(g => g.selectAll(".tick line").clone()
-				.attr("y2", windowHeight - ypos - margin.bottom)
+				.attr("y2", windowHeight - gridNamesHeight - margin.bottom)
 				.attr("stroke-opacity", 0.1)
 			)
 			.style("font-size", "12px");
@@ -714,15 +713,13 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y, gridStat
 		.attr("class", (d, i) => `universe universe-${i} ${term}`)
 		.attr("transform", (d, i) => `translate(0, ${yscale(i)})`)
 		.call( g => {
-				// if (!gridState) {
 				g.append("path")
 					.attr("class", "cdf")
 					.datum((d, i) => d)
 					.attr("fill", `${colors.secondary}`)
 					.attr("stroke", `${colors.secondary}`)
 					.attr("stroke-width", 1.5)
-					.attr("d", area)
-				// }
+					.attr("d", area(xscale, y))
 
 				g.append("path")
 					.attr("class", "median")
@@ -733,7 +730,7 @@ function enterCDF(enter, estimate, term, area, line, xscale, yscale, y, gridStat
 					.attr("fill", `${colors.primary}`)
 					.attr("stroke", `${colors.primary}`)
 					.attr("stroke-width", 2)
-					.attr("d", line)
+					.attr("d", line(xscale, y))
 
 				g.append("circle")
 					.datum((d, i) => {
@@ -756,14 +753,14 @@ function updateCDF(update, estimate, area, line, xscale, yscale, y, gridState) {
 		.call(g => {
 			g.select('path.cdf')
 				.datum((d, i) => d)
-				.attr("d", area)
+				.attr("d", area(xscale, y))
 
 			g.select("path.median")
 				.datum((d, i) => {
 					if (estimate[i].length === undefined) return [[Math.min(estimate[i]), 0.5], [Math.max(estimate[i]), 0.5]] 
 						else return [[Math.min(...estimate[i]), 0.5], [Math.max(...estimate[i]), 0.5]]
 				})
-				.attr("d", line)
+				.attr("d", line(xscale, y))
 
 			g.select('circle')
 				.datum((d, i) => {

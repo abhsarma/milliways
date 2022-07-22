@@ -240,8 +240,7 @@
 					option_dragging[d[0].index] = x_scale_options[d[0].parameter](d[0].index);
 
 					// Move the column that is moving on the front
-					let sel = d3.select(this);
-					sel.moveToFront();
+					d3.select(this).moveToFront();
 				}
 			}
 		})
