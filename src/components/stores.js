@@ -8,3 +8,6 @@ export const join_options = writable([]);
 export const groupParams = writable([]);
 export const param_order_scale = writable({});
 export const option_order_scale = writable({});
+export const store_order = writable({});
+export const store_pno = writable({});
+export const store_y = writable(null);
