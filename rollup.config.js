@@ -50,7 +50,7 @@ export default {
 		css({ output: 'bundle.css' }),
 
 		json(),
-
+		
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
 		// some cases you'll need additional configuration -
@@ -67,6 +67,7 @@ export default {
 			SOME_OBJECT: { one: 1, two: [1,2], three: '3' },
 			UNUSED: null
 		}),
+
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated

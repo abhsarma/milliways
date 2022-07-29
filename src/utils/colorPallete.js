@@ -8,5 +8,3 @@ export const colors = {
 	gray: '#777777',
 	hover: '#ff3e00'
 };
-
-// module.exports = colors

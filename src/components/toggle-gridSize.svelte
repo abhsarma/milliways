@@ -1,15 +1,13 @@
 <script>
 	import * as d3 from 'd3';
-	import { text, header1, namingDim, cell, iconSize } from './dimensions.js'
-	import { gridCollapse } from './stores.js';
+	import { text, header, cell, iconSize } from '../utils/dimensions.js'
+	import { gridCollapse } from '../utils/stores.js';
 
 	let active = false;
 	let r = 20;
 
 	function handleClick() {
 		active = !active;
-		let t = 400;
-		let ypos;
 
 		if (active) {
 			gridCollapse.set(1);
@@ -19,9 +17,17 @@
 	}
 </script>
 
+<div class="toggle">
+	<p>grid collapse?</p>
+	<div class="toggle-button" class:active={active} on:click="{handleClick}" style="height: {r}px">
+		<div class="state-indicator" class:active={active} style="width: {r}px; height: {r}px"></div>
+	</div>
+</div>
+
 <style>
 	.toggle {
 		display: inline-flex;
+		margin: 30px 0px
 	}
 
 	p {
@@ -76,10 +82,3 @@
 		transform: translate(100%, 0);
 	}
 </style>
-
-<div class="toggle" style="margin: {header1.top}px 0px">
-	<p>grid collapse?</p>
-	<div class="toggle-button" class:active={active} on:click="{handleClick}" style="height: {r}px">
-		<div class="state-indicator" class:active={active} style="width: {r}px; height: {r}px"></div>
-	</div>
-</div>

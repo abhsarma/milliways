@@ -19,7 +19,6 @@ import { mean } from './arrayMethods.js'
 
 	// Add the sorting factor (the outcome that we are sorting on) to the gridData
 	let gridDataSortingList = []
-	// console.log(estimateData)
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){
 		let e;
 		if (Array.isArray(estimateData[outcomeIndex][i])) e = mean(...estimateData[outcomeIndex][i])
