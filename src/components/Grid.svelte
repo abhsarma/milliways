@@ -2,12 +2,13 @@
 	import { css, cx } from '@emotion/css'
 	import * as d3 from 'd3';
 	import { onMount, createEventDispatcher } from 'svelte';
+	import { Canvas } from 'svelte-canvas';
 	import { colors } from '../utils/colorPallete.js';
 	import { windowHeight, margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
+	import Rect from './Rect.svelte'
 	import OptionToggle from './toggle-hide-option.svelte'
 	import OptionJoin from './toggle-join-option.svelte'
 	import { gridCollapse, exclude_options } from '../utils/stores.js'
-// import OptionJoin from './toggle-join-option.svelte'
 
 	export let data;
 	export let parameters;
@@ -50,6 +51,9 @@
 
 	let cellHeight, cellWidth;
 
+	let context;
+	let selected;
+
 	$: param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	$: n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	$: cols = [...Object.keys(parameters)].length;
@@ -85,13 +89,13 @@
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
 	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
-	$: h = gridNamesHeight + cell.padding + data.length * cellHeight + margin.bottom;
+	$: h = (gridNamesHeight + cell.padding + data.length * cellHeight + margin.bottom);
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.length))
-		.range([0, h - (margin.bottom + gridNamesHeight + cell.padding) ])
+		.range([cell.padding, h - (margin.bottom + gridNamesHeight + cell.padding) ])
 		.padding(0.1);
 
-	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--bgColor', colors.background);
 </script>
 
 <div class="grid">
@@ -132,39 +136,29 @@
 			</g>
 		{/each}
 	</svg>
-	<svg class="grid-body" height={h} width={w}>
+	<!-- <svg class="grid-body" height={h} width={w}> -->
+	<Canvas height={h < windowHeight ? windowHeight : h} width={w} style="background-color: {colors.background};">
 		{#each Object.keys(parameters) as parameter}
-			<g class="parameter-col {parameter}" transform="translate({x_scale_params(parameter)}, {gridNamesHeight})">
-				{#each parameters[parameter] as option, i}
-					<g class="option-headers {parameter} {option}" transform="translate({x2(i)}, 0)">
-						{#each data as universe, j}
-							{#if universe[parameter].includes(option)}
-								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell {selected_option}"
-								/>
-							{:else}
-								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell"
-								/>
-							{/if}
-						{/each}
-					</g>
+			{#each parameters[parameter] as option, i}
+				{#each data as universe, j}
+					<Rect 
+						parameter = {parameter}
+						option = {option}
+						x = {(cell.width - cellWidth)/2}
+						y = {y(j)}
+						width = {cellWidth}
+						height = {y.bandwidth()}
+						translate={[x_scale_params(parameter) + x2(i), gridNamesHeight]}
+						selected = {universe[parameter]}
+					/>
 				{/each}
-			</g>
+			{/each}
 		{/each}
-	</svg>
+	</Canvas>
 </div>
 
 <style>
-	svg.grid-header {
+	.grid-header {
 		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
@@ -172,13 +166,13 @@
 		box-shadow: 0px 4px 5px -2px #c0c0c0;
 	}
 
-	svg.grid-body {
+	.grid-body {
 		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
 	}
 
-	svg, g, rect {
-		transition: all .5s linear;;
-	}
+	/*svg, canvas, g, rect {
+		transition: all .5s linear;
+	}*/
 </style>

@@ -7,6 +7,7 @@
 	import { arrayEqual, any } from '../utils/helpers/arrayMethods.js'
 
 	export let parameter;
+	export let x_scale_params;
 	export let options;
 	export let index;
 	

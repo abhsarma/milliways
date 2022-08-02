@@ -48,7 +48,7 @@
 	// scale for position of g corresponding to each universe
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.density.length))
-		.range([0, h - (margin.bottom + gridNamesHeight + cell.padding) ])
+		.range([cell.padding, h - (margin.bottom + gridNamesHeight + cell.padding) ])
 		.padding(0.1);
 	
 	// scale for CDF of each universe
@@ -109,7 +109,7 @@
 			{/each}
 		</g>
 	</svg>
-	<svg class="outcome-results vis-{i}" bind:this={svg} height={h} width={w}>
+	<svg class="outcome-results vis-{i}" bind:this={svg} height={h < windowHeight ? windowHeight : h} width={w}>
 		<g transform="translate(0, {gridNamesHeight})">
 			<line class="intercept" 
 				x1="{xscale(0)}" x2="{xscale(0)}" y1="0" y2="{h - (margin.bottom + gridNamesHeight + cell.padding)}"
@@ -118,7 +118,7 @@
 			<!-- x axis -->
 			<!-- <path class="domain"  stroke="currentColor" d="{xPath}" fill="none" /> -->
 			{#each xscale.ticks(5) as tick}
-				<g class="tick" transform="translate({xscale(tick)}, 0)">
+				<g class="tick grid-lines" transform="translate({xscale(tick)}, 0)">
 					<!-- <line class="tick" y2="-6" stroke="black"/> -->
 					<line class="grid" y2="{h - (margin.bottom + gridNamesHeight + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
 					<!-- <text text-anchor="middle" dy="0em" y="{-text}" style="font-size: {text}">{tick}</text> -->
@@ -218,7 +218,11 @@
 		position: absolute;
 	}
 
+	line.grid {
+		transition: height .5s linear;
+	}
+
 	svg, g.universe {
-		transition: all .5s linear;;
+		transition: all .5s linear;
 	}
 </style>
