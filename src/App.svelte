@@ -10,6 +10,7 @@
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
+	import { drag_options, drag_parameters, dragSortDivider } from './utils/drag.js';
 
 	// CSS Styles
 	export const container = css`
@@ -23,6 +24,10 @@
 	function sortDirecitonCallback(event){
 		m.sortIndex = event.detail
 	}
+
+	// function dividerClicked(event, d){
+	// 	if (event.defaultPrevented) return; // dragged
+	// }
 
 	function hideOption(event) {
 		let parameter = event.detail.parameter
@@ -81,7 +86,6 @@
 			isSyncingRightScroll = false;
 		}
 	});
-
 
 	// defining color variables for use in CSS
 	document.documentElement.style.setProperty('--white', colors.white)
