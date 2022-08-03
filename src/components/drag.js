@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { join_options, groupParams, param_order_scale, option_order_scale, store_order, store_pno, store_y  } from './stores.js';
+import { join_options, groupParams, param_order_scale, option_order_scale  } from './stores.js';
 import { cell, groupPadding } from './dimensions.js';
 import { whichDiff, any } from './helpers/arrayMethods.js'
 
@@ -7,17 +7,11 @@ let options_to_join;
 let x_scale_params;
 let x_scale_options;
 let sortByGroupParams;
-let order;
-let param_n_options;
-let y;
 
 join_options.subscribe(value => options_to_join=value);
 param_order_scale.subscribe(value => x_scale_params=value);
 option_order_scale.subscribe(value => x_scale_options=value);
 groupParams.subscribe(value => sortByGroupParams=value);
-store_order.subscribe(value => order=value);
-store_pno.subscribe(value => param_n_options=value);
-store_y.subscribe(value => y=value);
 
 let option_dragging = {}, previous_option_order = {}, parameter_dragging = {};
 let target, trigger;
@@ -36,7 +30,7 @@ function transition(g) {
 // defines drag interaction to re-order 
 //  options within each parameter
 **/
-export let drag_options = d3.drag()
+export let drag_options = (options_to_join, x_scale_params, x_scale_options, order) => d3.drag()
     .subject(function(event, d) {
         return {x: x_scale_params(d[0].parameter) + x_scale_options[d[0].parameter](d[0].index)}
     })
@@ -61,12 +55,12 @@ export let drag_options = d3.drag()
                 x_scale_options[d[0].parameter].range()[1],
                 Math.max(-x_scale_options[d[0].parameter].bandwidth(), (event.x - x_scale_params(d[0].parameter)))
             );
-            order[d[0].parameter].name.sort(function(a, b) { return cPosition(d[0].parameter, a) - cPosition(d[0].parameter, b); });
+            order[d[0].parameter].name.sort(function(a, b) { return cPosition(d[0].parameter, a, x_scale_options) - cPosition(d[0].parameter, b, x_scale_options); });
             x_scale_options[d[0].parameter].domain(order[d[0].parameter].name);
             option_order_scale.update(v => v = x_scale_options);
             
             d3.selectAll(`g.option-value.${d[0].parameter}, g.option-headers.${d[0].parameter}`).attr("transform", function(d, i) { 
-                return "translate(" + cPosition(d[0].parameter, d[0].index) + ", 0)"; 
+                return "translate(" + cPosition(d[0].parameter, d[0].index, x_scale_options) + ", 0)"; 
             });
         }
     })
@@ -92,8 +86,9 @@ export let drag_options = d3.drag()
         transition(d3.select(`g.option-value.${d[0].parameter}.${d[0].option}`)).attr("transform", "translate(" + x_scale_options[d[0].parameter](d[0].index) + ")");
     });
 
+
 // option positions
-function cPosition(p, d) {
+function cPosition(p, d, x_scale_options) {
     var v = option_dragging[d];
     return v == null ? x_scale_options[p](d) : v;
 }
@@ -102,7 +97,7 @@ function cPosition(p, d) {
 // defines drag interaction to re-order 
 // parameters (while keeping options in the same order)
 **/
-export let drag_parameters = d3.drag()
+export let drag_parameters = (x_scale_params, sortByGroupParams, param_n_options, y) => d3.drag()
     .subject(function(event, d) {
         return {x: x_scale_params(d)}
     })
@@ -129,7 +124,7 @@ export let drag_parameters = d3.drag()
             );
 
             let parameter_order = Object.entries(param_n_options).sort(function(a, b) { 
-                return pPosition(a[0]) - pPosition(b[0]); 
+                return pPosition(a[0], x_scale_params) - pPosition(b[0], x_scale_params); 
             });
             let param_order_range = parameter_order.map(d => d[1])
                 .reduce( (acc, val, index) => {
@@ -157,9 +152,9 @@ export let drag_parameters = d3.drag()
 
             
             d3.selectAll(`g.parameter`).select('foreignObject')
-                .attr("x", d => pPosition(d));
+                .attr("x", d => pPosition(d, x_scale_params));
             d3.selectAll(`g.parameter-col`)
-                .attr("transform", d => `translate(${pPosition(d)}, ${y(0)})`);
+                .attr("transform", d => `translate(${pPosition(d, x_scale_params)}, ${y(0)})`);
         }
     })
     .on("end", function(event, d) {
@@ -181,23 +176,23 @@ export let drag_parameters = d3.drag()
     });
 
 // parameter positions
-function pPosition(d) {
-      var v = parameter_dragging[d];
-      return v == null ? x_scale_params(d) : v;
+function pPosition(d, x_scale_params) {
+    var v = parameter_dragging[d];
+    return v == null ? x_scale_params(d) : v;
 }
 
 /**
 // defines drag interaction for the groupedSortDivider
 // which defines input to the groupedSortFunction
 **/
-export let dragSortDivider = d3.drag()
+export let dragSortDivider = (x_scale_params, sortByGroupParams) => d3.drag()
     // .subject(function(event, d) {} )
     .on("start", dividerDragStarted)
-    .on("drag", dividerDragged)
-    .on("end", dividerDragEnded)
+    .on("drag", function(e) { dividerDragged.call(this, e, x_scale_params); })
+    .on("end", function(e) { dividerDragEnded.call(this, e, x_scale_params, sortByGroupParams); })
 
 
-function findClosestDivision(x_value) {
+function findClosestDivision(x_value, x_scale_params) {
     let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
     var nearest = boundaries.reduce(function(prev, curr) {
         return (Math.abs(curr - x_value) < Math.abs(prev - x_value) ? curr : prev);
@@ -207,7 +202,7 @@ function findClosestDivision(x_value) {
 
 function dividerDragStarted(event, d) { return null }
 
-function dividerDragged(event, d) {
+function dividerDragged(event, x_scale_params) {
     let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
     let minBarPosition = boundaries[0];
     let maxBarPosition = boundaries[boundaries.length - 1];
@@ -218,9 +213,9 @@ function dividerDragged(event, d) {
     }
 }
 
-function dividerDragEnded(event, d) {
+function dividerDragEnded(event, x_scale_params, sortByGroupParams) {
     let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
-    let nearestDivision = findClosestDivision(event.x);
+    let nearestDivision = findClosestDivision(event.x, x_scale_params);
     let dividerPositionIndex = boundaries.indexOf(nearestDivision);
 
     d3.select(this)

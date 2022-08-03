@@ -8,13 +8,10 @@
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
-	import { gridCollapse, exclude_options, join_options, groupParams, param_order_scale, option_order_scale, store_order, store_pno, store_y } from './components/stores.js';
+	import { gridCollapse, exclude_options, join_options, groupParams, param_order_scale, option_order_scale } from './components/stores.js';
 	import { colors } from './components/colorPallete.js';	
 	import { arrayEqual, whichDiff, any } from './components/helpers/arrayMethods.js'
-	// import { drag_options, drag_parameters, dragSortDivider } from './components/drag.js';
-	import { drag_options } from './components/dragOptions.js';
-	import { drag_parameters } from './components/dragParameters.js';
-	import { dragSortDivider } from './components/dragDivider.js';
+	import { drag_options, drag_parameters, dragSortDivider } from './components/drag.js';
 
 	// import { optionDragStart, optionDragged, optionDragEnd } from './components/helpers/dragOptions.js'
 
@@ -25,9 +22,6 @@
 	let x_scale_options;
 	let sortByGroupParams;
 	let gridCollapse_value;
-	let order;
-	let param_n_options
-	let y;
 
 	const gc_unsub = gridCollapse.subscribe(value => gridCollapse_value = value); // a store variable to control the size of the grid and corresponding outcome plot
 	const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
@@ -35,9 +29,6 @@
 	const pos_unsub = param_order_scale.subscribe(value => x_scale_params=value);
 	const oos_unsub = option_order_scale.subscribe(value => x_scale_options=value);
 	const gp_unsub = groupParams.subscribe(value => sortByGroupParams = value);
-	const o_unsub = store_order.subscribe(value => order=value);
-	const pno_unsub = store_pno.subscribe(value => param_n_options=value);
-	const y_unsub = store_y.subscribe(value => y=value);
 
 	let m = new multiverseMatrix(data.default); 
 	m.initializeData();
@@ -48,24 +39,21 @@
 
 	const cols = [...Object.keys(m.parameters())].length;
 
-	order = {};
+	let order = {};
   	Object.keys(params).forEach(function(d, i) {
   		let n = Object.values(params)[i].length;
 		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
 	});
-	store_order.set(order);
 
-	param_n_options = Object.fromEntries(Object.entries(params).map( d => [d[0], d[1].length] ));
-	store_pno.set(param_n_options);
+	let param_n_options = Object.fromEntries(Object.entries(params).map( d => [d[0], d[1].length] ));
 	
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 
 	let size = m.gridData.length;
-	y = d3.scaleBand()
+	let y = d3.scaleBand()
 			.domain(d3.range(size))
 			.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
 			.padding(0.1);
-	store_y.set(y);
 
 	$: if (gridCollapse_value) {cell.height = 1} else {cell.height = 24};
 	$: size = m.gridData.length;
@@ -77,7 +65,6 @@
 			.domain(d3.range(size))
 			.range([margin.top, h - (margin.bottom + namingDim + cell.height) ])
 			.padding(0.1);
-		store_y.set(y);
 	}
 
 	x_scale_params = d3.scaleOrdinal()
@@ -123,9 +110,9 @@
 		drawGridNames(m.gridData, m.parameters(), y, x_scale_params);
 		drawSortByGroupsDivider(params, x_scale_params, h);
 
-		d3.selectAll(".option-headers").call(drag_options);
-		d3.selectAll(".parameter").call(drag_parameters);
-		d3.select("g.groupedSortDivider").call(dragSortDivider)
+		d3.selectAll(".option-headers").call(drag_options(options_to_join, x_scale_params, x_scale_options, order));
+		d3.selectAll(".parameter").call(drag_parameters(x_scale_params, sortByGroupParams, param_n_options, y));
+		d3.select("g.groupedSortDivider").call(dragSortDivider(x_scale_params, sortByGroupParams))
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
