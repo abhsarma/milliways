@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { join_options, groupParams, parameter_scale, option_scale } from './stores.js';
+import { join_options, group_params, parameter_scale, option_scale } from './stores.js';
 import { cell, margin, gridNamesHeight, groupPadding } from './dimensions.js';
 import { whichDiff, any } from './helpers/arrayMethods.js'
 
@@ -11,7 +11,7 @@ let sortByGroupParams;
 join_options.subscribe(value => options_to_join=value);
 parameter_scale.subscribe(value => x_scale_params = value);
 option_scale.subscribe(value => x_scale_options = value);
-groupParams.subscribe(value => sortByGroupParams=value);
+group_params.subscribe(value => sortByGroupParams=value);
 
 let option_dragging = {}, previous_option_order = {}, parameter_dragging = {};
 let target, trigger;
@@ -202,7 +202,7 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 			 // .attr("transform", boundaries[dividerPositionIndex])
 
 		sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
-		groupParams.update(arr => arr = sortByGroupParams)
+		group_params.update(arr => arr = sortByGroupParams)
 
 		transition(d3.select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${margin.top})`));
 		transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${gridNamesHeight})`));
@@ -246,7 +246,7 @@ export let dragSortDivider = () => d3.drag()
 			.attr("transform", `translate(${nearestDivision}, 0)` )
 
 		sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
-		groupParams.update(arr => arr = sortByGroupParams)
+		group_params.update(arr => arr = sortByGroupParams)
 	})
 
 

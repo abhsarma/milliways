@@ -58,44 +58,6 @@
 				.domain( d3.range(d3.max(Object.values(param_n_options))) )
 				.range( [0, d3.max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
 
-	$: console.log($join_options);
-
-	$: {
-		// define parameter scale as a reactive variable
-		$parameter_scale = d3.scaleOrdinal()
-			.domain(Object.keys(parameters))
-			.range(
-				Object.values(param_n_options)
-					.reduce( (acc, val, index) => {
-						if (index == 0) {
-							acc.push(0);
-							acc.push(val); // acc.push([val[0], val[1]]);
-						} else {
-							acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
-						}
-						return acc; 
-					}, [] )
-					.reduce((a, v, i, arr) => {
-						if (i > 0) {
-							let opts = (arr[i] - arr[i - 1])
-							a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
-						} else {
-							a.push(groupPadding)
-						}
-						return a;
-					}, [])
-			)
-
-		// define option scale as a reactive variable
-		Object.keys(parameters).forEach(function(d, i) {
-			let n = Object.values(parameters)[i].length;
-
-			$option_scale[d] = d3.scaleBand()
-									.domain( d3.range(n) )
-									.range( [0, n * (cell.width + cell.padding)] );
-		})
-	}
-
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
 	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
@@ -117,7 +79,7 @@
 	onMount(() => {
 		d3.selectAll(".option-headers").call(drag_options(order));
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
-		// d3.select("g.grouped-sort-divider").call(dragSortDivider())
+		d3.select("g.grouped-sort-divider").call(dragSortDivider())
 	})
 </script>
 
@@ -140,7 +102,7 @@
 						x="{ (x2(i) + x2(i+1))/2 }"
 						width="{iconSize}"
 						height="{iconSize}">
-							<OptionJoin {parameter} {$parameter_scale} options={parameters[parameter]} index={i} on:join />				
+							<OptionJoin {parameter} options={parameters[parameter]} index={i} on:join />				
 					</foreignObject>
 				{/each}
 				{#each parameters[parameter] as option, i}

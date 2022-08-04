@@ -205,6 +205,8 @@ class multiverseMatrix {
 	}
 
 	updateHandler(join, exclude, sortByGroupParams = []) {
+		console.log("calling update handler");
+		
 		// call update grid data
 		this.updateGridData(join, exclude);
 	
