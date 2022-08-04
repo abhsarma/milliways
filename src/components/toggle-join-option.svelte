@@ -3,18 +3,16 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as d3 from 'd3';
 	import { text, iconSize, header, namingDim, cell } from '../utils/dimensions.js'
-	import { join_options } from '../utils/stores.js';
+	import { join_options, option_scale } from '../utils/stores.js';
 	import { arrayEqual, any } from '../utils/helpers/arrayMethods.js'
 
 	export let parameter;
 	export let options;
 	export let index;
-	
-	let selected = false;
 
-	$: option_order =  options; // x_scale_options[parameter].domain();
-	$: option_pair = [option_order[index], option_order[index+1]];
-	// $: selected = any(...options_to_join.map(d => arrayEqual(d.options, option_pair)));
+	$: option_order =  $option_scale[parameter].domain();
+	$: option_pair = [ options[option_order[index]], options[option_order[index+1]] ];
+	$: selected = any(...$join_options.map(d => arrayEqual(d.options, option_pair)));
 
 	const dispatch = createEventDispatcher();
 

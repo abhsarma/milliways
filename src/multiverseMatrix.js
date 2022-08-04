@@ -105,8 +105,6 @@ class multiverseMatrix {
 			e_data
 		)
 
-		console.log(exclude, combine);
-
 		this.outcomes[i].density = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
 	}

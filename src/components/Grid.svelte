@@ -4,10 +4,11 @@
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { windowHeight, margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
+	import SortByGroupDivider from './sortByGroupDivider.svelte';
 	import OptionToggle from './toggle-hide-option.svelte'
 	import OptionJoin from './toggle-join-option.svelte'
-	import { gridCollapse, exclude_options } from '../utils/stores.js'
-// import OptionJoin from './toggle-join-option.svelte'
+	import { gridCollapse, exclude_options, join_options, parameter_scale, option_scale } from '../utils/stores.js'
+	import { drag_options, drag_parameters, dragSortDivider } from '../utils/drag.js';
 
 	export let data;
 	export let parameters;
@@ -50,37 +51,50 @@
 
 	let cellHeight, cellWidth;
 
-	$: param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
-	$: n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
-	$: cols = [...Object.keys(parameters)].length;
+	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
+	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
+	const cols = [...Object.keys(parameters)].length;
+	const x2 = d3.scaleBand()
+				.domain( d3.range(d3.max(Object.values(param_n_options))) )
+				.range( [0, d3.max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
 
-	$: x_scale_params = d3.scaleOrdinal()
-		.domain(Object.keys(parameters))
-		.range(
-			Object.values(param_n_options)
-				.reduce( (acc, val, index) => {
-					if (index == 0) {
-						acc.push(0);
-						acc.push(val); // acc.push([val[0], val[1]]);
-					} else {
-						acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
-					}
-					return acc; 
-				}, [] )
-				.reduce((a, v, i, arr) => {
-					if (i > 0) {
-						let opts = (arr[i] - arr[i - 1])
-						a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
-					} else {
-						a.push(groupPadding)
-					}
-					return a;
-				}, [])
-		)
+	$: console.log($join_options);
 
-	$: x2 = d3.scaleBand()
-		.domain( d3.range(d3.max(Object.values(param_n_options))) )
-		.range( [0, d3.max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
+	$: {
+		// define parameter scale as a reactive variable
+		$parameter_scale = d3.scaleOrdinal()
+			.domain(Object.keys(parameters))
+			.range(
+				Object.values(param_n_options)
+					.reduce( (acc, val, index) => {
+						if (index == 0) {
+							acc.push(0);
+							acc.push(val); // acc.push([val[0], val[1]]);
+						} else {
+							acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
+						}
+						return acc; 
+					}, [] )
+					.reduce((a, v, i, arr) => {
+						if (i > 0) {
+							let opts = (arr[i] - arr[i - 1])
+							a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
+						} else {
+							a.push(groupPadding)
+						}
+						return a;
+					}, [])
+			)
+
+		// define option scale as a reactive variable
+		Object.keys(parameters).forEach(function(d, i) {
+			let n = Object.values(parameters)[i].length;
+
+			$option_scale[d] = d3.scaleBand()
+									.domain( d3.range(n) )
+									.range( [0, n * (cell.width + cell.padding)] );
+		})
+	}
 
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
@@ -92,6 +106,19 @@
 		.padding(0.1);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
+
+	let order = {};
+
+  	Object.keys(parameters).forEach(function(d, i) {
+  		let n = Object.values(parameters)[i].length;
+		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
+	});
+
+	onMount(() => {
+		d3.selectAll(".option-headers").call(drag_options(order));
+		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
+		// d3.select("g.grouped-sort-divider").call(dragSortDivider())
+	})
 </script>
 
 <div class="grid">
@@ -99,25 +126,25 @@
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter {parameter}">
 				<foreignObject 
-					x="{x_scale_params(parameter)}" 
+					x="{$parameter_scale(parameter)}" 
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
 					<div class="parameter-name {parameter_name} {parameter}" style="cursor: move">{parameter}</div>
 				</foreignObject>
 			</g>
-			<g class="parameter-col {parameter}" transform="translate({x_scale_params(parameter)}, {margin.top})">
+			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
 				{#each d3.range(parameters[parameter].length - 1) as d, i}
 					<foreignObject 
 						class="option-join {d}" 
 						x="{ (x2(i) + x2(i+1))/2 }"
 						width="{iconSize}"
 						height="{iconSize}">
-							<OptionJoin {parameter} {x_scale_params} options={parameters[parameter]} index={i} on:join />				
+							<OptionJoin {parameter} {$parameter_scale} options={parameters[parameter]} index={i} on:join />				
 					</foreignObject>
 				{/each}
 				{#each parameters[parameter] as option, i}
-					<g class="option-headers {parameter} {option}" transform="translate({x2(i)}, 0)">
+					<g class="option-headers {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						<foreignObject 
 							x="0" 
 							y="{iconSize + cell.padding}" 
@@ -134,9 +161,9 @@
 	</svg>
 	<svg class="grid-body" height={h} width={w}>
 		{#each Object.keys(parameters) as parameter}
-			<g class="parameter-col {parameter}" transform="translate({x_scale_params(parameter)}, {gridNamesHeight})">
+			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {gridNamesHeight})">
 				{#each parameters[parameter] as option, i}
-					<g class="option-headers {parameter} {option}" transform="translate({x2(i)}, 0)">
+					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
 								<rect 
@@ -160,6 +187,7 @@
 				{/each}
 			</g>
 		{/each}
+		<SortByGroupDivider parameters={parameters} h={h}/>
 	</svg>
 </div>
 
@@ -178,7 +206,7 @@
 		float: left;
 	}
 
-	svg, g, rect {
-		transition: all .5s linear;;
+	svg, rect {
+		transition: width .5s linear, height .5s linear, x .5s linear, y .5s linear;
 	}
 </style>
