@@ -110,12 +110,12 @@ class multiverseMatrix {
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
-		let toJoin = JSON.parse(JSON.stringify(join_data));
-		let toExclude = JSON.parse(JSON.stringify(exclude_data));
+		let toJoin = structuredClone(join_data);
+		let toExclude = structuredClone(exclude_data);
 		let combine = combineJoinOptions(toJoin);
 
 		// deep copy data structures
-		let g_data = JSON.parse(JSON.stringify(this.gridDataAll));
+		let g_data = structuredClone(this.gridDataAll);
 	
 		let combined_options = combine
 					.map( d => d[1].map( j => [d[0], j]) )
@@ -165,11 +165,11 @@ class multiverseMatrix {
 		let parameters = [...Object.keys(this.parameters())];
 		let gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
 
-		let g_data = JSON.parse(JSON.stringify(gridData));
-		let o_data = JSON.parse(JSON.stringify(this.outcomes[index].density));
+		let g_data = structuredClone(gridData);
+		let o_data = structuredClone(this.outcomes[index].density);
 		let e_data
-		let toJoin = JSON.parse(JSON.stringify(join_data));
-		let toExclude = JSON.parse(JSON.stringify(exclude_data));
+		let toJoin = structuredClone(join_data);
+		let toExclude = structuredClone(exclude_data);
 
 		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
 					.map( d => d[1].map( j => [d[0], j]) )

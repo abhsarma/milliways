@@ -81,6 +81,35 @@
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
 		d3.select("g.grouped-sort-divider").call(dragSortDivider())
 	})
+
+	let mvWindow;
+	const bc = new BroadcastChannel('mv');
+	function openFile() {
+		let spec = structuredClone(data[this.getAttribute("row")]);
+		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
+
+		if (!mvWindow || mvWindow.closed) {
+			mvWindow = open("example-analysis-4.html", "example-analysis-4.html", "height=540,width=960");
+
+			let script = document.createElement('script');
+			
+			let scriptContent = `
+				const bc = new BroadcastChannel('mv');
+				bc.onmessage = e => setActiveSpecification(e.data);
+				let poll = setInterval(()=>{
+					if (typeof setActiveSpecification !== 'undefined') {
+						setActiveSpecification(${JSON.stringify(spec)});
+						clearInterval(poll);
+					}
+				},100);
+			`;
+			script.innerHTML = scriptContent;
+			mvWindow.document.body.appendChild(script);
+		} 
+		else {
+			bc.postMessage(spec);
+		}
+	}
 </script>
 
 <div class="grid">
@@ -134,6 +163,8 @@
 									width="{cellWidth}" 
 									height="{y.bandwidth()}"
 									class="{options_container} {option} option-cell {selected_option}"
+									row={j}
+									on:click={openFile}
 								/>
 							{:else}
 								<rect 
@@ -142,6 +173,8 @@
 									width="{cellWidth}" 
 									height="{y.bandwidth()}"
 									class="{options_container} {option} option-cell"
+									row={j}
+									on:click={openFile}
 								/>
 							{/if}
 						{/each}
