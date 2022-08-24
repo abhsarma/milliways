@@ -4,7 +4,7 @@
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
 	import multiverseMatrix from './multiverseMatrix.js';
-	import { windowHeight, header, margin, cell, groupPadding } from './utils/dimensions.js'
+	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
@@ -113,6 +113,30 @@
 			}
 			isSyncingRightScroll = false;
 		}
+		rightDiv.insertAdjacentHTML('afterend', `
+			<div 
+				class="info-popup"
+				style="
+					position:absolute;
+					top:${header.top+nameContainer.height+gridNamesHeight}px;
+					left:${document.querySelector(".button-wrapper").offsetWidth+document.querySelector(".main").offsetWidth}px;
+					width:175px;
+					white-space:initial;
+					background-color:${colors.gray};
+					color:#F6F6F6;
+					border-radius:0 10px 10px 10px;
+			">
+				<p style="margin:10px;">
+					Click on any rectangle to open a new window of the analysis document with the options of the selected row displayed.
+				</p>
+				<button
+					style="margin:10px"
+					onclick="this.parentElement.remove()"
+				>
+					Close
+				</button>
+			</div>
+		`);
 	});
 
 	// defining color variables for use in CSS

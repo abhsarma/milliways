@@ -49,6 +49,10 @@
 		fill: ${colors.active};
 	`;
 
+	export const bg_rect = css`
+		fill: #d6d6d6;
+	`;
+
 	let cellHeight, cellWidth;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
@@ -76,10 +80,13 @@
 		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
 	});
 
+	let bgRect;
+
 	onMount(() => {
 		d3.selectAll(".option-headers").call(drag_options(order));
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
-		d3.select("g.grouped-sort-divider").call(dragSortDivider())
+		d3.select("g.grouped-sort-divider").call(dragSortDivider());
+		bgRect = document.querySelector("#bg-rect");
 	})
 
 	let mvWindow;
@@ -89,7 +96,13 @@
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
 		if (!mvWindow || mvWindow.closed) {
-			mvWindow = open("example-analysis-4.html", "example-analysis-4.html", "height=540,width=960");
+			mvWindow = open("example-analysis-4.html",
+							"example-analysis-4.html",
+							`top=0,
+							 left=${screen.width}-960,
+							 width=960,
+							 height=${screen.height}
+							`);
 
 			let script = document.createElement('script');
 			
@@ -109,6 +122,11 @@
 		else {
 			bc.postMessage(spec);
 		}
+	}
+
+	// TODO: get the row number as an argument
+	function moveBgRect() {
+		bgRect.setAttribute('y',this.y.baseVal.value - cell.padding/2);
 	}
 </script>
 
@@ -151,6 +169,15 @@
 		{/each}
 	</svg>
 	<svg class="grid-body" height={h} width={w}>
+		<rect 
+			x=0
+			y="-{y.bandwidth()+cell.padding}"
+			width=100%
+			height={y.bandwidth()+cell.padding}
+			transform="translate(0,{gridNamesHeight})"
+			class={bg_rect}
+			id="bg-rect"
+		/>
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {gridNamesHeight})">
 				{#each parameters[parameter] as option, i}
@@ -165,6 +192,7 @@
 									class="{options_container} {option} option-cell {selected_option}"
 									row={j}
 									on:click={openFile}
+									on:mouseover={moveBgRect}
 								/>
 							{:else}
 								<rect 
@@ -175,6 +203,7 @@
 									class="{options_container} {option} option-cell"
 									row={j}
 									on:click={openFile}
+									on:mouseover={moveBgRect}
 								/>
 							{/if}
 						{/each}
@@ -203,5 +232,9 @@
 
 	svg, rect {
 		transition: width .5s linear, height .5s linear, x .5s linear, y .5s linear;
+	}
+
+	#bg-rect {
+		transition: none;
 	}
 </style>
