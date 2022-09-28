@@ -89,7 +89,7 @@
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
 		if (!mvWindow || mvWindow.closed) {
-			mvWindow = open("example-analysis-4.html", "example-analysis-4.html", "height=540,width=960");
+			mvWindow = open("example-analysis-4.html", "example-analysis-4.html", "width=960, height=1080, top=0, left=960"); // get actual screenWidth and height for this
 
 			let script = document.createElement('script');
 			
