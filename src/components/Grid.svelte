@@ -49,6 +49,10 @@
 		fill: ${colors.active};
 	`;
 
+	export const bg_rect = css`
+		fill: #d6d6d6;
+	`;
+
 	let cellHeight, cellWidth;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
@@ -61,10 +65,10 @@
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
 	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
-	$: h = gridNamesHeight + cell.padding + data.length * cellHeight + margin.bottom;
+	$: h = cell.padding + data.length * cellHeight + margin.bottom;
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.length))
-		.range([0, h - (margin.bottom + gridNamesHeight + cell.padding) ])
+		.range([0, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
@@ -76,10 +80,13 @@
 		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
 	});
 
+	let bgRect;
+
 	onMount(() => {
 		d3.selectAll(".option-headers").call(drag_options(order));
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
-		d3.select("g.grouped-sort-divider").call(dragSortDivider())
+		d3.select("g.grouped-sort-divider").call(dragSortDivider());
+		bgRect = document.querySelector("#bg-rect");
 	})
 
 	let mvWindow;
@@ -89,7 +96,14 @@
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
 		if (!mvWindow || mvWindow.closed) {
-			mvWindow = open("example-analysis-4.html", "example-analysis-4.html", "width=960, height=1080, top=0, left=960"); // get actual screenWidth and height for this
+
+			mvWindow = open("example-analysis-4.html",
+							"example-analysis-4.html",
+							`top=0,
+							 left=${screen.width}-960,
+							 width=960,
+							 height=${screen.height}
+							`);
 
 			let script = document.createElement('script');
 			
@@ -110,9 +124,13 @@
 			bc.postMessage(spec);
 		}
 	}
+
+	function moveBgRect(yPos) {
+		bgRect.setAttribute('y', yPos - cell.padding/2);
+	}
 </script>
 
-<div class="grid">
+<div class="grid" style="height:{h}px;">
 	<svg class="grid-header" height={gridNamesHeight} width={w}>
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter {parameter}">
@@ -151,8 +169,16 @@
 		{/each}
 	</svg>
 	<svg class="grid-body" height={h} width={w}>
+		<rect 
+			x=0
+			y="-{y.bandwidth()+cell.padding}"
+			width=100%
+			height={y.bandwidth()+cell.padding}
+			class={bg_rect}
+			id="bg-rect"
+		/>
 		{#each Object.keys(parameters) as parameter}
-			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {gridNamesHeight})">
+			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, 0)">
 				{#each parameters[parameter] as option, i}
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
@@ -165,6 +191,7 @@
 									class="{options_container} {option} option-cell {selected_option}"
 									row={j}
 									on:click={openFile}
+									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
 								<rect 
@@ -175,6 +202,7 @@
 									class="{options_container} {option} option-cell"
 									row={j}
 									on:click={openFile}
+									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{/if}
 						{/each}
@@ -189,9 +217,11 @@
 <style>
 	svg.grid-header {
 		background-color: var(--bgColor) !important;
-		display: inline-block;
-		float: left;
-		position: fixed;
+		display: flex;
+		/* display: inline-block; */
+		/* float: left; */
+		position: sticky;
+		top: 0;
 		box-shadow: 0px 4px 5px -2px #c0c0c0;
 	}
 
@@ -203,5 +233,9 @@
 
 	svg, rect {
 		transition: width .5s linear, height .5s linear, x .5s linear, y .5s linear;
+	}
+
+	#bg-rect {
+		transition: none;
 	}
 </style>

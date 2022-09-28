@@ -4,17 +4,18 @@
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
 	import multiverseMatrix from './multiverseMatrix.js';
-	import { windowHeight, header, margin, cell, groupPadding } from './utils/dimensions.js'
+	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
+	import Code from './components/Code.svelte';
 
 	// CSS Styles
 	export const container = css`
 		height: ${windowHeight}px;
-		overflow-y: scroll
+		overflow-y: scroll;
 	`;
 
 	let m = new multiverseMatrix(data.default); 
@@ -113,6 +114,34 @@
 			}
 			isSyncingRightScroll = false;
 		}
+		document.querySelector('body').style.overflow = "hidden";
+		document.querySelector('main').insertAdjacentHTML('beforeend', `
+			<div style="position:absolute;top:0;left:0;height:100vh;width:100vw;background-color:${colors.gray+"80"};z-index:3;">
+				<div 
+					id="info-popup"
+					style="
+						position:absolute;
+						top:${header.top+nameContainer.height+gridNamesHeight}px;
+						left:${document.querySelector(".button-wrapper").offsetWidth+document.querySelector(".main").offsetWidth}px;
+						width:175px;
+						white-space:initial;
+						background-color:${colors.gray};
+						color:#F6F6F6;
+						border-radius:0 10px 10px 10px;
+					"
+				>
+					<p style="margin:10px;">
+						Click on any rectangle to open a new window of the analysis document with the options of the selected row displayed.
+					</p>
+					<button
+						style="margin:10px"
+						onclick="(function(e){e.parentElement.parentElement.remove();document.querySelector('body').style.overflow='auto';})(this)"
+					>
+						Close
+					</button>
+				</div>
+			</div>
+		`);
 	});
 
 	// defining color variables for use in CSS
@@ -161,6 +190,7 @@
 				on:hide={hideOption}
 			/>
 		</div>
+		<Code />
 	</div>
 </main>
 
