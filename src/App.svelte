@@ -9,7 +9,7 @@
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
-	import Popup from './components/Grid.svelte';
+	import Popup from './components/Popup.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Code from './components/Code.svelte';
 
@@ -26,7 +26,7 @@
 	// }
 
 	let m = new multiverseMatrix(data.default); 
-	let showInstructions = true;
+	let showInstructions = false;
 
 	m.initializeData();
 
@@ -141,12 +141,11 @@
 </script>
 
 <main>
-	<<!-- input 
+	<!-- <input 
 		bind:this={uploader}
 		on:change={uploadFile} 
 		type="file" 
 	/> -->
-	<Popup/>
 	<div id="leftDiv"></div>
 	<div class = "container-flex">
 		<div class="row">
