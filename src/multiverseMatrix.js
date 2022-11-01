@@ -204,9 +204,7 @@ class multiverseMatrix {
 		this.outcomes[index].estimate = e_data_processed;
 	}
 
-	updateHandler(join, exclude, sortByGroupParams = []) {
-		console.log("calling update handler");
-		
+	updateHandler(join, exclude, sortByGroupParams = []) {		
 		// call update grid data
 		this.updateGridData(join, exclude);
 	

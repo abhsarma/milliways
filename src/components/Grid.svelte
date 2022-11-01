@@ -97,8 +97,8 @@
 
 		if (!mvWindow || mvWindow.closed) {
 
-			mvWindow = open("example-analysis-4.html",
-							"example-analysis-4.html",
+			mvWindow = open(process.env.ANALYSIS_DOC,
+							process.env.ANALYSIS_DOC,
 							`top=0,
 							 left=${screen.width}-960,
 							 width=960,
