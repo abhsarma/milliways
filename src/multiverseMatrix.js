@@ -5,14 +5,16 @@ import combineJoinOptions from './utils/helpers/combineJoinOptions'
 import sortByOutcome from './utils/helpers/sortByOutcome.js';
 import sortByGroup from './utils/helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './utils/helpers/excludeAndCombineOutcomes.js';
-import { exclude_options } from './utils/stores.js'
+import { exclude_options, join_options, option_scale } from './utils/stores.js'
 
 // Stores
 let options_to_exclude;
 // let options_to_join;
+let opt_scale;
 
 const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 // const j_unsub =  join_options.subscribe(value => options_to_join=value);
+const o_unsub = option_scale.subscribe(value => opt_scale=value);
 
 class multiverseMatrix {
 	constructor (dat) {		
@@ -26,13 +28,16 @@ class multiverseMatrix {
 		this.outcomes = []; //[this.allOutcomeVars[0]];
 		this.gridData = null;
 		this.gridDataAll = null;
+		this.parameters = this._parameters();
+		this.invParameters = this._invParameters();
+		this.optionToIndex = this._optionToIndex();
 
 		// sorting index, initialized to -1 to indicate no default sort
 		this.sortByIndex = -1;
 		this.sortAscending = true; 
 	}
 
-	parameters = () => {
+	_parameters = () => {
 
 		// get the parameters from the first row as this is a rectangular dataset
 		// is there a better way to do this?
@@ -44,13 +49,47 @@ class multiverseMatrix {
 		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
+	_invParameters = () => {
+		/*
+			RETURNS:
+				{Object}: key,value -> option, parameter of option
+			NOTE:
+				this implicitly assumes unique parameter names
+		*/
+		const parameters = this._parameters();
+		let inverseParameters = {};
+		for (let key in parameters) {
+			let arr = parameters[key];
+			for (let val of arr)
+				inverseParameters[val] = key;
+		}
+		return inverseParameters;
+	}
+
+	_optionToIndex = () => {
+		/*
+			RETURNS:
+				{Object}: key,value -> option, index of option in this.parameters[this.invParameters[option]]
+			NOTE:
+				optionsToIndex is just for ease of access, used in updateWrapper.
+		*/
+		const parameters = this._parameters();
+		let optionToIndex = {};
+		for (let key in parameters) {
+			let arr = parameters[key];
+			for (let i=0; i<arr.length; i++)
+				optionToIndex[arr[i]] = i;
+		}
+		return optionToIndex;
+	}
+
 	// creates the data structure for the grid matrix
 	// we will draw this plot as a bar chart
 	// input: JSON multiverse object (this.data), parameters (this.parameters)
 	// output: rectangular data structure with columns corresponding to each parameter, 
 	// 		   estimate, conf.low (if applicable), conf.high (if applicable)
 	initializeData = (vis = "CDF") => {
-		let parameters = [...Object.keys(this.parameters())];
+		let parameters = [...Object.keys(this.parameters)];
 		options_to_exclude = Object.assign({}, ...parameters.map((i) => ({[i]: []})));
 		exclude_options.update(arr => arr=options_to_exclude);
 
@@ -60,7 +99,7 @@ class multiverseMatrix {
 
 	initializeGridData = () => {
 		// creating a shallow copy which is fine for here
-		let parameters = [...Object.keys(this.parameters())];
+		let parameters = [...Object.keys(this.parameters)];
 		let g_data = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
 		this.gridData = g_data;
 		this.gridDataAll = g_data;
@@ -72,7 +111,7 @@ class multiverseMatrix {
 		let e_data, o_data
 		let combine = [], exclude = [];
 
-		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
 		this.outcomes.push({
 			var: term,
@@ -162,7 +201,7 @@ class multiverseMatrix {
 	
 	updateOutcomeData = (index, term, join_data = [], exclude_data = []) => {		
 		// gets a re-intitialzied version of gridData
-		let parameters = [...Object.keys(this.parameters())];
+		let parameters = [...Object.keys(this.parameters)];
 		let gridData = this.data.map( d => Object.assign({}, ...parameters.map((i) => ({[i]: [d[i]]}))) );
 
 		let g_data = structuredClone(gridData);
@@ -197,7 +236,7 @@ class multiverseMatrix {
 		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
 		// }
 
-		let option_list = Object.entries(this.parameters()).map(d => d[1]);
+		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
 		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
 		this.outcomes[index].density = o_data_processed;
@@ -206,7 +245,7 @@ class multiverseMatrix {
 
 	updateHandler(join, exclude, sortByGroupParams = []) {
 		console.log("calling update handler");
-		
+
 		// call update grid data
 		this.updateGridData(join, exclude);
 	
@@ -234,6 +273,56 @@ class multiverseMatrix {
 			});
 			this.outcomes = temp;
 		}
+	}
+
+	updateWrapper(joinArr, excludeArr, sortByGroupParams=[]) {
+		/*
+			PARAMETERS:
+				joinArr {array[array[string]]}:
+					array of arrays of length 2 containing options to join
+				excludeArr {array[string]}:
+					array of options to exclude
+				sortByGroupParams {array}:
+					simply passed onto updateHandler
+			SIDE EFFECTS:
+				updates the 2 store variables join_options and exclude_options
+			NOTE:
+				this mostly assumes proper input for excludeArr, ex: no repeats in exclude
+			BUGS:
+				for exclude_options, for some reason, the button does not update accordingly
+		*/
+
+		// filter excludes option groups that are not valid
+		// map produces the proper format
+		let join = joinArr.filter(arr => {
+			let x=arr[0], y=arr[1];
+			return this.invParameters[x] === this.invParameters[y] && // options are in the same parameter
+				(() => { // options are visually next to each other in the mv vis document
+					let param = this.invParameters[x]
+					let ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+					    iy = opt_scale[param].domain().indexOf(this.optionToIndex[y]);
+					return Math.abs(ix-iy) === 1; // also ensures x !== y
+				})();
+		}).map(arr => {
+			let x=arr[0], y=arr[1];
+			let param = this.invParameters[x];
+			return {
+				indices: [opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+						  opt_scale[param].domain().indexOf(this.optionToIndex[y])],
+				options: arr,
+				parameter: param
+			}
+		});
+		
+		let exclude = {};
+		for (let key in this.parameters) exclude[key] = [];
+		for (let option of excludeArr) exclude[this.invParameters[option]].push(option);
+
+		// by updating these, it should reactively call this.updateHandler elsewhere (App.svelte)
+		join_options.update(_ => join);
+		exclude_options.update(_ => exclude);
+
+		// this.updateHandler(join, exclude, sortByGroupParams);
 	}
 }
 

@@ -22,7 +22,7 @@
 	let m = new multiverseMatrix(data.default); 
 	m.initializeData();
 
-	const parameters = m.parameters();
+	const parameters = m.parameters;
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	const cols = [...Object.keys(parameters)].length;
@@ -159,7 +159,7 @@
 		<div class="{container} grid-container" style="height: {windowHeight}px;">
 			<Grid 
 				data={m.gridData} 
-				parameters={m.parameters()}
+				parameters={m.parameters}
 				on:join={joinOptions}
 				on:hide={hideOption}
 			/>

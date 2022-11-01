@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { join_options, group_params, parameter_scale, option_scale } from './stores.js';
-import { cell, margin, gridNamesHeight, groupPadding } from './dimensions.js';
+import { cell, margin, groupPadding } from './dimensions.js';
 import { whichDiff, any } from './helpers/arrayMethods.js'
 
 let options_to_join;
@@ -184,7 +184,7 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 			d3.select('svg.grid-body').selectAll(`g.parameter-col`)
 				.attr("transform", function(d) {
 					let p = this.className.baseVal.split(' ')[1]
-					return `translate(${pPosition(p, x_scale_params)}, ${gridNamesHeight})`
+					return `translate(${pPosition(p, x_scale_params)}, 0)`
 				});
 		}
 	})
@@ -205,7 +205,7 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 		group_params.update(arr => arr = sortByGroupParams)
 
 		transition(d3.select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${margin.top})`));
-		transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${gridNamesHeight})`));
+		transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, 0)`));
 		transition(d3.select(this).select('foreignObject').attr("x", x_scale_params(d)));
 	});
 
