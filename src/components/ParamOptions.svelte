@@ -33,7 +33,13 @@
 </div>
 
 <style>
+    .options-container {
+        margin-bottom: 10px;
+    }
     div.param-option > h3 {
         margin: 0;
+    }
+    div.param-option > code {
+        white-space: pre-wrap;
     }
 </style>

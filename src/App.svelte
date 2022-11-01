@@ -30,7 +30,7 @@
 
 	m.initializeData();
 
-	const parameters = m.parameters();
+	const parameters = m.parameters;
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	const cols = [...Object.keys(parameters)].length;
@@ -123,7 +123,7 @@
 			}
 			isSyncingRightScroll = false;
 		}
-		document.querySelector('body').style.overflow = "hidden";
+		// document.querySelector('body').style.overflow = "hidden";
 	});
 
 	// defining color variables for use in CSS
@@ -141,12 +141,12 @@
 </script>
 
 <main>
-	<input 
+	<<!-- input 
 		bind:this={uploader}
 		on:change={uploadFile} 
 		type="file" 
-	/>
-	<!-- <UploadCSV onUpload={(file) => console.log("this is the parsed file: ", file)} /> -->
+	/> -->
+	<Popup/>
 	<div id="leftDiv"></div>
 	<div class = "container-flex">
 		<div class="row">
@@ -179,7 +179,7 @@
 		<div class="{container} grid-container" style="height: {windowHeight}px;">
 			<Grid 
 				data={m.gridData} 
-				parameters={m.parameters()}
+				parameters={m.parameters}
 				on:join={joinOptions}
 				on:hide={hideOption}
 			/>
