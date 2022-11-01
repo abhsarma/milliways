@@ -9,6 +9,8 @@ import injectProcessEnv from 'rollup-plugin-inject-process-env';
 
 const production = !process.env.ROLLUP_WATCH;
 
+const pkg = require('./package.json');
+
 function serve() {
 	let server;
 
@@ -38,6 +40,11 @@ export default {
 		name: 'app',
 		file: 'public/build/bundle.js'
 	},
+	// output: {
+	// 	format: 'umd',
+	// 	name: 'app',
+	// 	file: 'pkg.main'
+	// },
 	plugins: [
 		svelte({
 			compilerOptions: {
@@ -64,8 +71,7 @@ export default {
 		
 		injectProcessEnv({ 
 			NODE_ENV: 'production',
-			SOME_OBJECT: { one: 1, two: [1,2], three: '3' },
-			UNUSED: null
+			ANALYSIS_DOC: "analysis-doc.html"
 		}),
 
 

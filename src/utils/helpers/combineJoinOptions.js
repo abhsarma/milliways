@@ -28,7 +28,7 @@ function _combineJoinOptionsHelper(input) {
 }
 
 export default function combineJoinOptions(input_array) {
-	let arr = JSON.parse(JSON.stringify(input_array));
+	let arr = structuredClone(input_array);
 	let params = arr.map(d => d['parameter']).filter((v, i, a) => a.indexOf(v) === i);
 	let new_arr = {};
 	

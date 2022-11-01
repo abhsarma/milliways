@@ -4,23 +4,33 @@
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
 	import multiverseMatrix from './multiverseMatrix.js';
-	import { windowHeight, header, margin, cell, groupPadding } from './utils/dimensions.js'
+	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
+	import Popup from './components/Grid.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
+	import Code from './components/Code.svelte';
 
 	// CSS Styles
 	export const container = css`
 		height: ${windowHeight}px;
-		overflow-y: scroll
+		overflow-y: scroll;
 	`;
 
+	// let dnew = // some data URL
+	// initialiseMultiverse(dnew)
+	// function initialiseMultiverse(data) {
+
+	// }
+
 	let m = new multiverseMatrix(data.default); 
+	let showInstructions = true;
+
 	m.initializeData();
 
-	const parameters = m.parameters();
+	const parameters = m.parameters;
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	const cols = [...Object.keys(parameters)].length;
@@ -113,6 +123,7 @@
 			}
 			isSyncingRightScroll = false;
 		}
+		// document.querySelector('body').style.overflow = "hidden";
 	});
 
 	// defining color variables for use in CSS
@@ -121,9 +132,21 @@
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--grayColor', colors.gray)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+
+	let uploader;
+	function uploadFile(e) {
+		const file = uploader.files[0];
+		console.log(file)
+	}
 </script>
 
 <main>
+	<<!-- input 
+		bind:this={uploader}
+		on:change={uploadFile} 
+		type="file" 
+	/> -->
+	<Popup/>
 	<div id="leftDiv"></div>
 	<div class = "container-flex">
 		<div class="row">
@@ -156,11 +179,15 @@
 		<div class="{container} grid-container" style="height: {windowHeight}px;">
 			<Grid 
 				data={m.gridData} 
-				parameters={m.parameters()}
+				parameters={m.parameters}
 				on:join={joinOptions}
 				on:hide={hideOption}
 			/>
 		</div>
+		<Code />
+		<!-- {#if showInstructions}
+			<Popup />
+		{/if} -->
 	</div>
 </main>
 

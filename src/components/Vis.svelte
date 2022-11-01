@@ -27,16 +27,7 @@
 		position: absolute;
 	`;
 
-	$: { 
-		if ($gridCollapse) {
-			cellHeight = 2;
-			d3.selectAll("path.cdf").style("visibility", "hidden");
-
-		} else {
-			cellHeight = cell.height;
-			d3.selectAll("path.cdf").style("visibility", "visible");
-		}
-	}
+	$: cellHeight = $gridCollapse ? 2 : cell.height
 	$: w = outcomeVisWidth + margin.left;
 	$: h = gridNamesHeight + cell.padding + data.density.length * cellHeight + margin.bottom;
 
@@ -128,7 +119,9 @@
 
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {gridNamesHeight + y(i)})">
-				<path class="cdf" d={area(universe)} stroke="{colors.secondary}" stroke-width=1.5 opacity=0.8 />
+				{#if !$gridCollapse}
+					<path class="cdf" d={area(universe)} stroke="{colors.secondary}" stroke-width=1.5 opacity=0.8 />
+				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
 						d={line([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
