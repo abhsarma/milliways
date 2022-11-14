@@ -19,18 +19,52 @@
 		overflow-y: scroll;
 	`;
 
-	// let dnew = // some data URL
-	// initialiseMultiverse(dnew)
-	// function initialiseMultiverse(data) {
-
-	// }
-
 	let showInstructions = false;
 	let m;
-	// m = new multiverseMatrix(data.default);
-	// m.initializeData();
+	m = new multiverseMatrix(data.default);
+	m.initializeData();
 
-	$: if (processed) {
+	const parameters = m.parameters;
+
+	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
+	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
+
+	// initialise parameter and option scales
+	// these are updated as stores whenever there
+	// is a relevant interaction
+	$parameter_scale = d3.scaleOrdinal()
+		.domain(Object.keys(parameters))
+		.range(
+			Object.values(param_n_options)
+				.reduce( (acc, val, index) => {
+					if (index == 0) {
+						acc.push(0);
+						acc.push(val); // acc.push([val[0], val[1]]);
+					} else {
+						acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
+					}
+					return acc; 
+				}, [] )
+				.reduce((a, v, i, arr) => {
+					if (i > 0) {
+						let opts = (arr[i] - arr[i - 1])
+						a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
+					} else {
+						a.push(groupPadding)
+					}
+					return a;
+				}, [])
+		)
+
+	Object.keys(parameters).forEach(function(d, i) {
+		let n = Object.values(parameters)[i].length;
+
+		$option_scale[d] = d3.scaleBand()
+								.domain( d3.range(n) )
+								.range( [0, n * (cell.width + cell.padding)] );
+	})
+
+	$: {
 		m.updateHandler($join_options, $exclude_options, $group_params);
 		m = m;
 	}
@@ -64,27 +98,27 @@
 		m.sortIndex = event.detail
 	}
 
-	// onMount(() => {
-	// 	let isSyncingLeftScroll = false;
-	// 	let isSyncingRightScroll = false;
-	// 	let leftDiv = d3.select('.vis-container').node();
-	// 	let rightDiv = d3.select('.grid-container').node();
-	// 	leftDiv.onscroll = function() {
-	// 		if (!isSyncingLeftScroll) {
-	// 			isSyncingRightScroll = true;
-	// 			rightDiv.scrollTop = this.scrollTop;
-	// 		}
-	// 		isSyncingLeftScroll = false;
-	// 	}
-	// 	rightDiv.onscroll = function() {
-	// 		if (!isSyncingRightScroll) {
-	// 			isSyncingLeftScroll = true;
-	// 			leftDiv.scrollTop = this.scrollTop;
-	// 		}
-	// 		isSyncingRightScroll = false;
-	// 	}
-	// 	// document.querySelector('body').style.overflow = "hidden";
-	// });
+	onMount(() => {
+		let isSyncingLeftScroll = false;
+		let isSyncingRightScroll = false;
+		let leftDiv = d3.select('.vis-container').node();
+		let rightDiv = d3.select('.grid-container').node();
+		leftDiv.onscroll = function() {
+			if (!isSyncingLeftScroll) {
+				isSyncingRightScroll = true;
+				rightDiv.scrollTop = this.scrollTop;
+			}
+			isSyncingLeftScroll = false;
+		}
+		rightDiv.onscroll = function() {
+			if (!isSyncingRightScroll) {
+				isSyncingLeftScroll = true;
+				leftDiv.scrollTop = this.scrollTop;
+			}
+			isSyncingRightScroll = false;
+		}
+		// document.querySelector('body').style.overflow = "hidden";
+	});
 
 	// defining color variables for use in CSS
 	document.documentElement.style.setProperty('--white', colors.white)
@@ -92,69 +126,9 @@
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--grayColor', colors.gray)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
-
-	let files, processed, promise;
-	async function uploadFile(e) {
-		const promise = await files[0].text();
-		let d = JSON.parse(promise);
-
-		initializeMultiverse(d)
-	}
-
-	function initializeMultiverse(data) {
-		m = new multiverseMatrix(data)
-		m.initializeData();
-
-		const parameters = m.parameters;
-
-		const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
-		const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
-
-		// initialise parameter and option scales
-		// these are updated as stores whenever there
-		// is a relevant interaction
-		$parameter_scale = d3.scaleOrdinal()
-			.domain(Object.keys(parameters))
-			.range(
-				Object.values(param_n_options)
-					.reduce( (acc, val, index) => {
-						if (index == 0) {
-							acc.push(0);
-							acc.push(val); // acc.push([val[0], val[1]]);
-						} else {
-							acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
-						}
-						return acc; 
-					}, [] )
-					.reduce((a, v, i, arr) => {
-						if (i > 0) {
-							let opts = (arr[i] - arr[i - 1])
-							a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
-						} else {
-							a.push(groupPadding)
-						}
-						return a;
-					}, [])
-			)
-
-		Object.keys(parameters).forEach(function(d, i) {
-			let n = Object.values(parameters)[i].length;
-
-			$option_scale[d] = d3.scaleBand()
-									.domain( d3.range(n) )
-									.range( [0, n * (cell.width + cell.padding)] );
-		})
-
-		processed = true;
-	}
 </script>
 
 <main>
-	<input 
-		bind:files
-		on:change={uploadFile} 
-		type="file" 
-	/>
 	<div id="leftDiv"></div>
 	<div class = "container-flex">
 		<div class="row">
@@ -164,15 +138,15 @@
 	</div>
 
 	<!-- BUTTON TO ADD A NEW OUTCOME GRAPH -->
-	<!-- <div class="button-wrapper">
+	<div class="button-wrapper">
 		<button on:click={() => { m.initializeOutcomeData(); m.updateHandler($join_options, $exclude_options); m=m; }}>
 			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.active}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>
-	</div> -->
+	</div>
 
 	<!-- CREATES THE OUTCOME GRAPH(S) -->
 	<div class="main">
-		<!-- <div class="{container} vis-container" style="height: {windowHeight}px;">
+		<div class="{container} vis-container" style="height: {windowHeight}px;">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
 					i              		= {i}
@@ -187,25 +161,22 @@
 					on:remove			= {() => { m.outcomes.splice(i,1); m = m; }}
 				/>
 			{/each}
-		</div> -->
+		</div>
 
 		<!-- CREATES THE GRID PANEL FOR SPECIFICATIONS -->
-		{#await promise then value}
-			{#if processed}
-				<div class="{container} grid-container" style="height: {windowHeight}px;">
-					<Grid 
-						data={m.gridData} 
-						parameters={m.parameters}
-						on:join={joinOptions}
-						on:hide={hideOption}
-					/>
-				</div>
-			{/if}
-		{/await}
-		<!-- <Code /> -->
-		<!-- {#if showInstructions}
+		<div class="{container} grid-container" style="height: {windowHeight}px;">
+			<Grid 
+				data={m.gridData} 
+				parameters={m.parameters}
+				on:join={joinOptions}
+				on:hide={hideOption}
+			/>
+		</div>
+
+		<Code />
+		{#if showInstructions}
 			<Popup />
-		{/if} -->
+		{/if}
 	</div>
 </main>
 
