@@ -19,7 +19,7 @@
 		overflow-y: scroll;
 	`;
 
-	let showInstructions = false;
+	let showTutorial = true;
 	let m;
 	m = new multiverseMatrix(data.default);
 	m.initializeData();
@@ -174,8 +174,8 @@
 		</div>
 
 		<Code />
-		{#if showInstructions}
-			<Popup />
+		{#if showTutorial}
+			<Popup parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
@@ -233,14 +233,17 @@
 		fill: var(--white) !important;
 	}
 	.vis-container {
+		position:relative;
 		display: inline-block;
 		overflow-x: auto;
 		margin-left: 16px;
+		border-radius: 8px;
 	}
 
 	.grid-container {
 		display: inline-block;
 		position: relative;
 		margin-left: 16px;
+		border-radius: 8px;
 	}
 </style>

@@ -188,7 +188,7 @@
 									y="{y(j)}" 
 									width="{cellWidth}" 
 									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell {selected_option}"
+									class="{options_container} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
 									on:mouseover={() => moveBgRect(y(j))}
@@ -215,6 +215,10 @@
 </div>
 
 <style>
+	.to-front {
+		z-index: 99;
+	}
+
 	svg.grid-header {
 		background-color: var(--bgColor) !important;
 		display: flex;

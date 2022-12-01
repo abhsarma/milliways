@@ -12,6 +12,8 @@
 		cursor: pointer;
     `;
     export const codeLine = css`margin: 0;`;
+
+    document.documentElement.style.setProperty('--bgColor', colors.background)
 </script>
 
 <div class="code-container">
@@ -30,5 +32,7 @@
 		position: absolute;
 		margin-left: 16px;
         margin-right: 16px;
+        padding: 16px;
+        background-color: var(--bgColor);
     }
 </style>
