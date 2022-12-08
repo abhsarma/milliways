@@ -5,9 +5,9 @@
 	import { windowHeight, margin, cell, text, gridNamesHeight, scrollbarWidth, outcomeVisWidth, namingDim } from '../utils/dimensions.js'
 	import { colors } from '../utils/colorPallete.js';
 	import { mean } from '../utils/helpers/arrayMethods.js'
-	import { gridCollapse } from '../utils/stores.js'
+	import { gridCollapse, exclude_rows } from '../utils/stores.js'
 	
-	// this is out of necessity, not really used in the <script>
+	// svg is out of necessity, not really used in the <script>
 	let svg, cellHeight;
 
 	const dispatch = createEventDispatcher();
@@ -18,7 +18,7 @@
 	export let sortAscending;
 	export let sortByIndex;
 	export let term = allOutcomeVars[0];
-
+	
 	// CSS Styles
 	$: container = css`
 		background-color: ${colors.background};
@@ -58,6 +58,34 @@
 
 	// d's for axis paths
 	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`
+
+	function brushStart(e) {
+		// $exclude_rows = []; // this will not exclude anything
+		dispatch("brush");
+	}
+
+	function brushEnd(e) {
+		try {
+			let [p1,p2] = e.selection;
+			$exclude_rows = [i, [xscale.invert(p1), xscale.invert(p2)]];
+		}
+		catch (err) { // happens when the user clicks outside of selection rect without dragging
+			$exclude_rows = []; // this will not exclude anything
+		}
+	}
+
+	onMount(() => {
+		let brushContainer = d3.select(`#brush-container-${i}`);
+
+		let brush = d3
+			.brushX()
+			.on('start', brushStart)
+			.on('end', brushEnd)
+			.extent([[margin.left,-y(1)],[w - margin.right,0]]);
+
+		brushContainer.call(brush);
+	})
+
 </script>
 
 <div class="vis" id="vis-{i}">
@@ -88,8 +116,8 @@
 			</button>
 		</div>
 	</div>
-	<svg class="outcome-axis vis-{0}" bind:this={svg} height={windowHeight} width={w-scrollbarWidth}>
-		<g transform="translate(0, {gridNamesHeight})">
+	<svg class="outcome-axis vis-{i}" bind:this={svg} height={windowHeight} width={w-scrollbarWidth}>
+		<g id="axis-{i}" transform="translate(0, {gridNamesHeight})">
 			<!-- x axis -->
 			<path class="domain"  stroke="currentColor" d="{xPath}" fill="none" />
 			{#each xscale.ticks(5) as tick}
@@ -98,6 +126,8 @@
 					<text text-anchor="middle" dy="0em" y="{-text}" style="font-size: {text}">{tick}</text>
 				</g>
 			{/each}
+			<!-- brush is added onMount -->
+			<g class="brush-container" id="brush-container-{i}"></g>
 		</g>
 	</svg>
 	<svg class="outcome-results vis-{i}" bind:this={svg} height={h} width={w}>
@@ -209,6 +239,7 @@
 		display: inline-block;
 		float: left;
 		position: absolute;
+		pointer-events: none;
 	}
 
 	svg, g.universe {

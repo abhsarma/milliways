@@ -3,10 +3,11 @@
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import * as data from '../static/data/data.json';
+    import * as code from '../static/data/code.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
-	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
+	import { exclude_options, exclude_rows, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
 	import Popup from './components/Popup.svelte';
@@ -19,6 +20,7 @@
 		overflow-y: scroll;
 	`;
 
+	let currBrushIdx = 0; // index of current Vis that brush is used on
 	let showInstructions = false;
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -65,7 +67,7 @@
 	})
 
 	$: {
-		m.updateHandler($join_options, $exclude_options, $group_params);
+		m.updateHandler($join_options, $exclude_options, $exclude_rows, $group_params);
 		m = m;
 	}
 
@@ -98,6 +100,22 @@
 		m.sortIndex = event.detail
 	}
 
+	function removeBrush(idx) {
+		document.querySelectorAll(`#brush-container-${idx} > *`)
+			.forEach((v,i) => { // removes the rectangle and other related elements
+				if (i !== 0) { // the first one allows brushing behavior
+					v.style.display = "none";
+				}
+			});
+	}
+
+	function onBrush(idx) {
+		if (idx !== currBrushIdx) { // currBrushIdx is now prev
+			removeBrush(currBrushIdx);
+			currBrushIdx = idx;
+		}
+	}
+
 	onMount(() => {
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -117,7 +135,25 @@
 			}
 			isSyncingRightScroll = false;
 		}
-		// document.querySelector('body').style.overflow = "hidden";
+		const joinArr = [
+			['cl_option1','cl_option2'],
+			['fer_option1','fer_option2'],
+			['fer_option3','fer_option4'],
+
+			['cl_option3','cl_option2'],
+
+			['fer_option1','fer_option1'],
+
+			['fer_option4','fer_option3'],
+			['fer_option4','fer_option3'],
+
+			['fer_option4','fer_option2'],
+			
+			['fer_option2','fer_option3'],
+		];
+		const excludeArr = [ 'cl_option3', 'cl_option3', 'asdf', 'rs_option1', 'rs_option2' ];
+		// m.updateWrapper(joinArr, excludeArr);
+		console.log(m)
 	});
 
 	// defining color variables for use in CSS
@@ -155,10 +191,11 @@
 					bind:term      		= {outcome.var}
 					bind:sortByIndex 	= {m.sortByIndex}
 					bind:sortAscending 	= {m.sortAscending}
-					on:changeOutcomeVar = {() =>  { m.updateOutcomeData(i, outcome.var, $join_options, $exclude_options); m = m; }}
+					on:changeOutcomeVar = {() =>  { $exclude_rows=[]; removeBrush(i); m.updateOutcomeData(i, outcome.var, $join_options, $exclude_options); m = m; }}
 					on:setSortIndex 	= {(event) => { m.sortByIndex = event.detail; m.updateHandler($join_options, $exclude_options); m = m; }}
 					on:changeSortDirection = {() => { m.sortAscending = !m.sortAscending; m.updateHandler($join_options, $exclude_options); m = m; }}
-					on:remove			= {() => { m.outcomes.splice(i,1); m = m; }}
+					on:remove			= {() => { i===currBrushIdx?$exclude_rows = []:undefined; m.outcomes.splice(i,1); m = m; }}
+					on:brush			= {() => onBrush(i)}
 				/>
 			{/each}
 		</div>
@@ -173,7 +210,7 @@
 			/>
 		</div>
 
-		<Code />
+		<Code code={code} />
 		{#if showInstructions}
 			<Popup />
 		{/if}
