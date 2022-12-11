@@ -70,8 +70,10 @@
 	export let step;
 	export let position;
 	export let direction;
+	export let steps;
 
-	let shift, shadow, pointer;
+	let shift, shadow, pointer, next;
+	let activePrev  = false, activeSkip = false, activeNext = false;
 
 	if (direction == "right") {
 		shift = shiftLeft;
@@ -88,8 +90,6 @@
 		pointer = null;
 	}
 
-	let activePrev  = false, activeSkip = false, activeNext = false;
-
 	function incrementCount() {
 		step += 1
 		dispatch('message', {
@@ -104,21 +104,27 @@
 		});
 	}
 
-	$: next = step == 0 ? "Start Tutorial" : "Next"
+	if (step == 0) {
+		next = "Start Tutorial"
+	} else if (step > 0 & step <= steps) {
+		next = "Next"
+	} else {
+		next = "Finish"
+	}
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y}px; left: {position.x}px;">
 	<p>{@html message}</p>
-	<!-- {#if step > 0}
-		<p class="progress-indicator">{step}/N</p>
-	{/if} -->
+	{#if step > 0 & step <= steps}
+		<p class="progress-indicator">{step}/{steps}</p>
+	{/if}
 	<button class="{highlight_btn}" class:activeNext on:mouseenter={() => activeNext = true} on:mouseleave={() => activeNext = false} on:click={incrementCount}>{next}</button>
 	{#if step > 0}
 		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
 	{/if}
 	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} onclick="(e=>e.parentElement.parentElement.remove())(this)">Skip</button>
 </div>
-{#if step > 0 & step <= 13}
+{#if step > 0 & step <= steps}
 	<div class="pointer {pointer}" style="top: {position.y}px; left: {position.x}px;"></div>
 {/if}
 
@@ -128,8 +134,12 @@
 		font-family: 'Avenir Next';
 	}
 
+	p.progress-indicator {
+		color: #aaaaaa;
+	}
+
 	button {
-		margin: 0px 8px;
+		margin: 0px 4px;
 		font-family: 'Avenir Next';
 		border: none;
 		padding: 8px 16px;

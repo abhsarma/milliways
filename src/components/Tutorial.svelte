@@ -29,6 +29,7 @@
 
 	let activePrev  = false, activeSkip = false, activeNext = false, positions;
 	let step = 0;
+	let N = 13;
 	$: first_param = "";
 	$: first_option = "";
 
@@ -104,6 +105,9 @@
 
 	function updatePopup(event) {
 		step = Number(event.detail.step)
+		if (step > (N + 1)) {
+			document.querySelector('.popup-tutorial').remove();
+		}
 	}
 
 	$: console.log(step)
@@ -145,7 +149,8 @@
 			step = {step}
 			position = {position}
 			direction = "centre"
-			on:message={updatePopup}
+			on:message = {updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 1}
 		{focus("div.grid-container")}
@@ -155,6 +160,7 @@
 			position = {positions.grid}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 2}
 		{focus("div.grid-container", `div.parameter-name.${first_param}`)}
@@ -164,6 +170,7 @@
 			position = {positions.parameter}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 3}
 		{focus("div.grid-container", `div.option-label.${first_option}`)}
@@ -173,6 +180,7 @@
 			position = {positions.option}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 4}
 		{focus("div.grid-container")}
@@ -182,6 +190,7 @@
 			position = {positions.universe0}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 5}
 		<Popup 
@@ -190,6 +199,7 @@
 			position = {positions.option_interaction}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 6}
 		{focus("div.grid-container", `svg.exclude-icon`)}
@@ -199,6 +209,7 @@
 			position = {positions.exclude}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 7}
 		{focus("div.grid-container", `svg.link-icon`)}
@@ -208,6 +219,7 @@
 			position = {positions.join}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 8}
 		{focus("div.vis-container")}
@@ -217,6 +229,7 @@
 			position = {positions.vis}
 			direction = "left"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 9}
 		{focus("div.vis-container", "", "select.vis-dropdown")}
@@ -226,6 +239,7 @@
 			position = {positions.vis}
 			direction = "left"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 10}
 		{focus("div.vis-container", "", "button.sort-btn")}
@@ -235,6 +249,7 @@
 			position = {positions.vis}
 			direction = "left"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 11}
 		{focus("div.vis-container")}
@@ -244,6 +259,7 @@
 			position = {positions.result0}
 			direction = "left"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 12}
 		{focus("div.code-container")}
@@ -253,6 +269,7 @@
 			position = {positions.code}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else if step == 13}
 		{focus("div.grid-container")}
@@ -262,6 +279,7 @@
 			position = {positions.universe0}
 			direction = "right"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{:else}
 		{focus()}
@@ -271,6 +289,7 @@
 			position = {position}
 			direction = "centre"
 			on:message={updatePopup}
+			steps = {N}
 		/>
 	{/if}
 </div>
@@ -279,15 +298,6 @@
 	p {
 		margin: 8px 8px 32px 8px;
 		font-family: 'Avenir Next';
-	}
-
-	button {
-		margin: 0px 8px;
-		font-family: 'Avenir Next';
-		border: none;
-		padding: 8px 16px;
-		float: right;
-		border-radius: 4px;
 	}
 
 	:global(.focus-elem) {
