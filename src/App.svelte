@@ -9,7 +9,7 @@
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
-	import Popup from './components/Popup.svelte';
+	import Tutorial from './components/Tutorial.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Code from './components/Code.svelte';
 
@@ -175,7 +175,7 @@
 
 		<Code />
 		{#if showTutorial}
-			<Popup parameters={m.parameters}/>
+			<Tutorial parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
