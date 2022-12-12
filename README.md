@@ -37,10 +37,31 @@ To create a static HTML page of the interactive multiverse visualisation tool, w
 npm run compile
 ```
 
+This will create a `template.html` file, which will work as a standalone HTML document.
+
 ## Exporting
 
 Currently, if we make the modifications to package.json so that `pkg.main` is exported instead of the public bundle, we can install the svelte app into a new directory.
 The challenge, however, is to take additional command line arguments for the path to the interactive HTML file, the data files and the code files, which are currently hard-coded.
 
 A solution would be to get the files as arguments, move/copy and rename them to the correct relative locations, and then bundle using rollup.
+
+### Troubleshooting
+
+To compile, we make use of the inliner npm library. However, inliner does not support `defer` scripts. So in the `public/index.html` file, move:
+
+```
+<head>
+    <script defer src="/build/bundle.js"></script>
+</head>
+```
+
+to **after** the `<body/>` tag:
+
+```
+    <body></body>
+    <script src="/build/bundle.js"></script>
+</html>
+```
+
 

@@ -7,9 +7,10 @@
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
+	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
-	import Popup from './components/Popup.svelte';
+	import Tutorial from './components/Tutorial.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Code from './components/Code.svelte';
 
@@ -19,7 +20,7 @@
 		overflow-y: scroll;
 	`;
 
-	let showInstructions = false;
+	let showTutorial = true;
 	let m;
 	m = new multiverseMatrix(data.default);
 	m.initializeData();
@@ -174,8 +175,8 @@
 		</div>
 
 		<Code />
-		{#if showInstructions}
-			<Popup />
+		{#if showTutorial}
+			<Tutorial parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
@@ -233,14 +234,17 @@
 		fill: var(--white) !important;
 	}
 	.vis-container {
+		position:relative;
 		display: inline-block;
 		overflow-x: auto;
 		margin-left: 16px;
+		border-radius: 8px;
 	}
 
 	.grid-container {
 		display: inline-block;
 		position: relative;
 		margin-left: 16px;
+		border-radius: 8px;
 	}
 </style>
