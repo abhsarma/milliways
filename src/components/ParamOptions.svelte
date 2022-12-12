@@ -1,0 +1,45 @@
+<script>
+	import { css } from '@emotion/css';
+	import { colors } from '../utils/colorPallete.js';
+    export let param;
+    export let optionsData;
+
+    const optionsContainer = css`
+        background-color: ${colors.inactive+"80"};
+        margin: 5px;
+        padding: 5px;
+        border-radius: 5px;
+    `
+
+    let options = [];
+
+    for (let optionData of optionsData) {
+        let option = { name:"", content:"" };
+        let index = optionData.indexOf('"',1); // assumed to exist
+        option.name = optionData.slice(1,index);
+        index = optionData.indexOf('~'); // also assumed to exist
+        option.content = optionData.slice(index+2);
+        options.push(option);
+    }
+</script>
+
+<div class="options-container {optionsContainer}" id="paramOptions-{param}">
+    {#each options as { name, content }, i }
+        <div class="param-option" id="{param}-{i}">
+            <h3>{name}</h3>
+            <code>{content}</code>
+        </div>
+    {/each}
+</div>
+
+<style>
+    .options-container {
+        margin-bottom: 10px;
+    }
+    div.param-option > h3 {
+        margin: 0;
+    }
+    div.param-option > code {
+        white-space: pre-wrap;
+    }
+</style>
