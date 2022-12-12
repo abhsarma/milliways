@@ -7,6 +7,7 @@
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
+	import {scrollTop} from './components/scrollTop.js'
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
 	import Tutorial from './components/Tutorial.svelte';
