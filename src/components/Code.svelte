@@ -6,19 +6,12 @@
 	import ParamOptions from './ParamOptions.svelte';
     import CodeLine from './CodeLine.svelte';
 
-	// 80 for transparency
-	export const highlight = css`
-		background-color: ${colors.inactive+"80"};
-		cursor: pointer;
-    `;
-    export const codeLine = css`margin: 0;`;
-
     document.documentElement.style.setProperty('--bgColor', colors.background)
+    document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 <div class="code-container">
     <div class="code">
-        <h2>CODE</h2>
         <!--TODO: passing the whole code.parameters is probably bad-->
         {#each code.code as line}
             <CodeLine line={line} optionsData={code.parameters} />
@@ -34,5 +27,6 @@
         margin-right: 16px;
         padding: 16px;
         background-color: var(--bgColor);
+        border-radius: 8px;
     }
 </style>

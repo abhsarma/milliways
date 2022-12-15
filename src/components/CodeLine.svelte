@@ -10,9 +10,9 @@
     let paramOptionHtml;
     let show = false;
 
-    // 80 for transparency
     export const highlight = css`
-        background-color: ${colors.inactive+"80"};
+        background-color: ${colors.inactive};
+        opacity: 0.8;
         cursor: pointer;
     `;
 
@@ -44,10 +44,12 @@
                 function() {
                     if (show) {
                         paramOptionHtml.style.display = 'none';
-                        this.style.backgroundColor = colors.inactive+"80";
+                        this.style.backgroundColor = colors.inactive;
+                        this.style.color = '#333333';
                     } else {
                         paramOptionHtml.style.display = 'block';
-                        this.style.backgroundColor = colors.active+"80";
+                        this.style.backgroundColor = colors.active;
+                        this.style.color = '#ffffff';
                     }
                     show = !show;
                 }

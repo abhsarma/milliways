@@ -92,14 +92,14 @@
 
 	function incrementCount() {
 		step += 1
-		dispatch('message', {
+		dispatch('next', {
 			step: step
 		});
 	}
 
 	function decrementCount() {
 		step -= 1
-		dispatch('message', {
+		dispatch('next', {
 			step: step
 		});
 	}
@@ -111,6 +111,15 @@
 	} else {
 		next = "Finish"
 	}
+
+	function removeTutorial() {
+		console.log("skipping...")
+		dispatch('skip', {
+			step: step
+		});
+	}
+
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y}px; left: {position.x}px;">
@@ -122,7 +131,7 @@
 	{#if step > 0}
 		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
 	{/if}
-	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} onclick="(e=>e.parentElement.parentElement.remove())(this)">Skip</button>
+	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} on:click={removeTutorial}>Skip</button>
 </div>
 {#if step > 0 & step <= steps}
 	<div class="pointer {pointer}" style="top: {position.y}px; left: {position.x}px;"></div>
@@ -164,7 +173,7 @@
 	}
 
 	.activeNext {
-    	background-color: #ED8A68;
+    	background-color: var(--hoverColor);
     	cursor: pointer;
     }
 

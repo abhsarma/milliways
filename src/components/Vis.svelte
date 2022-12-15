@@ -57,9 +57,30 @@
 		.y(d => yscale(d[1]));
 
 	// d's for axis paths
-	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`
-	
+	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`;
+
+	// histogram
+	$: histogram = d3.histogram()
+		.value(function(d) { return d; })   // I need to give the vector of value
+		.domain(xscale.domain())  // then the domain of the graphic
+		.thresholds(xscale.ticks(70)); // then the numbers of bins
+
+	// $: bins = histogram(
+	// 	data.estimate.map(d => {
+	// 		if (Array.isArray(d)) return d3.mean(d);
+	// 		else return d;
+	// 	})
+	// );
+	$: bins = histogram(data.estimate.flat())
+
+	$: yscaleHist = d3.scaleLinear()
+		.range([0, gridNamesHeight - 44])
+		.domain([0, d3.max(bins, function(d) { return d.length; })]);
+
 	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--activeColor', colors.active)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--visColor', colors.vis)
 </script>
 
 <div class="vis" id="vis-{i}">
@@ -91,6 +112,19 @@
 		</div>
 	</div>
 	<svg class="outcome-axis vis-{0}" bind:this={svg} height={windowHeight} width={w-scrollbarWidth}>
+		<!-- Histogram -->
+		<g>
+			{#each bins as d}
+				<rect 
+					class="d3-histogram" 
+					x="{xscale(d.x0)}" 
+					y = "{gridNamesHeight - yscaleHist(d.length)}" 
+					width="{xscale(d.x1) - xscale(d.x0)}" 
+					height="{yscaleHist(d.length)}" 
+					fill="{colors.vis}"
+					opacity=0.8></rect>
+			{/each}
+		</g>
 		<g transform="translate(0, {gridNamesHeight})">
 			<!-- x axis -->
 			<path class="domain"  stroke="currentColor" d="{xPath}" fill="none" />
@@ -122,7 +156,7 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {gridNamesHeight + y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={area(universe)} stroke="{colors.secondary}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={area(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
@@ -141,11 +175,6 @@
 </div>
 
 <style>
-	path.cdf {
-		stroke: #8ecae6;
-		stroke-width: 1.5;
-		fill: #8ecae6;
-	}
 
 	svg.outcome-results {
 		background-color: var(--bgColor);
@@ -176,16 +205,17 @@
 		height: 36px;
 		border: 1px solid var(--bgColor);
 		background-color: var(--bgColor);
+		border-radius: 4px;
 		flex:1;
 		align-content: center;
 	}
 
 	.vis-button:hover > svg {
-		background-color: lightcoral;
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 	.vis-button:active > svg {
-		background-color: darkred;
+		background-color: var(--hoverColor);
 		color: white;
 	}
 	.vis {
@@ -197,7 +227,7 @@
 	}
 	
 	.active_svg {
-		background-color: darkred;
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
@@ -214,7 +244,7 @@
 		position: absolute;
 	}
 
-	svg, g.universe {
+	svg.outcome-results, g.universe {
 		transition: all .5s linear;;
 	}
 </style>

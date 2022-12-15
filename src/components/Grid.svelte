@@ -49,10 +49,6 @@
 		fill: ${colors.active};
 	`;
 
-	export const bg_rect = css`
-		fill: #d6d6d6;
-	`;
-
 	let cellHeight, cellWidth;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
@@ -174,7 +170,6 @@
 			y="-{y.bandwidth()+cell.padding}"
 			width=100%
 			height={y.bandwidth()+cell.padding}
-			class={bg_rect}
 			id="bg-rect"
 		/>
 		{#each Object.keys(parameters) as parameter}
@@ -240,6 +235,7 @@
 	}
 
 	#bg-rect {
+		fill: #eaeaea;
 		transition: none;
 	}
 </style>

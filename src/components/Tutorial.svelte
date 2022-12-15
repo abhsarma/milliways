@@ -104,13 +104,19 @@
 	}
 
 	function updatePopup(event) {
+		console.log(event.detail)
 		step = Number(event.detail.step)
 		if (step > (N + 1)) {
-			document.querySelector('.popup-tutorial').remove();
+			removePopup()
+			// focus();
+			// document.querySelector('.popup-tutorial').remove();
 		}
 	}
 
-	$: console.log(step)
+	function removePopup(event) {
+		focus();
+		document.querySelector('.popup-tutorial').remove();
+	}
 
 	function getPosition(el, right = false) {
 		let coords = document.querySelector(el).getBoundingClientRect();
@@ -135,8 +141,6 @@
 			result0: getPosition(`g.universe.universe-0`, true),
 			code: getPosition(`div.code-container`)
 		}
-
-		console.log(positions.vis)
 	});
 </script>
 
@@ -149,7 +153,8 @@
 			step = {step}
 			position = {position}
 			direction = "centre"
-			on:message = {updatePopup}
+			on:next = {updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 1}
@@ -159,27 +164,30 @@
 			step = {step}
 			position = {positions.grid}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 2}
 		{focus("div.grid-container", `div.parameter-name.${first_param}`)}
 		<Popup 
-			message = "The column headers indicate the parameters declared in the multiverse specification<br><br>Parameters represents a decision in the tree of decisions that comprises a multiverse analysis"
+			message = "The column headers indicate the parameters declared in the multiverse specification<br><br>Parameters represents a decision in the tree of decisions that comprises a multiverse analysis<br><br>You can change the order of the parameters by dragging on them"
 			step = {step}
 			position = {positions.parameter}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 3}
 		{focus("div.grid-container", `div.option-label.${first_option}`)}
 		<Popup 
-			message = "The sub columns represent options  for each parameter<br><br>Options represent the various choices for a decision in the analysis"
+			message = "The sub columns represent options for each parameter<br><br>Options represent the various choices for a decision in the analysis<br><br>You can reorder the options by dragging on them"
 			step = {step}
 			position = {positions.option}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 4}
@@ -189,16 +197,19 @@
 			step = {step}
 			position = {positions.universe0}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 5}
+		{focus("div.grid-container")}
 		<Popup 
 			message = "We provide the ability to interact with the multiverse—users can exclude and option or join two (or more) options together"
 			step = {step}
 			position = {positions.option_interaction}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 6}
@@ -208,7 +219,8 @@
 			step = {step}
 			position = {positions.exclude}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 7}
@@ -218,7 +230,8 @@
 			step = {step}
 			position = {positions.join}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 8}
@@ -228,7 +241,8 @@
 			step = {step}
 			position = {positions.vis}
 			direction = "left"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 9}
@@ -238,7 +252,8 @@
 			step = {step}
 			position = {positions.vis}
 			direction = "left"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 10}
@@ -248,7 +263,8 @@
 			step = {step}
 			position = {positions.vis}
 			direction = "left"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 11}
@@ -258,7 +274,8 @@
 			step = {step}
 			position = {positions.result0}
 			direction = "left"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 12}
@@ -268,7 +285,8 @@
 			step = {step}
 			position = {positions.code}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else if step == 13}
@@ -278,7 +296,8 @@
 			step = {step}
 			position = {positions.universe0}
 			direction = "right"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{:else}
@@ -288,7 +307,8 @@
 			step = {step}
 			position = {position}
 			direction = "centre"
-			on:message={updatePopup}
+			on:next={updatePopup}
+			on:skip = {removePopup}
 			steps = {N}
 		/>
 	{/if}

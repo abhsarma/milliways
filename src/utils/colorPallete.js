@@ -1,6 +1,7 @@
 export const colors = {
-	active : "#D97959",
-	inactive : "#abb7c4",
+	active : "#E0797D",
+	vis: "#99A3E0",
+	inactive : "#BCC2CC",
 	secondary : "#8ecae6",
 	primary : "#084C61",
 	background : "#f7f7f7",
@@ -8,7 +9,7 @@ export const colors = {
 	gray: '#777777',
 	popup: '#f0f0f0',
 	text: '#4f4f4f',
-	hover: '#ff3e00',
+	hover: '#D67477',
 	gray70: '#979797',
 	gray90: '#404040'
 };
