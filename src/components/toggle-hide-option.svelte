@@ -3,21 +3,25 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as d3 from 'd3';
 	import { text, iconSize } from '../utils/dimensions.js'
+	import { exclude_options } from '../utils/stores.js';
+	import { any } from '../utils/helpers/arrayMethods.js'
 
 	export let option;
 	export let parameter;
-	let selected = true;
 
-	const dispatch = createEventDispatcher();
-
-	function hideOption() {
-		selected = !selected;
-
+	$: selected = !($exclude_options[parameter].includes(option));
+	$: {
 		if (selected) {
 			d3.select(`div.option-label.${option}`).style("opacity", "1")
 		} else {
 			d3.select(`div.option-label.${option}`).style("opacity", "0.2")
 		}
+	}
+
+	const dispatch = createEventDispatcher();
+
+	function hideOption() {
+		selected = !selected;
 
 		dispatch('hide', {
 			state: selected,

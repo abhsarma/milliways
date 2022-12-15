@@ -77,10 +77,12 @@
 
 		if (!event.detail.state) {
 			$exclude_options[parameter] = [...$exclude_options[parameter], option];
-			d3.selectAll(`button.join.${option}`).property("disabled", true)
+			// below is commented out as i think it doesn't do anything, but i'm not entirely sure
+			// d3.selectAll(`button.join.${option}`).property("disabled", true)
 		} else {
 			$exclude_options[parameter] = $exclude_options[parameter].filter(d => d !== option)
-			d3.selectAll(`button.join.${option}`).property("disabled", false)
+			// ditto
+			// d3.selectAll(`button.join.${option}`).property("disabled", false)
 		}
 	}
 
@@ -135,25 +137,6 @@
 			}
 			isSyncingRightScroll = false;
 		}
-		const joinArr = [
-			['cl_option1','cl_option2'],
-			['fer_option1','fer_option2'],
-			['fer_option3','fer_option4'],
-
-			['cl_option3','cl_option2'],
-
-			['fer_option1','fer_option1'],
-
-			['fer_option4','fer_option3'],
-			['fer_option4','fer_option3'],
-
-			['fer_option4','fer_option2'],
-			
-			['fer_option2','fer_option3'],
-		];
-		const excludeArr = [ 'cl_option3', 'cl_option3', 'asdf', 'rs_option1', 'rs_option2' ];
-		// m.updateWrapper(joinArr, excludeArr);
-		console.log(m)
 	});
 
 	// defining color variables for use in CSS
