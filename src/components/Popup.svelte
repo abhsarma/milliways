@@ -7,7 +7,14 @@
 
 	const dispatch = createEventDispatcher();
 
-	export const popupBg = css`
+	export let message;
+	export let step;
+	export let position;
+	export let direction;
+	export let steps;
+	export let containsImage;
+
+	const popupBg = css`
 		position:absolute;
 		top: 0;
 		left: 0;
@@ -18,60 +25,60 @@
 		z-index: 9;
 	`
 
-	export const infoPopup = css`
-		width: ${popup.width}px;
+	let pw;
+	if (containsImage) {
+		pw = 496;
+	} else {
+		pw = popup.width;
+	}
+
+	const infoPopup = css`
+		width: ${pw}px;
 		background-color: ${colors.popup};
 		color: ${colors.text};
 	`;
 
-	export const pointerRight = css`
+	const pointerRight = css`
 		transform: translate(-${(popup.shift + cell.padding + 1)}px, ${3*popup.shift/2}px) rotate(-135deg);;
 	`;
 
-	export const pointerLeft = css`
+	const pointerLeft = css`
 		transform: translate(${popup.shift + cell.padding + 1}px, ${3*popup.shift/2}px) rotate(45deg);;
 	`;
 
-	export const shiftLeft = css`
+	const shiftLeft = css`
 		transform: translate(-${popup.width + 2*popup.padding + popup.shift + cell.padding}px, -${3*popup.shift/2}px);
 	`  // add some buffer
 
-	export const shiftRight = css`
+	const shiftRight = css`
 		transform: translate(${popup.shift + cell.padding}px, 0px);
 	`  // add some buffer
 
-	export const shiftCentre = css`
+	const shiftCentre = css`
 		transform: translate(-50%, -50%);
 	`
 
-	export const shadowLeft = css`
+	const shadowLeft = css`
 		box-shadow: -2px 2px 2px 0px #cccccc;
 	`
 
-	export const shadowRight = css`
+	const shadowRight = css`
 		box-shadow: 2px 2px 2px 0px #cccccc;
 	`
 
-	export const shadowCentre = css`
+	const shadowCentre = css`
 		box-shadow: 0px 2px 2px 0px #cccccc;
 	`
 
-	export const highlight_btn = css`
+	const highlight_btn = css`
 		background-color: ${colors.active};
 		color: ${colors.white};
 	`
 
-	export const plain_btn = css`
+	const plain_btn = css`
 		color: ${colors.text};
 		background-color: ${colors.popup};
 	`
-
-	export let message;
-	export let step;
-	export let position;
-	export let direction;
-	export let steps;
-
 	let shift, shadow, pointer, next;
 	let activePrev  = false, activeSkip = false, activeNext = false;
 
@@ -113,13 +120,14 @@
 	}
 
 	function removeTutorial() {
-		console.log("skipping...")
+		console.log("skipping tutorial...")
 		dispatch('skip', {
 			step: step
 		});
 	}
 
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--secondaryColor', colors.secondary)
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y}px; left: {position.x}px;">
@@ -145,6 +153,11 @@
 
 	p.progress-indicator {
 		color: #aaaaaa;
+	}
+
+	:global(.definition) {
+		font-style: italic;
+		color: var(--secondaryColor);
 	}
 
 	button {

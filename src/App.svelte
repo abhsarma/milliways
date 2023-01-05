@@ -7,6 +7,7 @@
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
 	import { exclude_options, join_options, parameter_scale, option_scale, group_params } from './utils/stores.js'
+	import { calculateParamPosition } from './utils/drag.js';
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
 	import Tutorial from './components/Tutorial.svelte';
@@ -34,27 +35,7 @@
 	// is a relevant interaction
 	$parameter_scale = d3.scaleOrdinal()
 		.domain(Object.keys(parameters))
-		.range(
-			Object.values(param_n_options)
-				.reduce( (acc, val, index) => {
-					if (index == 0) {
-						acc.push(0);
-						acc.push(val); // acc.push([val[0], val[1]]);
-					} else {
-						acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
-					}
-					return acc; 
-				}, [] )
-				.reduce((a, v, i, arr) => {
-					if (i > 0) {
-						let opts = (arr[i] - arr[i - 1])
-						a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
-					} else {
-						a.push(groupPadding)
-					}
-					return a;
-				}, [])
-		)
+		.range(calculateParamPosition(Object.values(param_n_options)));
 
 	Object.keys(parameters).forEach(function(d, i) {
 		let n = Object.values(parameters)[i].length;
@@ -129,10 +110,11 @@
 </script>
 
 <main>
-	<div id="leftDiv"></div>
 	<div class = "container-flex">
-		<div class="row">
-			<h1 style="margin: {header.top}px 72px">Multiverse Visualisation</h1>
+		<div class="vertical-align">
+			<div class="page-header">
+				<h1>Multiverse Visualisation</h1>
+			</div>
 			<ToggleSize/>
 		</div>
 	</div>
@@ -190,17 +172,27 @@
   		vertical-align: middle;
 	}
 
-	div.row {
-		display: inline-block;
+	.vertical-align {
+		display: flex;
+		flex-direction: row;
+		margin: 32px 0px 8px 0px;
+	}
+
+	div.page-header {
+		position: relative;
+		padding: 8px 0px;
+		height: 48px;
+		width: 480px;
+		margin: 0px 72px;
 	}
 
 	h1 {
+		margin: 0px;
 		color: var(--activeColor) !important;
 		text-transform: uppercase;
 		font-family: 'Avenir Next';
-		font-size: 32px;
+		font-size: 36px;
 		font-weight: 300;
-		display: inline-block;
 	}
 
 	.button-wrapper {

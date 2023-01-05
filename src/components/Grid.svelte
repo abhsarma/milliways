@@ -135,7 +135,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}" style="cursor: move">{parameter}</div>
+					<div class="parameter-name {parameter_name} {parameter}">{parameter}</div>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
@@ -237,5 +237,9 @@
 	#bg-rect {
 		fill: #eaeaea;
 		transition: none;
+	}
+
+	.parameter-name, .option-label {
+		cursor: move;
 	}
 </style>

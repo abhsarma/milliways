@@ -8,7 +8,7 @@
 	import { gridCollapse } from '../utils/stores.js'
 	
 	// this is out of necessity, not really used in the <script>
-	let svg, cellHeight;
+	let svg, cellHeight, min = 32;
 
 	const dispatch = createEventDispatcher();
 	
@@ -65,17 +65,11 @@
 		.domain(xscale.domain())  // then the domain of the graphic
 		.thresholds(xscale.ticks(70)); // then the numbers of bins
 
-	// $: bins = histogram(
-	// 	data.estimate.map(d => {
-	// 		if (Array.isArray(d)) return d3.mean(d);
-	// 		else return d;
-	// 	})
-	// );
-	$: bins = histogram(data.estimate.flat())
+	$: bins = histogram(data.estimate.flat());
 
 	$: yscaleHist = d3.scaleLinear()
-		.range([0, gridNamesHeight - 44])
-		.domain([0, d3.max(bins, function(d) { return d.length; })]);
+		.domain([0, d3.max(bins, function(d) { return d.length; })])
+		.range([0, gridNamesHeight - 96]);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
@@ -115,14 +109,16 @@
 		<!-- Histogram -->
 		<g>
 			{#each bins as d}
+				{console.log(gridNamesHeight - yscaleHist(d.length), yscaleHist(d.length))}
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
-					y = "{gridNamesHeight - yscaleHist(d.length)}" 
+					y = "{gridNamesHeight - 32 - yscaleHist(d.length)}" 
 					width="{xscale(d.x1) - xscale(d.x0)}" 
 					height="{yscaleHist(d.length)}" 
 					fill="{colors.vis}"
 					opacity=0.8></rect>
+				}
 			{/each}
 		</g>
 		<g transform="translate(0, {gridNamesHeight})">
