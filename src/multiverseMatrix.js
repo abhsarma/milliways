@@ -319,7 +319,7 @@ class multiverseMatrix {
 					array of arrays of length 2 containing options to join
 				excludeArr : array[string]
 					array of options to exclude
-				excludeRows : Object // TODO/IN PROGRESS
+				excludeRows : Object
 					Has format
 					{ 
 						outcomeVar : <outcomeVar> (string)
