@@ -5,6 +5,7 @@
 	import { text, iconSize, header, namingDim, cell } from '../utils/dimensions.js'
 	import { join_options, option_scale } from '../utils/stores.js';
 	import { arrayEqual, any } from '../utils/helpers/arrayMethods.js'
+	import { colors } from '../utils/colorPallete.js';
 
 	export let parameter;
 	export let options;
@@ -28,7 +29,7 @@
 	}
 
 	export const iconStyle = css`
-		fill: #777777;
+		fill: ${colors.gray70};
 		cursor: pointer;
 		height: ${iconSize}px;
 		width: ${iconSize}px;
@@ -45,7 +46,7 @@
 
 <style>
 	svg.icon:hover {
-		fill: #2a2a2a;
+		fill: #404040;
 	}
 
 	button:disabled svg {

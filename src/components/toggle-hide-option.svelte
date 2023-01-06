@@ -3,8 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as d3 from 'd3';
 	import { text, iconSize } from '../utils/dimensions.js'
-	import { exclude_options } from '../utils/stores.js';
-	import { any } from '../utils/helpers/arrayMethods.js'
+	import { colors } from '../utils/colorPallete.js';
 
 	export let option;
 	export let parameter;
@@ -31,7 +30,7 @@
 	}
 
 	export const iconStyle = css`
-		fill: #979797;
+		fill: ${colors.gray70};
 		cursor: pointer;
 		height: ${iconSize}px;
 		width: ${iconSize}px;

@@ -49,10 +49,6 @@
 		fill: ${colors.active};
 	`;
 
-	export const bg_rect = css`
-		fill: #d6d6d6;
-	`;
-
 	let cellHeight, cellWidth;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
@@ -139,7 +135,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}" style="cursor: move">{parameter}</div>
+					<div class="parameter-name {parameter_name} {parameter}">{parameter}</div>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
@@ -174,7 +170,6 @@
 			y="-{y.bandwidth()+cell.padding}"
 			width=100%
 			height={y.bandwidth()+cell.padding}
-			class={bg_rect}
 			id="bg-rect"
 		/>
 		{#each Object.keys(parameters) as parameter}
@@ -188,7 +183,7 @@
 									y="{y(j)}" 
 									width="{cellWidth}" 
 									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell {selected_option}"
+									class="{options_container} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
 									on:mouseover={() => moveBgRect(y(j))}
@@ -215,6 +210,10 @@
 </div>
 
 <style>
+	.to-front {
+		z-index: 99;
+	}
+
 	svg.grid-header {
 		background-color: var(--bgColor) !important;
 		display: flex;
@@ -236,6 +235,11 @@
 	}
 
 	#bg-rect {
+		fill: #eaeaea;
 		transition: none;
+	}
+
+	.parameter-name, .option-label {
+		cursor: move;
 	}
 </style>

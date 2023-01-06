@@ -1,0 +1,410 @@
+<script>
+	import { onMount } from 'svelte';
+	import { css } from '@emotion/css';
+	import { header, cell, nameContainer, gridNamesHeight, popup } from '../utils/dimensions.js';
+	import { colors } from '../utils/colorPallete.js';
+	import Popup from './Popup.svelte';
+	import { parameter_scale, option_scale } from '../utils/stores.js'
+	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
+
+	export let parameters;
+
+	export const popupBg = css`
+		position:absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		background-color: ${colors.gray+"80"};
+		backdrop-filter: blur(3px);
+		z-index: 9;
+	`
+	export const highlight_btn = css`
+		background-color: ${colors.active};
+		color: ${colors.white};
+	`
+
+	export const plain_btn = css`
+		color: ${colors.text};
+		background-color: ${colors.popup};
+	`
+
+	let activePrev  = false, activeSkip = false, activeNext = false, positions;
+	let step = 0;
+	let N = 15;
+	$: first_param = "";
+	$: first_option = "";
+
+	// div positioning css variables
+	$: position = {x: window.innerWidth/2, y: window.innerHeight/2};
+
+	function incrementCount() {
+		step += 1;
+		activePrev  = false;
+		activeSkip = false;
+		activeNext = false;
+	}
+
+	function decrementCount() {
+		step -= 1;
+		activePrev  = false;
+		activeSkip = false;
+		activeNext = false;
+	}
+
+	function resetCount() {
+		step = 0;
+		activePrev  = false;
+		activeSkip = false;
+		activeNext = false;
+	}
+
+	function setLayout(toFront = "", highlight = "", focusBorder = "") {
+		/*
+		NOTE: these CSS styles (".to-front", ".focus-elem") are defined in this document below
+		*/
+		//reset any changes in order of parameters
+		let param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
+		$parameter_scale.domain(Object.keys(parameters))
+		$parameter_scale.range(calculateParamPosition(Object.values(param_n_options)));
+
+		Object.keys(parameters).forEach(d => {
+			moveParams($parameter_scale, d)
+			$option_scale[d].domain([...Array(parameters[d].length).keys()])
+			parameters[d].forEach((x, i) => {
+				moveOptions($option_scale, d, x, i);
+			})
+		})
+		//reset any changes in order of options
+
+		// reset all styles
+		// send to back all elements which were brought forward
+		let elFront = Array.from(document.getElementsByClassName("to-front"));
+		if (elFront.length) {
+			elFront.forEach(e => {
+				e.classList.remove("to-front");
+			})
+
+		}
+
+		// understate all elements which were highlighted
+		let elFocus = Array.from(document.getElementsByClassName("focus-elem"));
+		if (elFocus.length) {
+			elFocus.forEach(e => {
+				e.classList.remove("focus-elem");
+			})
+		}
+
+		// understate all elements which were highlighted
+		let elFocusBorder = Array.from(document.getElementsByClassName("focus-elem-border"));
+		if (elFocusBorder.length) {
+			elFocusBorder.forEach(e => {
+				e.classList.remove("focus-elem-border");
+			})
+		}
+
+		if (toFront) {
+			document.querySelector(toFront).classList.add("to-front");
+		}
+
+		if (highlight) {
+			document.querySelector(highlight).classList.add("focus-elem");
+		}
+
+		if (focusBorder) {
+			document.querySelector(focusBorder).classList.add("focus-elem-border");
+		}
+
+		return ""
+	}
+
+	function updatePopup(event) {
+		step = Number(event.detail.step)
+		if (step > (N + 1)) {
+			removePopup(event)
+			// focus();
+			// document.querySelector('.popup-tutorial').remove();
+		}
+	}
+
+	function removePopup(event) {
+		setLayout();
+		document.querySelector('.popup-tutorial').remove();
+	}
+
+	function getPosition(el, right = false, offset = {"x": 0, "y": 0}) {
+		let coords = document.querySelector(el).getBoundingClientRect();
+		let width = 0;
+		if (right) width = coords.width;
+		return {"x": coords.x + width + offset.x, "y": coords.y + offset.y}
+	}
+
+	onMount(() => {
+		first_param = Object.keys(parameters)[0];
+		first_option = parameters[first_param][0];
+
+		positions = {
+			grid: getPosition("div.grid"),
+			parameter: getPosition(`div.parameter-name.${first_param}`),
+			option: getPosition(`div.option-label.${first_option}`),
+			universe0: getPosition(`rect.universe-0`), // get position of first universe which also needs to be highlighted somehow!!
+			option_interaction: getPosition(`g.parameter-col.${first_param}`),
+			exclude: getPosition(`svg.exclude-icon.${first_option}`),
+			join: getPosition(`.option-join`),
+			vis: getPosition(`.vis-container`, true),
+			result0: getPosition(`g.universe.universe-0`, true),
+			code: getPosition(`div.code-container`),
+			gsort: getPosition(`g.grouped-sort-divider-icon`, true, {"x": -4, "y": -16}),
+			toggle: getPosition(`div.toggle`, true, {"x": 0, "y": -16})
+		}
+	});
+</script>
+
+<div class="popup-tutorial">
+	<div class={popupBg}></div>
+	{#if step == 0}
+		{setLayout()}
+		<Popup 
+			message = "Welcome to the multiverse visualisation tool"
+			step = {step}
+			position = {position}
+			direction = "centre"
+			on:next = {updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 1}
+		{setLayout("div.grid-container")}
+		<Popup 
+			message = "This panel shows the analytical decisions that comprise this multiverse analysis."
+			step = {step}
+			position = {positions.grid}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 2}
+		{setLayout("div.grid-container", `div.parameter-name.${first_param}`)}
+		<Popup 
+			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree<br><br>You can change the order of the parameters by dragging on them."
+			step = {step}
+			position = {positions.parameter}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 3}
+		{setLayout("div.grid-container", `div.option-label.${first_option}`)}
+		<Popup 
+			message = "The sub columns represent the possible <span class='definitions'>options</span> that each parameter can take.<br><br>You can reorder the options by dragging on them."
+			step = {step}
+			position = {positions.option}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 4}
+		{setLayout("div.grid-container")}
+		<Popup 
+			message = "Each row in this grid represents a <span>universe</span>&mdash;a singular end-to-end analysis stemming from a particular combination of distinct analytical choices, which are highlighted in coral."
+			step = {step}
+			position = {positions.universe0}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 5}
+		{setLayout("div.grid-container")}
+		<Popup 
+			message = "You can interact with the multiverse by <span>exclude</span> an option or <span>join</span> two (or more) options together and inspect which parameters and options have the greatest influence the outcome."
+			step = {step}
+			position = {positions.option_interaction}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 6}
+		{setLayout("div.grid-container", `svg.exclude-icon`)}
+		<Popup 
+			message = "<span class='definition'>Excluding</span> an option means that every universe which includes that option will be hidden."
+			step = {step}
+			position = {positions.exclude}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 7}
+		{setLayout("div.grid-container", `svg.link-icon`)}
+		<Popup 
+			message = "<span class='definition'>Joining</span> options mean that the estimates from the universes with those options will be aggregated."
+			step = {step}
+			position = {positions.join}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 8}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "This panel shows the analysis outcomes (or estimates) from each universe in the multiverse.<br><br>For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse."
+			step = {step}
+			position = {positions.vis}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 9}
+		{setLayout("div.vis-container", "", "select.vis-dropdown")}
+		<Popup 
+			message = "The dropdown menu allows you to change which outcome variable (eg. model coefficients or effect size estimates) is being visualised in this panel."
+			step = {step}
+			position = {positions.vis}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 10}
+		{setLayout("div.vis-container", "", "button.sort-btn")}
+		<Popup 
+			message = "You can sort a variable based on the median estimate from each universe."
+			step = {step}
+			position = {positions.vis}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 11}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img src='images/mcdf.png' width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			step = {step}
+			position = {positions.result0}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+	{:else if step == 12}
+		{setLayout("div.grid-container", `g.grouped-sort-divider`)}
+		<Popup 
+			message = "The slider (black line with handle icon) allows you to perform a <span class='definition'>grouped sort</span>.<br><br>When performing a grouped sort, options of parameters to the right of the slider are sorted based on the group means, while those to the left are sorted within each group. This allows the user to "
+			step = {step}
+			position = {positions.gsort}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 13}
+		{setLayout("div.code-container")}
+		<Popup 
+			message = "This panel shows the R code used to implement the analysis. This code was used to obtain the estimates on the left most panel"
+			step = {step}
+			position = {positions.code}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 14}
+		{setLayout("div.grid-container")}
+		<Popup 
+			message = "If you click on any of the rows in this grid, it will bring up the corresponding <span  class='definition'>Exploratory Multiverse Analysis Report (EMARs)</span>, if the authors have prepared one.<br><br>EMARs are an interactive document which describe a end-to-end analysis of one universe in the multiverse at a time"
+			step = {step}
+			position = {positions.universe0}
+			direction = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 15}
+		{setLayout("div.toggle")}
+		<Popup 
+			message = "The toggle button collapses the grid by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
+			step = {step}
+			position = {positions.toggle}
+			direction = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else}
+		{setLayout()}
+		<Popup 
+			message = "You are at the end of the tutorial"
+			step = {step}
+			position = {position}
+			direction = "centre"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+		/>
+	{/if}
+</div>
+
+<style type="text/css">
+	p {
+		margin: 8px 8px 32px 8px;
+		font-family: 'Avenir Next';
+	}
+
+	i {
+		color: red;
+	}
+
+	:global(.focus-elem) {
+		color: var(--activeColor);
+		font-weight: 700;
+		fill: var(--activeColor) !important;
+	}
+
+	:global(.focus-elem-border) {
+		border: 1px solid var(--activeColor) !important;
+		border-radius: 8px;
+	}
+
+	:global(.to-front) {
+		z-index: 99;
+    }
+
+	.activePrev  {
+		background-color: #e0e0e0;
+		cursor: pointer;
+	}
+
+	.activeSkip {
+		background-color: #e0e0e0;
+		cursor: pointer;
+	}
+
+	.activeNext {
+    	background-color: #ED8A68;
+    	cursor: pointer;
+    }
+</style>

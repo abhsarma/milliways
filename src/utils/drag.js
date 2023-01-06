@@ -99,9 +99,15 @@ export let drag_options = (order) => d3.drag()
 		join_options.update(arr => arr = options_to_join);
 		
 		delete option_dragging[index];
-		transition(d3.select(this)).attr("transform", "translate(" + x_scale_options[parameter](index) + ")");
-		transition(d3.select(`g.option-value.${parameter}.${option}`)).attr("transform", "translate(" + x_scale_options[parameter](index) + ")");
+
+		console.log(x_scale_options[parameter].domain(), x_scale_options[parameter].range());
+		moveOptions(x_scale_options, parameter, option, index);
 	});
+
+export function moveOptions(xscale, parameter, option, index) {
+	transition(d3.select(`g.option-headers.${parameter}.${option}`)).attr("transform", `translate(${x_scale_options[parameter](index)}, 0)`);
+	transition(d3.select(`g.option-value.${parameter}.${option}`)).attr("transform", `translate(${x_scale_options[parameter](index)}, 0)`);
+}
 
 
 // option positions
@@ -147,25 +153,7 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 			let parameter_order = Object.entries(param_n_options).sort(function(a, b) { 
 				return pPosition(a[0], x_scale_params) - pPosition(b[0], x_scale_params); 
 			});
-			let param_order_range = parameter_order.map(d => d[1])
-				.reduce( (acc, val, index) => {
-					if (index == 0) {
-						acc.push(0);
-						acc.push(val); // acc.push([val[0], val[1]]);
-					} else {
-						acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
-					}
-					return acc; 
-				}, [] )
-				.reduce((a, v, i, arr) => {
-					if (i > 0) {
-						let opts = (arr[i] - arr[i - 1])
-						a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
-					} else {
-						a.push(groupPadding)
-					}
-					return a;
-				}, []);
+			let param_order_range = calculateParamPosition(parameter_order.map(d => d[1]));
 
 			x_scale_params.domain(parameter_order.map(d => d[0]));
 			x_scale_params.range(param_order_range);
@@ -204,10 +192,14 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 		sortByGroupParams = x_scale_params.domain().slice(dividerPositionIndex).reverse()
 		group_params.update(arr => arr = sortByGroupParams)
 
-		transition(d3.select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, ${margin.top})`));
-		transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${x_scale_params(d)}, 0)`));
-		transition(d3.select(this).select('foreignObject').attr("x", x_scale_params(d)));
+		moveParams(x_scale_params, d)
 	});
+
+export function moveParams(xscale, d) {
+	transition(d3.select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 40)`));
+	transition(d3.select('svg.grid-header').select(`g.parameter.${d}`).select('foreignObject').attr("x", xscale(d)));
+	transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 0)`));
+}
 
 // parameter positions
 function pPosition(d, x_scale_params) {
@@ -256,4 +248,26 @@ function findClosestDivision(x_value) {
 		return (Math.abs(curr - x_value) < Math.abs(prev - x_value) ? curr : prev);
   });
   return nearest
+}
+
+export function calculateParamPosition(parameter_n) {
+	return parameter_n
+			.reduce( (acc, val, index) => {
+				if (index == 0) {
+					acc.push(0);
+					acc.push(val); // acc.push([val[0], val[1]]);
+				} else {
+					acc.push(val + acc[acc.length - 1]); // acc.push([val[0], val[1] + acc[acc.length - 1][1]]);
+				}
+				return acc; 
+			}, [] )
+			.reduce((a, v, i, arr) => {
+				if (i > 0) {
+					let opts = (arr[i] - arr[i - 1])
+					a.push(opts * cell.width + (opts - 1) * cell.padding + groupPadding + a[i - 1])
+				} else {
+					a.push(groupPadding)
+				}
+				return a;
+			}, [])
 }

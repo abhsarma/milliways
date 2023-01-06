@@ -4,7 +4,7 @@
 	import { gridCollapse } from '../utils/stores.js';
 
 	let active = false;
-	let r = 20;
+	let r = 22;
 
 	function handleClick() {
 		active = !active;
@@ -18,7 +18,9 @@
 </script>
 
 <div class="toggle">
-	<p>grid collapse?</p>
+	<div class="text-container">
+		<p>collapse grid</p>
+	</div>
 	<div class="toggle-button" class:active={active} on:click="{handleClick}" style="height: {r}px">
 		<div class="state-indicator" class:active={active} style="width: {r}px; height: {r}px"></div>
 	</div>
@@ -26,29 +28,39 @@
 
 <style>
 	.toggle {
+		position: relative;
+		padding: 8px 16px;
+		height: 48px;
+		background-color: #ffffff;
+		border-radius: 4px;
 		display: inline-flex;
-		margin: 30px 0px
 	}
 
 	p {
 		display: inline-block;
 		margin: 0px 12px 0px 0px;
-		line-height: 30px;
+		line-height: 32px;
 		font-family: 'Avenir Next';
 		font-size: 14px;
 		font-weight: 300;
 		align-items: center;
 		text-align: right;
-		width: 180px;
+		vertical-align: middle;
+		margin-top: 8px;
+	}
+
+	.text-container {
+		height: 32px;
 	}
 
 	.toggle-button {
 		width: 40px;
 		background-color: #fafafa;
-		border-radius: 20px;
+		border-radius: 22px;
 		border: 1px solid #979797;
 		display: inline-block;
 		padding: 4px;
+		margin-top: 8px;
 		/* Firefox */
 	    -moz-transition: all 0.4s ease-in-out;
 	    /* WebKit */

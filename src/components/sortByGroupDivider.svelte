@@ -4,7 +4,8 @@
 
 	export let parameters
 	export let h
-	$: ch = h > windowHeight ? windowHeight : h
+
+	$: ch = h > windowHeight ? windowHeight - gridNamesHeight : h
 	const dividerWidth = 3
 
 	$: boundaries = $parameter_scale.range().map( d => (d - (groupPadding/2)) );
@@ -15,7 +16,7 @@
 	style="cursor: pointer">
 	<line x1=0 y1=0 x2=0 y2={h} style="stroke: #666; stroke-width: {dividerWidth}"></line>
 	<g class="grouped-sort-divider-icon" 
-		transform="translate(0, {(ch - gridNamesHeight - (iconSize * 4/3))/2})">
+		transform="translate(0, {(ch - (iconSize * 4/3))/2})">
 		<path d="M16,32L16,32c-5.3,0-9.6-4.3-9.6-9.6V9.6C6.4,4.3,10.7,0,16,0h0c5.3,0,9.6,4.3,9.6,9.6v12.8C25.6,27.7,21.3,32,16,32z"
 			transform="translate({-iconSize*4/6}, 0)" fill="#666"></path>
 		<path d="M20.92,11.67H10.91c-0.55,0-1-0.45-1-1v-0.01c0-0.55,0.45-1,1-1h10.01c0.55,0,1,0.45,1,1v0.01C21.91,11.22,21.47,11.67,20.92,11.67z"

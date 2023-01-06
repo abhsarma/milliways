@@ -7,8 +7,9 @@
 	import { mean } from '../utils/helpers/arrayMethods.js'
 	import { gridCollapse, exclude_rows } from '../utils/stores.js'
 	
-	// svg is out of necessity, not really used in the <script>
-	let svg, cellHeight;
+	// this is out of necessity, not really used in the <script>
+	// let svg, cellHeight, min = 32;
+	let cellHeight, min = 32;
 
 	const dispatch = createEventDispatcher();
 	
@@ -57,7 +58,7 @@
 		.y(d => yscale(d[1]));
 
 	// d's for axis paths
-	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`
+	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`;
 
 	function brushStart(e) {
 		// $exclude_rows = []; // this will not exclude anything
@@ -86,6 +87,22 @@
 		brushContainer.call(brush);
 	})
 
+	// histogram
+	$: histogram = d3.histogram()
+		.value(function(d) { return d; })   // I need to give the vector of value
+		.domain(xscale.domain())  // then the domain of the graphic
+		.thresholds(xscale.ticks(70)); // then the numbers of bins
+
+	$: bins = histogram(data.estimate.flat());
+
+	$: yscaleHist = d3.scaleLinear()
+		.domain([0, d3.max(bins, function(d) { return d.length; })])
+		.range([0, gridNamesHeight - 96]);
+
+	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--activeColor', colors.active)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--visColor', colors.vis)
 </script>
 
 <div class="vis" id="vis-{i}">
@@ -98,25 +115,40 @@
 			</select>
 			{#if sortByIndex == i}
 				{#if sortAscending}
-					<button class="vis-button" id="vis-{i}" on:click={()=> dispatch("changeSortDirection")}>
+					<button class="vis-button sort-btn" id="vis-{i}" on:click={()=> dispatch("changeSortDirection")}>
 						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>
 					</button>
 				{:else}
-					<button class="vis-button" id="vis-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", -1)}}>
+					<button class="vis-button sort-btn" id="vis-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", -1)}}>
 						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>						
 					</button>
 				{/if}
 			{:else}
-				<button class="vis-button" id="vis-{i}" on:click={() => dispatch("setSortIndex", i)}>
+				<button class="vis-button sort-btn" id="vis-{i}" on:click={() => dispatch("setSortIndex", i)}>
 					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
 				</button>
 			{/if}
-			<button class="vis-button" id="vis-{i}" on:click={() => dispatch("remove")}>
+			<button class="vis-button close-btn" id="vis-{i}" on:click={() => dispatch("remove")}>
 				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
 			</button>
 		</div>
 	</div>
 	<svg class="outcome-axis vis-{i}" bind:this={svg} height={windowHeight} width={w-scrollbarWidth}>
+		<!-- Histogram -->
+		<g>
+			{#each bins as d}
+				{console.log(gridNamesHeight - yscaleHist(d.length), yscaleHist(d.length))}
+				<rect 
+					class="d3-histogram" 
+					x="{xscale(d.x0)}" 
+					y = "{gridNamesHeight - 32 - yscaleHist(d.length)}" 
+					width="{xscale(d.x1) - xscale(d.x0)}" 
+					height="{yscaleHist(d.length)}" 
+					fill="{colors.vis}"
+					opacity=0.8></rect>
+				}
+			{/each}
+		</g>
 		<g id="axis-{i}" transform="translate(0, {gridNamesHeight})">
 			<!-- x axis -->
 			<path class="domain"  stroke="currentColor" d="{xPath}" fill="none" />
@@ -150,7 +182,7 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {gridNamesHeight + y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={area(universe)} stroke="{colors.secondary}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={area(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
@@ -169,14 +201,9 @@
 </div>
 
 <style>
-	path.cdf {
-		stroke: #8ecae6;
-		stroke-width: 1.5;
-		fill: #8ecae6;
-	}
 
 	svg.outcome-results {
-		background-color: #f7f7f7;
+		background-color: var(--bgColor);
 		float: left;
 		scrollbar-width: thin;
 	}
@@ -192,7 +219,8 @@
 		position: sticky;
 		top: 0;
 		z-index: 1;
-		flex:1
+		flex:1;
+		border: 1px solid var(--bgColor);
 	}
 
 	.vis-button {
@@ -201,18 +229,19 @@
 		top: 0;
 		z-index: 2;
 		height: 36px;
-		border: none;
-		background-color: #f7f7f7;
+		border: 1px solid var(--bgColor);
+		background-color: var(--bgColor);
+		border-radius: 4px;
 		flex:1;
 		align-content: center;
 	}
 
 	.vis-button:hover > svg {
-		background-color: lightcoral;
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 	.vis-button:active > svg {
-		background-color: darkred;
+		background-color: var(--hoverColor);
 		color: white;
 	}
 	.vis {
@@ -224,14 +253,14 @@
 	}
 	
 	.active_svg {
-		background-color: darkred;
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
 	select {
 		height: 36px;
 		border: none;
-		background-color: #f7f7f7;
+		background-color: var(--bgColor);
 		text-align: center;
 	}
 
@@ -242,7 +271,7 @@
 		pointer-events: none;
 	}
 
-	svg, g.universe {
+	svg.outcome-results, g.universe {
 		transition: all .5s linear;;
 	}
 </style>
