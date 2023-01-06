@@ -5,7 +5,7 @@ import combineJoinOptions from './utils/helpers/combineJoinOptions'
 import sortByOutcome from './utils/helpers/sortByOutcome.js';
 import sortByGroup from './utils/helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './utils/helpers/excludeAndCombineOutcomes.js';
-import { exclude_options, join_options, option_scale } from './utils/stores.js'
+import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
 
 // Stores
 let options_to_exclude;
@@ -51,9 +51,10 @@ class multiverseMatrix {
 	_invParameters = () => {
 		/*
 			RETURNS:
-				{Object}: key,value -> option, parameter of option
+				Object
+					has format { option : parameter of option, ... }
 			NOTE:
-				this implicitly assumes unique parameter names
+				this implicitly assumes unique option names
 		*/
 		const parameters = this._parameters();
 		let inverseParameters = {};
@@ -68,7 +69,8 @@ class multiverseMatrix {
 	_optionToIndex = () => {
 		/*
 			RETURNS:
-				{Object}: key,value -> option, index of option in this.parameters[this.invParameters[option]]
+				Object
+					has format { option : index of option in this.parameters[this.invParameters[option]], ... }
 			NOTE:
 				optionsToIndex is just for ease of access, used in updateWrapper.
 		*/
@@ -148,29 +150,43 @@ class multiverseMatrix {
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
+		/*
+			Updates this.gridData
+
+			PARAMETERS:
+				join_data : array[Object(string:?)
+					each Object looks like the following:
+					{
+						indices   : {array[int]}    the indices corresponding to the order displayed on vis
+						options   : {array[string]} the options to be joined
+						parameter : {string}        the parameter that the options belong to
+					}
+				exclude_data : Object(string:array[string])
+					has format { parameter : options to exclude, ... }
+		*/
 		let toJoin = structuredClone(join_data);
 		let toExclude = structuredClone(exclude_data);
 		let combine = combineJoinOptions(toJoin);
-
+		
 		// deep copy data structures
 		let g_data = structuredClone(this.gridDataAll);
 	
-		let combined_options = combine
-					.map( d => d[1].map( j => [d[0], j]) )
-					.flat(1)
-					.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
+		// let combined_options = combine
+		// 			.map( d => d[1].map( j => [d[0], j]) )
+		// 			.flat(1)
+		// 			.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
 	
 		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
 					.map( d => d[1].map( j => [d[0], j]) )
 					.flat(1)
 					.map( i => ({"parameter": i[0], "option": i[1]}) );
-	
+		
 		if (exclude.length > 0) {
 			let toFilter = g_data.map(j => exclude.map(i => j[i['parameter']] != i['option']).reduce((a, b) => (a && b)));
 			g_data = g_data.filter( (i, n) => toFilter[n] )
 		}
 	
-		if (combine.length > 0) {
+		if (combine.length > 0 && g_data.length > 0) {
 			let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
@@ -242,20 +258,42 @@ class multiverseMatrix {
 		this.outcomes[index].estimate = e_data_processed;
 	}
 
-	updateHandler(join, exclude, sortByGroupParams = []) {		
+	updateHandler(join, exclude, excludeRows, sortByGroupParams = []) {
 		// call update grid data
 		this.updateGridData(join, exclude);
 	
-		// call update otucomes
+		// call update outcomes
 		for (let i in this.outcomes) {
 			this.updateOutcomeData(i, this.outcomes[i].var, join, exclude);
 		}
 
-		let outcomeData = this.outcomes.map(d => d.density);
-		let estimateData;
+		if (excludeRows && excludeRows.length !== 0) {
+			const [idx,[low,high]] = excludeRows;
+
+			let mask; // used to filter out which rows should be included or not
+			if (join && join.length !== 0) {
+				mask = this.outcomes[idx].estimate.map(arr => {
+					const mn = Math.min(...arr),
+						  mx = Math.max(...arr);
+					const v = mn + (mx - mn)/2;
+					return low<=v && v<=high; // compares to the middle of the min and max
+				});
+			}
+			else
+				mask = this.outcomes[idx].estimate.map(v => low<=v && v<=high);
+
+			// filter based off of mask
+			this.gridData = this.gridData.filter((_,i) => mask[i]);
+			this.outcomes = this.outcomes.map((d,_) => {
+				d.density = d.density.filter((_,i) => mask[i]);
+				d.estimate = d.estimate.filter((_,i) => mask[i]);
+				return d;
+			});
+		}
 
 		if (this.sortByIndex != -1) {
-			estimateData = this.outcomes.map(d => d.estimate)
+			let outcomeData = this.outcomes.map(d => d.density);
+			let estimateData = this.outcomes.map(d => d.estimate);
 
 			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
@@ -272,54 +310,116 @@ class multiverseMatrix {
 		}
 	}
 
-	updateWrapper(joinArr, excludeArr, sortByGroupParams=[]) {
+	updateWrapper(joinOptions=[], excludeOptions=[], excludeRows={}) {
 		/*
+			Updates the store variables join_options, exclude_options, and exclude_rows which then should be handled elsewhere
+			
 			PARAMETERS:
-				joinArr {array[array[string]]}:
+				joinArr : array[array[string]]
 					array of arrays of length 2 containing options to join
-				excludeArr {array[string]}:
+				excludeArr : array[string]
 					array of options to exclude
-				sortByGroupParams {array}:
-					simply passed onto updateHandler
-			SIDE EFFECTS:
-				updates the 2 store variables join_options and exclude_options
-			NOTE:
-				this mostly assumes proper input for excludeArr, ex: no repeats in exclude
-			BUGS:
-				for exclude_options, for some reason, the button does not update accordingly
+				excludeRows : Object
+					Has format
+					{ 
+						outcomeVar : <outcomeVar> (string)
+						range      : [<min>, <max>] ([number, number])
+					}
+					<min> to <max> is the range of intercept values to exclude based on <outcomeVar>
+					NOTE: the outcomeVar must be visually on the visualization
+			EXAMPLES:
+				Let there be 2 parameters p and q each with 3 options p_1, p_2, p_3 and q_1, q_2, q_3.
+				Let there be 2 outcome variables o_1, o_2 and only o_1 is shown on the vis.
+				Assuming the parameters & options haven't been moved around, some example calls are
+
+				updateWrapper([ ['p_1','p_2'], ['q_2', q_3'] ]);
+					This will join options p_1 and p_2, and it will also join q_2, q_3.
+
+				updateWrapper([ ['p_2','p_1'], ['q_3', q_2'] ]);
+					This will behave the same as above.
+				
+				updateWrapper([ ['p_1', 'p_3'] ]);
+					This does nothing, as p_1 and p_3 are not adjacent.
+					If p_1 and p_3  are moved in the visualization such that they are adjacent, this will join.
+				
+				updateWrapper([ ['p_1', 'p_2'], ['p_2', 'p_3'] ]);
+					This will join all three options together.
+
+				updateWrapper([ ['p_1, 'p_2'], ['p_1', 'p_3'] ]);
+					This will only join p_1 and p_2.
+				
+				updateWrapper(excludeOptions=['p_1','p_3','q_1']);
+					This will exclude the respective options.
+				
+				updateWrapper([ ['p_1', 'p_2'], ['p_2', 'p_3'] ], ['p_3']);
+					This will join all three options, but also exclude p_3
+
+				updateWrapper(excludeRows={ outcomeVar: "o_1", range: [4.123, 4.987] })
+					Only the rows such that the intercept value for o_1 is between 4.123 and 4.987 are included.
+
+				updateWrapper(excludeRows={ outcomeVar: "o_1", range: ["4.123", "4.987"] })
+					This does nothing as the elements in range are not the right type.
+
+				updateWrapper(excludeRows={ outcomeVar: "o_1", range: [0] })
+					This does nothing as range is not in the right format.
+
+				updateWrapper(excludeRows={ outcomeVar: "o_2", range: [0,0.5] })
+					This does nothing as o_2 is not being visualized.
+				
+				updateWrapper(excludeRows={ outcomeVar: "o_3", range: [1,2] })
+					This does nothing as o_3 does not exist.
 		*/
 
 		// filter excludes option groups that are not valid
 		// map produces the proper format
-		let join = joinArr.filter(arr => {
+		let newJoinOptions = joinOptions.filter(arr => {
 			let x=arr[0], y=arr[1];
-			return this.invParameters[x] === this.invParameters[y] && // options are in the same parameter
-				(() => { // options are visually next to each other in the mv vis document
-					let param = this.invParameters[x]
-					let ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+			return x in this.invParameters && y in this.invParameters && // checks options exist
+				this.invParameters[x] === this.invParameters[y] && // checks options are in the same parameter
+				(() => { // checks options are visually next to each other in the mv vis document
+					const param = this.invParameters[x]
+					const ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
 					    iy = opt_scale[param].domain().indexOf(this.optionToIndex[y]);
 					return Math.abs(ix-iy) === 1; // also ensures x !== y
 				})();
 		}).map(arr => {
-			let x=arr[0], y=arr[1];
-			let param = this.invParameters[x];
+			const x=arr[0], y=arr[1];
+			const param = this.invParameters[x];
+			const indices = [
+				opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+				opt_scale[param].domain().indexOf(this.optionToIndex[y])
+			];
+			let reversed = indices[0] > indices[1]; // true=>[0] comes after (on the right) of [1] in the vis
 			return {
-				indices: [opt_scale[param].domain().indexOf(this.optionToIndex[x]),
-						  opt_scale[param].domain().indexOf(this.optionToIndex[y])],
-				options: arr,
+				indices: reversed ? [indices[1],indices[0]] : indices,
+				options: reversed ? [arr[1],arr[0]] : arr,
 				parameter: param
 			}
 		});
 		
-		let exclude = {};
-		for (let key in this.parameters) exclude[key] = [];
-		for (let option of excludeArr) exclude[this.invParameters[option]].push(option);
+		excludeOptions = Array.from(new Set(excludeOptions)); // remove duplicates
+		let newExcludeOptions = {};
+		for (let key in this.parameters) newExcludeOptions[key] = [];
+		for (let option of excludeOptions) {
+			if (option in this.invParameters) // makes sure is valid option
+				newExcludeOptions[this.invParameters[option]].push(option);
+		}
+		
+		let newExcludeRows = [];
+		// make sure range is in the right format
+		if (excludeRows.range.length===2 && excludeRows.range.every(v => typeof v === 'number')) {
+			for (let i = 0; i < this.outcomes.length; i++) {
+				if (this.outcomes[i].var === excludeRows.outcomeVar) {
+					newExcludeRows = [i, excludeRows.range];
+					break;
+				}
+			}
+		}
 
 		// by updating these, it should reactively call this.updateHandler elsewhere (App.svelte)
-		join_options.update(_ => join);
-		exclude_options.update(_ => exclude);
-
-		// this.updateHandler(join, exclude, sortByGroupParams);
+		join_options.update(_ => newJoinOptions);
+		exclude_options.update(_ => newExcludeOptions);
+		exclude_rows.update(_ => newExcludeRows);
 	}
 }
 

@@ -7,18 +7,20 @@
 
 	export let option;
 	export let parameter;
-	let selected = true;
 
-	const dispatch = createEventDispatcher();
-
-	function hideOption() {
-		selected = !selected;
-
+	$: selected = !($exclude_options[parameter].includes(option));
+	$: {
 		if (selected) {
 			d3.select(`div.option-label.${option}`).style("opacity", "1")
 		} else {
 			d3.select(`div.option-label.${option}`).style("opacity", "0.2")
 		}
+	}
+
+	const dispatch = createEventDispatcher();
+
+	function hideOption() {
+		selected = !selected;
 
 		dispatch('hide', {
 			state: selected,

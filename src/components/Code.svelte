@@ -2,9 +2,10 @@
 	import { css } from '@emotion/css';
 	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
-	import * as code from '../../static/data/code.json';
 	import ParamOptions from './ParamOptions.svelte';
     import CodeLine from './CodeLine.svelte';
+    
+    export let code;
 
     document.documentElement.style.setProperty('--bgColor', colors.background)
     document.documentElement.style.setProperty('--hoverColor', colors.hover)
