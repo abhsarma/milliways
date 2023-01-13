@@ -3,10 +3,12 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as d3 from 'd3';
 	import { text, iconSize } from '../utils/dimensions.js'
+	import { exclude_options } from '../utils/stores.js';
 	import { colors } from '../utils/colorPallete.js';
 
 	export let option;
 	export let parameter;
+	export let parameters;
 
 	$: selected = !($exclude_options[parameter].includes(option));
 	$: {
@@ -17,16 +19,24 @@
 		}
 	}
 
+	const eqSet = (xs, ys) => xs.size === ys.size && [...xs].every((x) => ys.has(x));
 	const dispatch = createEventDispatcher();
 
 	function hideOption() {
-		selected = !selected;
+		let parameter_option_set = new Set(parameters[parameter])
+		let excluded_set = new Set([...$exclude_options[parameter], option]);
 
-		dispatch('hide', {
-			state: selected,
-			option: option,
-			parameter: parameter
-		});
+		if (eqSet(parameter_option_set, excluded_set)) {
+			alert("You cannot exclude all the options of a parameter as this will result in an empty set.")
+		} else {
+			selected = !selected;
+
+			dispatch('hide', {
+				state: selected,
+				option: option,
+				parameter: parameter
+			});
+		}
 	}
 
 	export const iconStyle = css`
@@ -35,18 +45,27 @@
 		height: ${iconSize}px;
 		width: ${iconSize}px;
 	`;
+
+	export const excluded = css`
+		opacity: 0.2;
+	`
+
+	export const included = css`
+		opacity: 1;
+	`
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 <style>
 	svg.icon:hover {
-		fill: #404040;
+		fill: var(--hoverColor);
 	}
 </style>
 
 {#if selected}
 	<!-- <Add class="icon" on:message={handleMessage}/> -->
-	<svg class="icon exclude-icon {option} {iconStyle}" on:click={hideOption} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+	<svg class="icon exclude-icon {included} {option} {iconStyle}" on:click={hideOption} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
 {:else}
 	<!-- <Remove class="icon" on:message={handleMessage}/> -->
-	<svg class="icon include-icon {option} {iconStyle}" on:click={hideOption} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
+	<svg class="icon include-icon {excluded} {option} {iconStyle}" on:click={hideOption} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
 {/if}

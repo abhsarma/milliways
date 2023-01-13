@@ -15,7 +15,7 @@
 		left: 0;
 		height: 100%;
 		width: 100%;
-		background-color: ${colors.gray+"80"};
+		background-color: ${colors.gray70 + "80"}; // rgba(151, 151, 151, 0.5)
 		backdrop-filter: blur(3px);
 		z-index: 9;
 	`

@@ -14,17 +14,6 @@
 	export let steps;
 	export let containsImage;
 
-	const popupBg = css`
-		position:absolute;
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-		background-color: ${colors.gray+"80"};
-		backdrop-filter: blur(3px);
-		z-index: 9;
-	`
-
 	let pw;
 	if (containsImage) {
 		pw = 496;

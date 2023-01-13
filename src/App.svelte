@@ -27,6 +27,8 @@
 	m = new multiverseMatrix(data.default);
 	m.initializeData();
 
+	console.log("size of the multiverse: ", m.size)
+
 	const parameters = m.parameters;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
@@ -58,12 +60,8 @@
 
 		if (!event.detail.state) {
 			$exclude_options[parameter] = [...$exclude_options[parameter], option];
-			// below is commented out as i think it doesn't do anything, but i'm not entirely sure
-			// d3.selectAll(`button.join.${option}`).property("disabled", true)
 		} else {
 			$exclude_options[parameter] = $exclude_options[parameter].filter(d => d !== option)
-			// ditto
-			// d3.selectAll(`button.join.${option}`).property("disabled", false)
 		}
 	}
 
@@ -124,7 +122,7 @@
 	document.documentElement.style.setProperty('--white', colors.white)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--bgColor', colors.background)
-	document.documentElement.style.setProperty('--grayColor', colors.gray)
+	document.documentElement.style.setProperty('--grayColor', colors.gray80)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 

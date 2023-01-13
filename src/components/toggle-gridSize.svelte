@@ -91,6 +91,6 @@
 	}
 
 	.state-indicator.active {
-		transform: translate(100%, 0);
+		transform: translate(18px, 0);
 	}
 </style>

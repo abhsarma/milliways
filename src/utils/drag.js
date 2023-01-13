@@ -100,7 +100,6 @@ export let drag_options = (order) => d3.drag()
 		
 		delete option_dragging[index];
 
-		console.log(x_scale_options[parameter].domain(), x_scale_options[parameter].range());
 		moveOptions(x_scale_options, parameter, option, index);
 	});
 

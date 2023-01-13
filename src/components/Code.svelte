@@ -6,6 +6,7 @@
     import CodeLine from './CodeLine.svelte';
     
     export let code;
+    console.log(code)
 
     document.documentElement.style.setProperty('--bgColor', colors.background)
     document.documentElement.style.setProperty('--hoverColor', colors.hover)

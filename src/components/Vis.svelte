@@ -7,9 +7,8 @@
 	import { mean } from '../utils/helpers/arrayMethods.js'
 	import { gridCollapse, exclude_rows } from '../utils/stores.js'
 	
-	// this is out of necessity, not really used in the <script>
-	// let svg, cellHeight, min = 32;
-	let cellHeight, min = 32;
+	// svg is used to bind the svg HTML element in line 135
+	let svg, cellHeight, min = 32;
 
 	const dispatch = createEventDispatcher();
 	
@@ -137,7 +136,6 @@
 		<!-- Histogram -->
 		<g>
 			{#each bins as d}
-				{console.log(gridNamesHeight - yscaleHist(d.length), yscaleHist(d.length))}
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
@@ -166,7 +164,7 @@
 		<g transform="translate(0, {gridNamesHeight})">
 			<line class="intercept" 
 				x1="{xscale(0)}" x2="{xscale(0)}" y1="0" y2="{h - (margin.bottom + gridNamesHeight + cell.padding)}"
-				stroke={colors.gray} stroke-width="2" />
+				stroke={colors.gray80} stroke-width="2" />
 
 			<!-- x axis -->
 			<!-- <path class="domain"  stroke="currentColor" d="{xPath}" fill="none" /> -->
@@ -187,13 +185,13 @@
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
 						d={line([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
-						stroke="{colors.primary}" stroke-width=2 />
-					<circle fill="{colors.primary}" stroke="{colors.primary}" cx="{xscale(data.estimate[i])}" cy="{yscale(0.5)}" r="0.5"></circle>
+						stroke="{colors.median}" stroke-width=2 />
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(0.5)}" r="0.5"></circle>
 				{:else}
 					<path class="median" 
 						d={line([[Math.min(...data.estimate[i]), 0.5], [Math.max(...data.estimate[i]), 0.5]])}
-						stroke="{colors.primary}" stroke-width=2 />
-					<circle fill="{colors.primary}" stroke="{colors.primary}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(0.5)}" r="0.5"></circle>
+						stroke="{colors.median}" stroke-width=2 />
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(0.5)}" r="0.5"></circle>
 				{/if}
 			</g>
 		{/each}

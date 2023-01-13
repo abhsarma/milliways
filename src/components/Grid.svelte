@@ -156,7 +156,7 @@
 							width="{cell.width + cell.padding}" 
 							height="{namingDim}" 
 							class="option-name {option}">
-								<OptionToggle {parameter} {option} on:hide/>
+								<OptionToggle {parameters} {parameter} {option} on:hide/>
 								<div class="option-label {option_names} {option}">{option}</div>
 						</foreignObject>
 					</g>
