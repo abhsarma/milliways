@@ -175,14 +175,15 @@
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, 0)">
 				{#each parameters[parameter] as option, i}
+					<!-- {console.log(option, i, $option_scale[parameter].domain(), $option_scale[parameter].range()), $option_scale[parameter](i)} -->
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
 								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
+									x={(cell.width - cellWidth)/2}
+									y={y(j)}
+									width={cellWidth} 
+									height={y.bandwidth()}
 									class="{options_container} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
@@ -190,10 +191,10 @@
 								/>
 							{:else}
 								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
+									x={(cell.width - cellWidth)/2} 
+									y={y(j)}
+									width={cellWidth}
+									height={y.bandwidth()}
 									class="{options_container} {option} option-cell"
 									row={j}
 									on:click={openFile}

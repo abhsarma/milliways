@@ -62,9 +62,13 @@ export let drag_options = (order) => d3.drag()
 
 		if (trigger == "option-label" & target == "DIV") {
 			option_dragging[index] = Math.min(
-				x_scale_options[parameter].range()[1],
-				Math.max(-x_scale_options[parameter].bandwidth(), (event.x - x_scale_params(parameter)))
-			);
+				x_scale_options[parameter].range()[1], // (1) right most boundary of the parameter column
+				Math.max(
+					-x_scale_options[parameter].bandwidth(), // (2) the left hand limit of how far you can drag
+					event.x // (3) how far you have dragged the col
+					// // not used anymore: (event.x - x_scale_params(parameter))
+				) // (4) max of (2) and (3)
+			); // min of (1) and (4)
 
 			order[parameter].name.sort(function(a, b) { return cPosition(parameter, a, x_scale_options) - cPosition(parameter, b, x_scale_options); });
 			x_scale_options[parameter].domain(order[parameter].name);
@@ -73,7 +77,7 @@ export let drag_options = (order) => d3.drag()
 			d3.selectAll(`g.option-value.${parameter}, g.option-headers.${parameter}`).attr("transform", function(d) { 
 				let p = this.className.baseVal.split(' ')[1]
 				let i = this.className.baseVal.split(' ')[3].split('-')[1]
-				return `translate(${cPosition(p, i, x_scale_options)}, 0)`; 
+				return `translate(${cPosition(p, Number(i), x_scale_options)}, 0)`; 
 			});
 		}
 	})
@@ -99,20 +103,19 @@ export let drag_options = (order) => d3.drag()
 		join_options.update(arr => arr = options_to_join);
 		
 		delete option_dragging[index];
-
-		moveOptions(x_scale_options, parameter, option, index);
+		moveOptions(x_scale_options, parameter, option, Number(index));
 	});
 
 export function moveOptions(xscale, parameter, option, index) {
-	transition(d3.select(`g.option-headers.${parameter}.${option}`)).attr("transform", `translate(${x_scale_options[parameter](index)}, 0)`);
-	transition(d3.select(`g.option-value.${parameter}.${option}`)).attr("transform", `translate(${x_scale_options[parameter](index)}, 0)`);
+	transition(d3.select(`g.option-headers.${parameter}.${option}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
+	transition(d3.select(`g.option-value.${parameter}.${option}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
 }
 
 
 // option positions
-function cPosition(p, d, x_scale_options) {
+function cPosition(p, d, xscale) {
 	var v = option_dragging[d];
-	return v == null ? x_scale_options[p](d) : v;
+	return v == null ? xscale[p](d) : v;
 }
 
 /**

@@ -22,7 +22,7 @@
 	`;
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
-	let showTutorial = true;
+	let showTutorial = false;
 	let m;
 	m = new multiverseMatrix(data.default);
 	m.initializeData();
