@@ -15,12 +15,6 @@
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Code from './components/Code.svelte';
 
-	// CSS Styles
-	export const container = css`
-		height: ${windowHeight}px;
-		overflow-y: scroll;
-	`;
-
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 	let showTutorial = false;
 	let m;
@@ -145,7 +139,7 @@
 
 	<!-- CREATES THE OUTCOME GRAPH(S) -->
 	<div class="main">
-		<div class="{container} vis-container" style="height: {windowHeight}px;">
+		<div class="vis-container" style="height: {windowHeight}px;">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
 					i              		= {i}
@@ -164,7 +158,7 @@
 		</div>
 
 		<!-- CREATES THE GRID PANEL FOR SPECIFICATIONS -->
-		<div class="{container} grid-container" style="height: {windowHeight}px;">
+		<div class="grid-container" style="height: {windowHeight}px;">
 			<Grid 
 				data={m.gridData} 
 				parameters={m.parameters}
@@ -242,12 +236,14 @@
 		background-color: var(--hoverColor) !important;
 		fill: var(--white) !important;
 	}
+	
 	.vis-container {
 		position:relative;
 		display: inline-block;
 		overflow-x: auto;
 		margin-left: 16px;
 		border-radius: 8px;
+		overflow-y: scroll;
 	}
 
 	.grid-container {
@@ -255,5 +251,12 @@
 		position: relative;
 		margin-left: 16px;
 		border-radius: 8px;
+		overflow-y: scroll;
+		-ms-overflow-style: none;  /* IE and Edge */
+	}
+
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.grid-container::-webkit-scrollbar {
+		display: none;
 	}
 </style>

@@ -61,10 +61,10 @@
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
 	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
-	$: h = cell.padding + data.length * cellHeight + margin.bottom;
+	$: h = cell.padding + data.length * cellHeight + 2*margin.bottom;
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.length))
-		.range([0, h - (margin.bottom + cell.padding) ])
+		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
@@ -218,8 +218,6 @@
 	svg.grid-header {
 		background-color: var(--bgColor) !important;
 		display: flex;
-		/* display: inline-block; */
-		/* float: left; */
 		position: sticky;
 		top: 0;
 		box-shadow: 0px 4px 5px -2px #c0c0c0;

@@ -8,7 +8,7 @@
 	import { gridCollapse, exclude_rows } from '../utils/stores.js'
 	
 	// svg is used to bind the svg HTML element in line 135
-	let svg, cellHeight, min = 32;
+	let cellHeight, min = 32;
 
 	const dispatch = createEventDispatcher();
 	
@@ -18,18 +18,34 @@
 	export let sortAscending;
 	export let sortByIndex;
 	export let term = allOutcomeVars[0];
+
+	let visButtonHeight = 44;
+
+	// the axis is anchored at the Top as opposed to the more commonly used axisBottom
+	// takes into account size of tick + font (24px) and padding (2 * 8px)
+	let axisAdjust = 24 + 2*8;
 	
 	// CSS Styles
 	$: container = css`
+		height: ${visButtonHeight}px; // height of buttons (44) + ...
+		width: ${w}px;
+		displaY: flex;
+		position: sticky;
+		top: 0px;
 		background-color: ${colors.background};
-		height: ${gridNamesHeight}px;
-		width: ${w - scrollbarWidth}px;
-		position: absolute;
+	`;
+
+	$: outcomeAxis = css`
+		background-color: ${colors.background} !important;
+		display: flex;
+		position: sticky;
+		top: ${visButtonHeight}px;
+		pointer-events: none;
 	`;
 
 	$: cellHeight = $gridCollapse ? 2 : cell.height
 	$: w = outcomeVisWidth + margin.left;
-	$: h = gridNamesHeight + cell.padding + data.density.length * cellHeight + margin.bottom;
+	$: h = cell.padding + data.density.length * cellHeight + 2*margin.bottom;
 
 	// scales
 	$: xscale = d3.scaleLinear()
@@ -39,7 +55,7 @@
 	// scale for position of g corresponding to each universe
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.density.length))
-		.range([0, h - (margin.bottom + gridNamesHeight + cell.padding) ])
+		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 	
 	// scale for CDF of each universe
@@ -96,8 +112,9 @@
 
 	$: yscaleHist = d3.scaleLinear()
 		.domain([0, d3.max(bins, function(d) { return d.length; })])
-		.range([0, gridNamesHeight - 96]);
+		.range([0, gridNamesHeight - (visButtonHeight + axisAdjust + 2)]); // 24 is for padding
 
+	$: console.log(yscaleHist.domain(), yscaleHist.range());
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
@@ -132,22 +149,10 @@
 			</button>
 		</div>
 	</div>
-	<svg class="outcome-axis vis-{i}" bind:this={svg} height={windowHeight} width={w-scrollbarWidth}>
-		<!-- Histogram -->
-		<g>
-			{#each bins as d}
-				<rect 
-					class="d3-histogram" 
-					x="{xscale(d.x0)}" 
-					y = "{gridNamesHeight - 32 - yscaleHist(d.length)}" 
-					width="{xscale(d.x1) - xscale(d.x0)}" 
-					height="{yscaleHist(d.length)}" 
-					fill="{colors.vis}"
-					opacity=0.8></rect>
-				}
-			{/each}
-		</g>
-		<g id="axis-{i}" transform="translate(0, {gridNamesHeight})">
+
+	<svg class="{outcomeAxis} vis-{i}" height={gridNamesHeight - visButtonHeight} width={w}>
+		<!-- Axes -->
+		<g id="axis-{i}" transform="translate(0, {axisAdjust})">
 			<!-- x axis -->
 			<path class="domain"  stroke="currentColor" d="{xPath}" fill="none" />
 			{#each xscale.ticks(5) as tick}
@@ -159,26 +164,57 @@
 			<!-- brush is added onMount -->
 			<g class="brush-container" id="brush-container-{i}"></g>
 		</g>
-	</svg>
-	<svg class="outcome-results vis-{i}" bind:this={svg} height={h} width={w}>
-		<g transform="translate(0, {gridNamesHeight})">
-			<line class="intercept" 
-				x1="{xscale(0)}" x2="{xscale(0)}" y1="0" y2="{h - (margin.bottom + gridNamesHeight + cell.padding)}"
-				stroke={colors.gray80} stroke-width="2" />
 
-			<!-- x axis -->
-			<!-- <path class="domain"  stroke="currentColor" d="{xPath}" fill="none" /> -->
+		<!-- Grid Lines -->
+		<g transform="translate(0, {axisAdjust})">
+			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<!-- <line class="tick" y2="-6" stroke="black"/> -->
-					<line class="grid" y2="{h - (margin.bottom + gridNamesHeight + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
-					<!-- <text text-anchor="middle" dy="0em" y="{-text}" style="font-size: {text}">{tick}</text> -->
+					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
+				</g>
+			{/each}
+		</g>
+
+		<!-- Histogram -->
+		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
+			<!-- {axisAdjust + 8} -->
+			{#each bins as d}
+				<!-- y={yscaleHist.range()[1] - yscaleHist(d.length) + 4} // 4 is for padding -->
+				<rect 
+					class="d3-histogram" 
+					x="{xscale(d.x0)}" 
+					y = "{yscaleHist.range()[1] - yscaleHist(d.length)}"
+					width="{xscale(d.x1) - xscale(d.x0)}" 
+					height="{yscaleHist(d.length)}" 
+					fill="{colors.vis}"
+					opacity=0.8></rect>
+				}
+			{/each}
+			<line class="histogram-xgrid-major" 
+				x1="{xscale.range()[0]}" x2="{xscale.range()[1]}" y1="{yscaleHist.range()[1]}" y2="{yscaleHist.range()[1]}"
+				stroke="black" stroke-opacity="0.2" stroke-width="2" />
+		</g>
+
+		<!-- zero-line -->
+		<line class="intercept" 
+			x1="{xscale(0)}" x2="{xscale(0)}" y1="{axisAdjust}" y2="{windowHeight}"
+			stroke={colors.gray80} stroke-width="2" />
+	</svg>
+
+
+	<svg class="outcomeResults vis-{i}" height={h} width={w}>
+		<!-- Grid Lines -->
+		<g>
+			<!-- grid lines -->
+			{#each xscale.ticks(5) as tick}
+				<g class="tick" transform="translate({xscale(tick)}, 0)">
+					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
 				</g>
 			{/each}
 		</g>
 
 		{#each data.density as universe, i}
-			<g class="universe universe-{i}" transform="translate(0, {gridNamesHeight + y(i)})">
+			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
 					<path class="cdf" d={area(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
 				{/if}
@@ -195,15 +231,24 @@
 				{/if}
 			</g>
 		{/each}
+
+		<!-- zero-line -->
+		<line class="intercept" 
+			x1="{xscale(0)}" x2="{xscale(0)}" y1="0" y2="{h - (margin.bottom + cell.padding)}"
+			stroke={colors.gray80} stroke-width="2" />
 	</svg>
 </div>
 
 <style>
-
-	svg.outcome-results {
+	svg.outcomeResults {
 		background-color: var(--bgColor);
 		float: left;
-		scrollbar-width: thin;
+		display: inline-block;
+		scrollbar-width: none;  /* Firefox */
+	}
+
+	svg.outcomeResults, g.universe {
+		transition: all .5s linear;;
 	}
 
 	.vis-button-group {
@@ -221,12 +266,17 @@
 		border: 1px solid var(--bgColor);
 	}
 
+	.vis-dropdown {
+		padding: 0px;
+	}
+
 	.vis-button {
 		/* 34px is the height of the dropdown */
 		position: sticky;
 		top: 0;
 		z-index: 2;
 		height: 36px;
+		padding: 0px;
 		border: 1px solid var(--bgColor);
 		background-color: var(--bgColor);
 		border-radius: 4px;
@@ -260,16 +310,5 @@
 		border: none;
 		background-color: var(--bgColor);
 		text-align: center;
-	}
-
-	svg.outcome-axis {
-		display: inline-block;
-		float: left;
-		position: absolute;
-		pointer-events: none;
-	}
-
-	svg.outcome-results, g.universe {
-		transition: all .5s linear;;
 	}
 </style>
