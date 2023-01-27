@@ -20,13 +20,21 @@
 		text-transform: uppercase;
 		padding: 0px ${cell.padding/2 + "px"};
 		background-color: ${colors.background};
+		color: ${colors.gray90};
 		cursor: default;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		height: ${cell.height}px;
+		line-height: ${cell.height}px;
 		text-align: center;
 		width: 100%;
 		user-select: none;
 	`;
+
+	export const parameter_label = css`
+		line-height: ${cell.height}px;
+		margin: 0px
+	`
 
 	export const option_names = css`
 		font-size: ${header.size + "px"};
@@ -91,8 +99,9 @@
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
-		if (!mvWindow || mvWindow.closed) {
+		console.log(spec);
 
+		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(process.env.ANALYSIS_DOC,
 							process.env.ANALYSIS_DOC,
 							`top=0,
@@ -117,6 +126,7 @@
 			mvWindow.document.body.appendChild(script);
 		} 
 		else {
+			mvWindow.focus();
 			bc.postMessage(spec);
 		}
 	}
@@ -135,7 +145,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}">{parameter}</div>
+					<div class="parameter-name {parameter_name} {parameter}"><p class='{parameter_label}'>{parameter}</p></div>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
@@ -167,7 +177,7 @@
 	<svg class="grid-body" height={h} width={w}>
 		<rect 
 			x=0
-			y="-{y.bandwidth()+cell.padding}"
+			y=-{y.bandwidth()+cell.padding}
 			width=100%
 			height={y.bandwidth()+cell.padding}
 			id="bg-rect"
@@ -206,13 +216,20 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} h={h}/>
+		<SortByGroupDivider parameters={parameters} bind:h={h}/>
 	</svg>
+	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
+		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>
+	</svg> -->
 </div>
 
 <style>
 	.to-front {
 		z-index: 99;
+	}
+
+	foreignObject {
+		border-radius: 4px;
 	}
 
 	svg.grid-header {
@@ -221,12 +238,21 @@
 		position: sticky;
 		top: 0;
 		box-shadow: 0px 4px 5px -2px #c0c0c0;
+		z-index: 10;
 	}
 
 	svg.grid-body {
 		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
+		position: relative;
+		z-index: 1;
+	}
+
+	svg.grid-group-divider {
+		position: sticky;
+		top: 188px;
+		z-index: 10;
 	}
 
 	svg, rect {
@@ -238,7 +264,7 @@
 		transition: none;
 	}
 
-	.parameter-name, .option-label {
+	div.parameter-name, .option-label {
 		cursor: move;
 	}
 </style>

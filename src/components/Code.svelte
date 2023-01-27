@@ -3,21 +3,33 @@
 	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import ParamOptions from './ParamOptions.svelte';
-    import CodeLine from './CodeLine.svelte';
-    
-    export let code;
+	import CodeLine from './CodeLine.svelte';
+	
+	export let code;
 
-    document.documentElement.style.setProperty('--bgColor', colors.background)
-    document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+
+	function getParameter(line) {
+		const paramRegex  = /(?<=branch\().*?(?=\))/;
+		let param;
+
+		try {
+			param = line.match(paramRegex)[0];
+		} catch (e) {
+			param = undefined;
+		}
+
+		return param;
+	}
 </script>
 
 <div class="code-container">
-    <div class="code">
-        <!--TODO: passing the whole code.parameters is probably bad-->
-        {#each code.code as line}
-            <CodeLine line={line} optionsData={code.parameters} />
-        {/each}
-    </div>
+	<div class="code">
+		{#each code.code as line}
+			<CodeLine line={line} parameter={getParameter(line)} options={code.parameters[getParameter(line)]}  />
+		{/each}
+	</div>
 </div>
 
 <style>
@@ -25,9 +37,9 @@
 		display: inline-flex;
 		position: absolute;
 		margin-left: 16px;
-        margin-right: 16px;
-        padding: 16px;
-        background-color: var(--bgColor);
-        border-radius: 8px;
-    }
+		margin-right: 16px;
+		padding: 16px;
+		background-color: var(--bgColor);
+		border-radius: 8px;
+	}
 </style>

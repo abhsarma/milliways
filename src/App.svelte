@@ -13,10 +13,14 @@
 	import Grid from './components/Grid.svelte';
 	import Tutorial from './components/Tutorial.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
+	import Help from './components/help.svelte'
 	import Code from './components/Code.svelte';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
-	let showTutorial = false;
+
+	let showInterfaceTutorial = false;
+	let showMenu = false;
+
 	let m;
 	m = new multiverseMatrix(data.default);
 	m.initializeData();
@@ -118,15 +122,25 @@
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--grayColor', colors.gray80)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+
+	function removeEventTriggers(event) {
+		if (event.target.classList[0] != 'help') {
+			// hide the menu
+			showMenu = false
+		}
+	}
 </script>
 
-<main>
+<main on:click={removeEventTriggers}>
 	<div class = "container-flex">
 		<div class="vertical-align">
 			<div class="page-header">
 				<h1>Multiverse Visualisation</h1>
 			</div>
+
 			<ToggleSize/>
+
+			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial}/>
 		</div>
 	</div>
 
@@ -168,8 +182,8 @@
 		</div>
 
 		<Code code={code} />
-		{#if showTutorial}
-			<Tutorial parameters={m.parameters}/>
+		{#if showInterfaceTutorial}
+			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
@@ -225,6 +239,7 @@
 	svg.add-vis-icon {
 		/*position: sticky;*/
 		fill: var(--grayColor) !important;
+		cursor: pointer;
 	}
 
 	.button-wrapper button:hover, button:active {
@@ -236,7 +251,7 @@
 		background-color: var(--hoverColor) !important;
 		fill: var(--white) !important;
 	}
-	
+
 	.vis-container {
 		position:relative;
 		display: inline-block;

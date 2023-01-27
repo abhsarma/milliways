@@ -145,8 +145,16 @@ class multiverseMatrix {
 			e_data
 		)
 
+		let limits = d3.extent(o_data_processed[0].map(d => d[0]));
+		let histogram = d3.histogram()
+			.value(function(d) { return d; })   // I need to give the vector of value
+			.domain(limits)  // then the domain of the graphic
+			.thresholds(d3.scaleLinear().domain(limits).ticks(70)); // then the numbers of bins
+		let bins = histogram(e_data_processed.flat());
+
 		this.outcomes[i].density = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
+		this.outcomes[i].mode = d3.max(bins, function(d) { return d.length; })
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {

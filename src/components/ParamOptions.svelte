@@ -1,7 +1,7 @@
 <script>
 	import { css } from '@emotion/css';
 	import { colors } from '../utils/colorPallete.js';
-    export let param;
+    export let parameter;
     export let optionsData;
 
     const optionsContainer = css`
@@ -34,9 +34,9 @@
     }
 </script>
 
-<div class="options-container {optionsContainer}" id="paramOptions-{param}">
+<div class="options-container {optionsContainer}" id="paramOptions-{parameter}">
     {#each options as { name, content }, i }
-        <div class="param-option {paramOption}" id="{param}-{i}">
+        <div class="param-option {paramOption}" id="{parameter}-{i}">
             <p class={optionName}>{name}</p>
             <code>{content}</code>
         </div>

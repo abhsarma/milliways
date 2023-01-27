@@ -8,6 +8,7 @@
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
 
 	export let parameters;
+	export let visible;
 
 	export const popupBg = css`
 		position:absolute;
@@ -17,7 +18,7 @@
 		width: 100%;
 		background-color: ${colors.gray70 + "80"}; // rgba(151, 151, 151, 0.5)
 		backdrop-filter: blur(3px);
-		z-index: 9;
+		z-index: 20;
 	`
 	export const highlight_btn = css`
 		background-color: ${colors.active};
@@ -122,14 +123,12 @@
 		step = Number(event.detail.step)
 		if (step > (N + 1)) {
 			removePopup(event)
-			// focus();
-			// document.querySelector('.popup-tutorial').remove();
 		}
 	}
 
 	function removePopup(event) {
 		setLayout();
-		document.querySelector('.popup-tutorial').remove();
+		visible = false
 	}
 
 	function getPosition(el, right = false, offset = {"x": 0, "y": 0}) {
@@ -168,6 +167,7 @@
 			message = "Welcome to the multiverse visualisation tool"
 			step = {step}
 			position = {position}
+			adjust = {{x:0,y:0}}
 			direction = "centre"
 			on:next = {updatePopup}
 			on:skip = {removePopup}
@@ -180,6 +180,7 @@
 			message = "This panel shows the analytical decisions that comprise this multiverse analysis."
 			step = {step}
 			position = {positions.grid}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -192,6 +193,7 @@
 			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree<br><br>You can change the order of the parameters by dragging on them."
 			step = {step}
 			position = {positions.parameter}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -204,6 +206,7 @@
 			message = "The sub columns represent the possible <span class='definitions'>options</span> that each parameter can take.<br><br>You can reorder the options by dragging on them."
 			step = {step}
 			position = {positions.option}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -216,6 +219,7 @@
 			message = "Each row in this grid represents a <span>universe</span>&mdash;a singular end-to-end analysis stemming from a particular combination of distinct analytical choices, which are highlighted in coral."
 			step = {step}
 			position = {positions.universe0}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -228,6 +232,7 @@
 			message = "You can interact with the multiverse by <span>exclude</span> an option or <span>join</span> two (or more) options together and inspect which parameters and options have the greatest influence the outcome."
 			step = {step}
 			position = {positions.option_interaction}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -240,6 +245,7 @@
 			message = "<span class='definition'>Excluding</span> an option means that every universe which includes that option will be hidden."
 			step = {step}
 			position = {positions.exclude}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -252,6 +258,7 @@
 			message = "<span class='definition'>Joining</span> options mean that the estimates from the universes with those options will be aggregated."
 			step = {step}
 			position = {positions.join}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -264,6 +271,7 @@
 			message = "This panel shows the analysis outcomes (or estimates) from each universe in the multiverse.<br><br>For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse."
 			step = {step}
 			position = {positions.vis}
+			adjust = {{x:0,y:-0}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -276,6 +284,7 @@
 			message = "The dropdown menu allows you to change which outcome variable (eg. model coefficients or effect size estimates) is being visualised in this panel."
 			step = {step}
 			position = {positions.vis}
+			adjust = {{x:0,y:-0}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -288,6 +297,7 @@
 			message = "You can sort a variable based on the median estimate from each universe."
 			step = {step}
 			position = {positions.vis}
+			adjust = {{x:0,y:-0}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -300,6 +310,7 @@
 			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img src='images/mcdf.png' width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
 			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -309,9 +320,10 @@
 	{:else if step == 12}
 		{setLayout("div.grid-container", `g.grouped-sort-divider`)}
 		<Popup 
-			message = "The slider (black line with handle icon) allows you to perform a <span class='definition'>grouped sort</span>.<br><br>When performing a grouped sort, options of parameters to the right of the slider are sorted based on the group means, while those to the left are sorted within each group. This allows the user to "
+			message = "The slider (black line with handle icon) allows you to perform a <span class='definition'>grouped sort</span>.<br><br>When performing a grouped sort, options of parameters to the right of the slider are sorted based on the group means, while those to the left are sorted within each group. This allows the user to ... <incomplete> "
 			step = {step}
 			position = {positions.gsort}
+			adjust = {{x:0,y:-120}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -324,6 +336,7 @@
 			message = "This panel shows the R code used to implement the analysis. This code was used to obtain the estimates on the left most panel"
 			step = {step}
 			position = {positions.code}
+			adjust = {{x:0,y:0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -336,6 +349,7 @@
 			message = "If you click on any of the rows in this grid, it will bring up the corresponding <span  class='definition'>Exploratory Multiverse Analysis Report (EMARs)</span>, if the authors have prepared one.<br><br>EMARs are an interactive document which describe a end-to-end analysis of one universe in the multiverse at a time"
 			step = {step}
 			position = {positions.universe0}
+			adjust = {{x:0,y:-0}}
 			direction = "right"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -348,6 +362,7 @@
 			message = "The toggle button collapses the grid by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
 			step = {step}
 			position = {positions.toggle}
+			adjust = {{x:0,y:-0}}
 			direction = "left"
 			on:next={updatePopup}
 			on:skip = {removePopup}
@@ -360,6 +375,7 @@
 			message = "You are at the end of the tutorial"
 			step = {step}
 			position = {position}
+			adjust = {{x:0,y:-0}}
 			direction = "centre"
 			on:next={updatePopup}
 			on:skip = {removePopup}

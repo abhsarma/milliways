@@ -10,6 +10,7 @@
 	export let message;
 	export let step;
 	export let position;
+	export let adjust;
 	export let direction;
 	export let steps;
 	export let containsImage;
@@ -119,7 +120,7 @@
 	document.documentElement.style.setProperty('--secondaryColor', colors.secondary)
 </script>
 
-<div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y}px; left: {position.x}px;">
+<div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
 	<p>{@html message}</p>
 	{#if step > 0 & step <= steps}
 		<p class="progress-indicator">{step}/{steps}</p>
@@ -180,7 +181,7 @@
     }
 
     .popup {
-    	position: fixed;
+    	position: absolute;
 		top: 50%;
 		left: 50%;
 		padding: 16px;

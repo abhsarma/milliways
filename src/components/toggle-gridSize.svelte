@@ -51,6 +51,7 @@
 
 	.text-container {
 		height: 32px;
+		cursor: default;
 	}
 
 	.toggle-button {
@@ -61,6 +62,7 @@
 		display: inline-block;
 		padding: 4px;
 		margin-top: 8px;
+		cursor: pointer;
 		/* Firefox */
 	    -moz-transition: all 0.4s ease-in-out;
 	    /* WebKit */
