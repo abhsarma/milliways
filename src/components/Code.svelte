@@ -6,6 +6,23 @@
 	import CodeLine from './CodeLine.svelte';
 	
 	export let code;
+	
+	const regexp = /(branch)/g;
+	// if there's multiple matches of `branch` in a line, make sure they are split into separate lines:
+	function splitMultipleBranches(code) {
+		for (let i in code) {
+			const branches = [...code[i].matchAll(regexp)];
+			if (branches.length > 1) {
+				// we need to split up this string into multiple lines
+				// and then remove this element, and 
+				// replace it with a list of strings
+				code.splice(i, 1, code[i].split(/(?=branch)/))
+			}
+		}
+		return code.flat()
+	}
+
+	let formattedCode = splitMultipleBranches(code.code);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
@@ -26,7 +43,7 @@
 
 <div class="code-container">
 	<div class="code">
-		{#each code.code as line}
+		{#each formattedCode as line}
 			<CodeLine line={line} parameter={getParameter(line)} options={code.parameters[getParameter(line)]}  />
 		{/each}
 	</div>
