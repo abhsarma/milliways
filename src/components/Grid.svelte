@@ -76,6 +76,7 @@
 		.padding(0.1);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--textColor', colors.gray90)
 
 	let order = {};
 
@@ -98,8 +99,6 @@
 	function openFile() {
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
-
-		console.log(spec);
 
 		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(process.env.ANALYSIS_DOC,
@@ -145,7 +144,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}"><p class='{parameter_label}'>{parameter}</p></div>
+					<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
@@ -167,7 +166,9 @@
 							height="{namingDim}" 
 							class="option-name {option}">
 								<OptionToggle {parameters} {parameter} {option} on:hide/>
-								<div class="option-label {option_names} {option}">{option}</div>
+								<a class="tooltip-link" data-toggle="tooltip" title="{option}">
+									<div class="option-label parameter-{parameter} {option_names} {option}">{option}</div>
+								</a>
 						</foreignObject>
 					</g>
 				{/each}
@@ -266,5 +267,10 @@
 
 	div.parameter-name, .option-label {
 		cursor: move;
+	}
+
+	a.tooltip-link {
+		text-decoration: none;
+		color: var(--textColor) ;
 	}
 </style>

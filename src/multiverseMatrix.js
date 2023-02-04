@@ -179,11 +179,6 @@ class multiverseMatrix {
 		// deep copy data structures
 		let g_data = structuredClone(this.gridDataAll);
 	
-		// let combined_options = combine
-		// 			.map( d => d[1].map( j => [d[0], j]) )
-		// 			.flat(1)
-		// 			.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
-	
 		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
 					.map( d => d[1].map( j => [d[0], j]) )
 					.flat(1)
@@ -242,22 +237,10 @@ class multiverseMatrix {
 
 		let size = g_data.length;
 
+
 		let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
 		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
 		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
-
-		// we need to update the term and the associated data for creating CDFs
-		// if (graph == CI) {
-		// 	o_data = this.data.map(function(d) { 
-		// 		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-		// 			i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-		// 		))
-		// 	});
-		// } else {
-		// 	let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
-		// 	o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
-		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
-		// }
 
 		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
@@ -305,7 +288,7 @@ class multiverseMatrix {
 
 			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
-
+			// console.log(this.gridData, g_data);
 			this.gridData = g_data;
 
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]

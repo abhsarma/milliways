@@ -14,7 +14,7 @@ option_scale.subscribe(value => x_scale_options = value);
 group_params.subscribe(value => sortByGroupParams=value);
 
 let option_dragging = {}, previous_option_order = {}, parameter_dragging = {};
-let target, trigger;
+let target, target_class, trigger;
 
 d3.selection.prototype.moveToFront = function() {
 	return this.each(function(){
@@ -129,24 +129,19 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 	})
 	.on("start", function(event) {
 		let d = this.className.baseVal.split(' ')[1]
-		target = event.sourceEvent.target.tagName;
-
-		if (target == "DIV") {
-			trigger = event.sourceEvent.target.className.split(" ")[0];
-
-			if (trigger == "parameter-name") {
-				parameter_dragging[d] = x_scale_params(d);
-
-				// Move the column that is moving on the front
-				d3.select(this).moveToFront();
-				d3.selectAll(`g.parameter-col.${d}`).moveToFront();
-			}
+		target = event.sourceEvent.target.tagName; // target of drag an HTML element with tag p
+		trigger = event.sourceEvent.target.className.split(" ")[0]; // target of drag has class `parameter-label`
+		if (target == "P" & trigger == "parameter-label") {
+			parameter_dragging[d] = x_scale_params(d);
+			// Move the column that is moving on the front
+			d3.select(this).moveToFront();
+			d3.selectAll(`g.parameter-col.${d}`).moveToFront();
 		}
 	})
 	.on("drag", function(event) {
 		let d = this.className.baseVal.split(' ')[1]
 
-		if (trigger == "parameter-name" & target == "DIV") {
+		if (trigger == "parameter-label" & target == "P") {
 			parameter_dragging[d] = Math.max(
 				x_scale_params.range()[0] - 24,
 				Math.min(event.x, x_scale_params.range()[x_scale_params.range().length - 2] + 24)

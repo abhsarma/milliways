@@ -2,8 +2,8 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data.json';
-    import * as code from '../static/data/code.json';
+	import * as data from '../static/data/bm-data.json'; // change 
+    import * as code from '../static/data/bm-code.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
@@ -71,7 +71,7 @@
 		if (event.detail.state) {
 			$join_options = [...$join_options, {'parameter': parameter, 'options': option_pair, 'indices': indices}];
 		} else {
-			$join_options = $join_options.filter( i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)) );
+			$join_options = $join_options.filter( i => !((i.parameter === parameter) && JSON.stringify(i['options']) === JSON.stringify(option_pair)));
 		}
 	}
 

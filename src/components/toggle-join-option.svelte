@@ -4,7 +4,7 @@
 	import * as d3 from 'd3';
 	import { text, iconSize, header, namingDim, cell } from '../utils/dimensions.js'
 	import { join_options, option_scale } from '../utils/stores.js';
-	import { arrayEqual, any } from '../utils/helpers/arrayMethods.js'
+	import { arrayEqual, any, indexOfAll } from '../utils/helpers/arrayMethods.js'
 	import { colors } from '../utils/colorPallete.js';
 
 	export let parameter;
@@ -13,7 +13,8 @@
 
 	$: option_order =  $option_scale[parameter].domain();
 	$: option_pair = [ options[option_order[index]], options[option_order[index+1]] ];
-	$: selected = any(...$join_options.map(d => arrayEqual(d.options, option_pair)));
+	$: indices = indexOfAll($join_options.map(d => d.parameter), parameter)
+	$: selected = any(...indices.map(i => $join_options[i]).map(d => arrayEqual(d.options, option_pair)));
 
 	const dispatch = createEventDispatcher();
 

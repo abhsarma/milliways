@@ -13,9 +13,9 @@
 	$: selected = !($exclude_options[parameter].includes(option));
 	$: {
 		if (selected) {
-			d3.select(`div.option-label.${option}`).style("opacity", "1")
+			d3.select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "1")
 		} else {
-			d3.select(`div.option-label.${option}`).style("opacity", "0.2")
+			d3.select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "0.2")
 		}
 	}
 
