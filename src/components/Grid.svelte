@@ -144,7 +144,9 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
+					<a class="tooltip-link" data-toggle="tooltip" title="{parameter}">
+						<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
+					</a>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">

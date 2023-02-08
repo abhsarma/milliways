@@ -26,7 +26,7 @@
 		paramRegex:
 		- it just takes anything between 'branch(' and the first ')' afterwards
 	*/	
-	const branchRegex = /(.*\s*)(\bbranch\s*\(\s*[a-zA-Z_0-9]+\s*\))(.+?)/;
+	const branchRegex = /(.*\s*)(\bbranch\s*\(\s*[a-zA-Z_0-9]+\s*\))(.+)/;
 	let segments, branch_segment, pre_branch, post_branch
 	try {
 		segments = line.match(branchRegex);

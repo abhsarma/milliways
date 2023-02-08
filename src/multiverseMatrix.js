@@ -39,9 +39,7 @@ class multiverseMatrix {
 
 	_parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
-		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
-
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 

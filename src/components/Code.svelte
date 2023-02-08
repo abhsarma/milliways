@@ -15,8 +15,10 @@
 			if (branches.length > 1) {
 				// we need to split up this string into multiple lines
 				// and then remove this element, and 
-				// replace it with a list of strings
-				code.splice(i, 1, code[i].split(/(?=branch)/))
+				// replace it with a list of strings;
+				// adds indentation due to introduction of line breaks
+				// code.splice(i, 1, code[i].split(/(?=branch)/).map(x => "  " + x))
+				code.splice( i, 1, code[i].split(/(?=branch)/).map((x, i) => { if (i > 0) {return "  " + x} else {return x} }) )
 			}
 		}
 		return code.flat()

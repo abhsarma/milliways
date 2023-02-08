@@ -101,14 +101,14 @@ export let drag_options = (order) => d3.drag()
 				any(...diff_indices.map(v => x.indices.includes(v)))) // step 2.2 if yes, remove the indices which differ in position
 		);
 		join_options.update(arr => arr = options_to_join);
-		
+
 		delete option_dragging[index];
 		moveOptions(x_scale_options, parameter, option, Number(index));
 	});
 
 export function moveOptions(xscale, parameter, option, index) {
-	transition(d3.select(`g.option-headers.${parameter}.${option}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
-	transition(d3.select(`g.option-value.${parameter}.${option}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
+	transition(d3.select(`g.option-headers.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
+	transition(d3.select(`g.option-value.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
 }
 
 
