@@ -15,6 +15,8 @@
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Help from './components/help.svelte'
 	import Code from './components/Code.svelte';
+	import Table from './components/Table.svelte';
+	import * as tableData from '../static/data/durante.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
@@ -181,7 +183,10 @@
 			/>
 		</div>
 
-		<Code code={code} />
+		<div class="right-container" style="height: {windowHeight}px;">
+			<!-- <Code code={code} /> -->
+			<Table tableData={tableData.default}/>
+		</div>
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
@@ -268,6 +273,16 @@
 		border-radius: 8px;
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */
+	}
+
+	.right-container {
+		display: inline-flex;
+		position: absolute;
+		margin-left: 16px;
+		margin-right: 16px;
+		padding: 16px;
+		background-color: var(--bgColor);
+		border-radius: 8px;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */
