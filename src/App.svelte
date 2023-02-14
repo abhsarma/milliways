@@ -2,8 +2,8 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data.json'; // change 
-    import * as code from '../static/data/code.json';
+	import * as data from '../static/data/hurricane-data.json'; // change 
+    import * as code from '../static/data/hurricane-code.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';

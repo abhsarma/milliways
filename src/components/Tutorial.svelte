@@ -395,7 +395,7 @@
 	}
 
 	:global(.focus-elem) {
-		color: var(--activeColor);
+		color: var(--activeColor) !important;
 		font-weight: 700;
 		fill: var(--activeColor) !important;
 	}

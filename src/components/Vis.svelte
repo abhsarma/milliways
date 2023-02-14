@@ -97,7 +97,7 @@
 			.brushX()
 			.on('start', brushStart)
 			.on('end', brushEnd)
-			.extent([[margin.left,-y(1)],[w - margin.right,0]]);
+			.extent([[margin.left, 2], [w - margin.right, yscaleHist.range()[1]]]);
 
 		brushContainer.call(brush);
 	})
@@ -160,8 +160,6 @@
 					<text text-anchor="middle" dy="0em" y="{-text}" style="font-size: {text}">{tick}</text>
 				</g>
 			{/each}
-			<!-- brush is added onMount -->
-			<g class="brush-container" id="brush-container-{i}"></g>
 		</g>
 
 		<!-- Grid Lines -->
@@ -173,6 +171,9 @@
 				</g>
 			{/each}
 		</g>
+
+		<!-- brush is added onMount -->
+		<g class="brush-container" id="brush-container-{i}" transform="translate(0, {axisAdjust})"></g>
 
 		<!-- Histogram -->
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 

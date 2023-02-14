@@ -85,13 +85,19 @@
 		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
 	});
 
-	let bgRect;
+	let bgRect, scrollY = 0;
 
 	onMount(() => {
 		d3.selectAll(".option-headers").call(drag_options(order));
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
 		d3.select("g.grouped-sort-divider").call(dragSortDivider());
 		bgRect = document.querySelector("#bg-rect");
+
+		const grid_body = document.querySelector(".grid-container");
+
+		grid_body.addEventListener("scroll", event => {
+			scrollY = grid_body.scrollTop;
+		}, { passive: true });
 	})
 
 	let mvWindow;
@@ -219,7 +225,7 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} bind:h={h}/>
+		<SortByGroupDivider parameters={parameters} bind:h={h} bind:y={scrollY}/>
 	</svg>
 	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
 		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>

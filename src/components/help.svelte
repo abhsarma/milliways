@@ -26,8 +26,8 @@
 	</div>
 	{#if menu}
 		<div class="help-dropdown-menu" >
-			<p class="help-option" on:click={showInterfaceTutorial}>Interface Help</p>
-			<p class="help-option" on:click={showHandsOnTutorial}>Hands-on Tutorial</p>
+			<p class="help-option" on:click={showInterfaceTutorial}>Quick Tour</p>
+			<p class="help-option" on:click={showHandsOnTutorial}>Demo</p>
 		</div>
 	{/if}
 </div>
