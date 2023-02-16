@@ -1,6 +1,6 @@
 <script>
 	import { css } from '@emotion/css';
-	import { header, cell, nameContainer, gridNamesHeight, popup } from '../utils/dimensions.js';
+	import { header, cell, nameContainer, gridNamesHeight, demo } from '../utils/dimensions.js';
 	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { createEventDispatcher } from 'svelte';
@@ -16,12 +16,14 @@
 	export let steps;
 	export let containsImage;
 
-	let pw;
-	if (containsImage) {
-		pw = 496;
-	} else {
-		pw = popup.width;
-	}
+	let pw = demo.width;
+	// if (containsImage) {
+	// 	pw = 496;
+	// } else {
+	// 	pw = demo.width;
+	// }
+
+	console.log(pw)
 
 	const infoPopup = css`
 		width: ${pw}px;
@@ -29,35 +31,11 @@
 		color: ${colors.text};
 	`;
 
-	const pointerRight = css`
-		transform: translate(-${(popup.shift + cell.padding + 1)}px, ${3*popup.shift/2}px) rotate(-135deg);;
-	`;
-
-	const pointerLeft = css`
-		transform: translate(${popup.shift + cell.padding + 1}px, ${3*popup.shift/2}px) rotate(45deg);;
-	`;
-
-	const shiftLeft = css`
-		transform: translate(-${popup.width + 2*popup.padding + popup.shift + cell.padding}px, -${3*popup.shift/2}px);
-	`  // add some buffer
-
-	const shiftRight = css`
-		transform: translate(${popup.shift + cell.padding}px, 0px);
-	`  // add some buffer
-
-	const shiftCentre = css`
+	const shift = css`
 		transform: translate(-50%, -50%);
 	`
 
-	const shadowLeft = css`
-		box-shadow: -2px 2px 2px 0px #cccccc;
-	`
-
-	const shadowRight = css`
-		box-shadow: 2px 2px 2px 0px #cccccc;
-	`
-
-	const shadowCentre = css`
+	const shadow = css`
 		box-shadow: 0px 2px 2px 0px #cccccc;
 	`
 
@@ -70,28 +48,8 @@
 		color: ${colors.text};
 		background-color: ${colors.popup};
 	`
-	let shift, shadow, next, pointerPos = null;
+	let next;
 	let activePrev  = false, activeSkip = false, activeNext = false;
-
-	if (direction == "left") {
-		shift = shiftLeft;
-		shadow = shadowRight;
-	} else if (direction == "right") {
-		shift = shiftRight;
-		shadow = shadowLeft;
-	} else if (direction == "centre") {
-		// center
-		shift = shiftCentre;
-		shadow = shadowCentre;
-	}
-
-	if (pointer == "left") {
-		pointerPos = pointerLeft;
-	} else if (pointer == "right") {
-		pointerPos = pointerRight;
-	} else if (pointer == "hidden") {
-		pointerPos = null;
-	}
 
 	function incrementCount() {
 		step += 1
@@ -107,9 +65,7 @@
 		});
 	}
 
-	if (step == 0) {
-		next = "Start Tutorial"
-	} else if (step > 0 & step <= steps) {
+	if (step <= steps) {
 		next = "Next"
 	} else {
 		next = "Finish"
@@ -127,6 +83,11 @@
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
+	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} on:click={removeTutorial}>
+		<svg class="svg" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+			<path d="M6 5.293L10.646.646l.707.708L6.708 6l4.647 4.646-.708.708L6 6.707l-4.646 4.647-.708-.707L5.293 6 .646 1.354l.708-.707L6 5.293z" fill-rule="evenodd" fill-opacity="1" fill="#666666" stroke="none"></path>
+		</svg>
+	</button>
 	<p>{@html message}</p>
 	{#if step > 0 & step <= steps}
 		<p class="progress-indicator">{step}/{steps}</p>
@@ -135,16 +96,11 @@
 	{#if step > 0}
 		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
 	{/if}
-	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} on:click={removeTutorial}>Skip</button>
 </div>
-{#if pointerPos}
-	<div class="pointer {pointerPos}" style="top: {position.y}px; left: {position.x}px;"></div>
-}
-{/if}
 
 <style type="text/css">
 	p {
-		margin: 8px 8px 32px 8px;
+		margin: 0px 80px 32px 8px;
 		font-family: 'Avenir Next';
 	}
 

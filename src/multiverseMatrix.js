@@ -191,21 +191,32 @@ class multiverseMatrix {
 			let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
+		
+
+			// vec is a modified version of g_data where the options (say op1, op2) 
+			// which are joined are replaced by an array [op1, op2]
 			let vec = g_data.map((d, i) => {
-				let options = Object.values(d).flat();
+				// let options = Object.values(d).flat();
 				let g = groups.forEach(x => {
-						let includes = options.map(d => x['group'].includes(d)).reduce((a, b) => (a || b));
+						let options = d[x['parameter']];
+						let includes = options.map(y => x['group'].includes(y)).reduce((a, b) => (a || b));
 						if (includes) {
 							d[x['parameter']] = x['group']
 						}
 					})
 				return d
 			});
+
+			// vec.map((d, i) => {
+			// 	console.log(i, d);
+			// })
+
+			// console.log(vec)
 	
-			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()))
+			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
 	
 			let non_duplicates = duplicates_data.map((d, i) => {
+				// console.log(d, duplicates_data.indexOf(d), i)
 				return duplicates_data.indexOf(d) == i;
 			})
 	
@@ -286,7 +297,6 @@ class multiverseMatrix {
 
 			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
-			// console.log(this.gridData, g_data);
 			this.gridData = g_data;
 
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]

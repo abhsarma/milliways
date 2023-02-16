@@ -18,6 +18,10 @@ import { mean } from './arrayMethods.js'
 		return {gridData, outcomeData, estimateData}
 	}
 
+	if ((gridData.length != outcomeData[outcomeIndex].length) | (gridData.length != estimateData[outcomeIndex].length)) {
+		throw new Error(`gridData, outcomeData and estimateData for index ${outcomeIndex} are not of the same size`)
+	}
+
 	// Add the sorting factor (the outcome that we are sorting on) to the gridData
 	let gridDataSortingList = []
 	for (let i =0; i< outcomeData[outcomeIndex].length; i++){

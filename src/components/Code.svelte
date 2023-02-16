@@ -28,6 +28,7 @@
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--textColor', colors.text)
 
 	function getParameter(line) {
 		const paramRegex  = /(?<=branch\().*?(?=\))/;
@@ -45,6 +46,7 @@
 
 <div class="code-container">
 	<div class="code">
+		<h4>Code</h4>
 		{#each formattedCode as line}
 			<CodeLine line={line} parameter={getParameter(line)} options={code.parameters[getParameter(line)]}  />
 		{/each}
@@ -52,6 +54,12 @@
 </div>
 
 <style>
+	h4 {
+		font-size: 21px;
+		margin: 4px 0px 12px 0px;
+		font-family: Avenir Next;
+		color: var(--textColor);
+	}
 	div.code-container {
 		display: inline-flex;
 		position: absolute;

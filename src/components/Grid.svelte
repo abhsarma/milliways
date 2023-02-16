@@ -68,7 +68,7 @@
 
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
-	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
+	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding) + 8;
 	$: h = cell.padding + data.length * cellHeight + 2*margin.bottom;
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.length))
@@ -194,7 +194,6 @@
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, 0)">
 				{#each parameters[parameter] as option, i}
-					<!-- {console.log(option, i, $option_scale[parameter].domain(), $option_scale[parameter].range()), $option_scale[parameter](i)} -->
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}

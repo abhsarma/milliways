@@ -11,3 +11,4 @@ export const windowHeight = (window.innerHeight - 170);
 export const scrollbarWidth = 12;
 export const gridNamesHeight = margin.top + 4 * cell.padding + iconSize + namingDim; // yscale(0)
 export const popup = {width: 280, padding: 16, shift: 16}
+export const demo = {width: 640, padding: 16, shift: 16}

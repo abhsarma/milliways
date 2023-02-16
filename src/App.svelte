@@ -11,14 +11,16 @@
 	import { calculateParamPosition } from './utils/drag.js';
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
-	import Tutorial from './components/Tutorial.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Help from './components/help.svelte'
+	import Tutorial from './components/Tutorial.svelte';
+	import Demo from './components/Demo.svelte';
 	import Code from './components/Code.svelte';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
 	let showInterfaceTutorial = false;
+	let showDemo = false;
 	let showMenu = false;
 
 	let m;
@@ -95,6 +97,8 @@
 		}
 	}
 
+	let coords_x1 = 150, coords_y1 = 150;
+
 	onMount(() => {
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
@@ -140,7 +144,7 @@
 
 			<ToggleSize/>
 
-			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial}/>
+			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial} bind:demo={showDemo}/>
 		</div>
 	</div>
 
@@ -153,6 +157,7 @@
 
 	<!-- CREATES THE OUTCOME GRAPH(S) -->
 	<div class="main">
+		<div class="highlight hidden"></div>
 		<div class="vis-container" style="height: {windowHeight}px;">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
@@ -185,12 +190,34 @@
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
+		{#if showDemo}
+			<Demo bind:visible={showDemo} parameters={m.parameters}/>
+		{/if}
 	</div>
 </main>
 
 <style>
 	main {
 		white-space: nowrap;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
+	div.highlight {
+		position: absolute;
+		animation: highlightElem 2s ease-in-out infinite;
+		border: 3px solid #E0797D;
+		height: 12px;
+		width: 12px;
+		border-radius: 40px;
+		z-index: 999;
+	}
+
+	@keyframes highlightElem{
+		0% { width: 12px; height: 12px; top: -6px; left: -6px; opacity: 100% }
+		50%, 100% { width: 40px; height: 40px; top: -20px; left: -20px; opacity: 0% }
 	}
 
 	div.main {
