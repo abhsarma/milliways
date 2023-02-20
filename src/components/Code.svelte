@@ -24,22 +24,8 @@
 	}
 </script>
 
-<div class="code-container">
-	<div class="code">
-		{#each code.code as line}
-			<CodeLine line={line} parameter={getParameter(line)} options={code.parameters[getParameter(line)]}  />
-		{/each}
-	</div>
+<div class="code">
+	{#each code.code as line}
+		<CodeLine line={line} parameter={getParameter(line)} options={code.parameters[getParameter(line)]}  />
+	{/each}
 </div>
-
-<style>
-	div.code-container {
-		display: inline-flex;
-		position: absolute;
-		margin-left: 16px;
-		margin-right: 16px;
-		padding: 16px;
-		background-color: var(--bgColor);
-		border-radius: 8px;
-	}
-</style>

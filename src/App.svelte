@@ -184,8 +184,16 @@
 		</div>
 
 		<div class="right-container" style="height: {windowHeight}px;">
-			<!-- <Code code={code} /> -->
-			<Table tableData={tableData.default}/>
+			<div class="code-container">
+				<Code code={code} />
+			</div>
+			<div class="table-container">
+				<!-- don't make cellWidth<105. doesn't look good -->
+				<Table
+					tableData={tableData.default}
+					cellWidth=150
+				/>
+			</div>
 		</div>
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
@@ -277,12 +285,26 @@
 
 	.right-container {
 		display: inline-flex;
+		flex-direction: column;
 		position: absolute;
 		margin-left: 16px;
 		margin-right: 16px;
-		padding: 16px;
+		width: 500px; /* TEST */
+	}
+	
+	.code-container {
 		background-color: var(--bgColor);
+		min-height: calc(25% - 16px);
+		overflow-x: auto;
+		margin-bottom: 8px;
+		padding: 16px;
 		border-radius: 8px;
+	}
+
+	.table-container {
+		background-color: var(--bgColor);
+		margin-top: 8px;
+		overflow: auto;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

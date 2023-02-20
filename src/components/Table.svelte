@@ -8,16 +8,13 @@
             {
                 "field": <string>,
                 "values": [<field_type>,...],
-                "field_type": <string>
+                "field_type": "nominal" | "ordinal" | "numeric" | "Date"
             },
             ...
         ]
         Each {} is a column.
     */
-    export let tableData;
-    
-    let headers = [];
-    for (let d of tableData) headers.push({ field:d.field, field_type:d.field_type});
+    export let tableData, cellWidth;
 
     let rows = [];
     for (let i = 0; i < tableData[0].values.length; i++) {
@@ -30,16 +27,14 @@
 </script>
 
 <div class="table">
-    <TableHeader headers={headers} />
+    <TableHeader
+        tableData={tableData}
+        width={cellWidth}
+    />
     {#each rows as row}
-        <TableRow row={row} />
+        <TableRow
+            row={row}
+            width={cellWidth}
+        />
     {/each}
 </div>
-
-<style>
-    .table {
-        border-collapse: collapse;
-        overflow: scroll;
-        /* height: 50%; */
-    }
-</style>
