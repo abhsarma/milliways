@@ -2,8 +2,8 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/hurricane-data.json'; // change 
-    import * as code from '../static/data/hurricane-code.json';
+	import * as data from '../static/data/data.json'; // change 
+    import * as code from '../static/data/code.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
@@ -188,15 +188,22 @@
 			/>
 		</div>
 
-		<!-- CREATES THE CODE PANEL FOR ANALYSIS CODE OUTPUT -->
-		<div class="code-container"  style="height: {(windowHeight - groupPadding)/2}px">
-			<Code code={code} />
+		<div class="right-container" style="height: {windowHeight}px;">
+			<!-- CREATES THE CODE PANEL FOR ANALYSIS CODE OUTPUT -->
+			<div class="code-container" style="height: {windowHeight/2 - groupPadding}px">
+				<Code code={code} />
+			</div>
+
+			<!-- CREATES THE DATA PANEL FOR PROVIDING OVERVIEW OF THE DATA -->
+			<div class="table-container" style="">
+				<DataTable
+					tableData={tableData.default}
+					cellWidth=150
+					h={windowHeight/2}
+				/>
+			</div>
 		</div>
 
-		<div class="table-container" style="height: {windowHeight}px;">
-			<!-- <Code code={code} /> -->
-			<DataTable tableData={tableData.default}/>
-		</div>
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
@@ -307,29 +314,32 @@
 		-ms-overflow-style: none;  /* IE and Edge */
 	}
 
-	.table-container {
+	.right-container {
 		display: inline-flex;
+		flex-direction: column;
 		position: absolute;
 		margin-left: 16px;
 		margin-right: 16px;
-		padding: 16px;
+		width: 500px; /* TEST */
+	}
+	
+	.code-container {
+		/*display: inline-flex;
+		position: absolute;*/
+
 		background-color: var(--bgColor);
+		overflow-x: auto;
+		margin-bottom: 8px;
 		border-radius: 8px;
 
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */
 	}
 
-	.code-container {
-		display: inline-flex;
-		position: absolute;
-		margin-left: 16px;
-		margin-right: 16px;
-		background-color: var(--bgColor);
-		border-radius: 8px;
-		
-		overflow-y: scroll;
-		-ms-overflow-style: none;  /* IE and Edge */
+	.table-container {
+		/*	background-color: var(--bgColor);
+		padding: 8px; */
+		margin-top: 8px;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

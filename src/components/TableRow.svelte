@@ -1,31 +1,38 @@
 <script>
-    export let row;
+	import { css } from "@emotion/css";
+
+
+	export let row, width;
+	let cell = css`
+		min-width: ${width}px;
+		width: ${width}px;
+	`
 </script>
 
 <div class="table-row">
-    {#each row as value}
-        <div class="table-cell">{value}</div>
-    {/each}
+	{#each row as value}
+		<div class="table-cell {cell}">{value}</div>
+	{/each}
 </div>
 
 <style>
-    .table-row {
-        font-size: 11px;
-        display: flex;
-        flex-direction: row;
-    }
+	.table-row {
+		font-size: 11px;
+		display: flex;
+		flex-direction: row;
+		border-bottom: 1px solid #efefef;
+		height: fit-content;
+		width: fit-content;
+	}
 
-    .table-cell {
-        min-width: 100px;
-        width: 100px;
-        padding: 8px;
-        border: 1px solid black;
-        border-top: 0;
-        white-space: initial;
-        word-break: break-all;
-    }
+	.table-cell {
+		padding: 8px;
+		border-top: 0;
+		white-space: initial;
+		word-break: break-all;
+	}
 
-    .table-cell:not(:first-child) {
-        border-left: 0;
-    }
+	.table-cell:not(:first-child) {
+		border-left: 1px solid #efefef;
+	}
 </style>

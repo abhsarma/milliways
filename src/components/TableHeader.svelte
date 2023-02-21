@@ -1,42 +1,113 @@
 <script>
-    export let headers;
+	import { css } from "@emotion/css";
+	import TableHistogram from "./TableHistogram.svelte";
+	import { onMount } from 'svelte';
+
+	export let tableData, width;
+
+	let cell = css`
+		min-width: ${width}px;
+		width: ${width}px;
+	`
+
+	onMount(() => {
+		let container = document.querySelector('div.table');
+		let h = document.querySelector('div.table-label').getBoundingClientRect().height;
+
+		container.addEventListener('scroll', function() {
+			let scrollPosition = container.scrollTop;
+
+			if (scrollPosition > h) {
+				document.querySelector('div.table-header').classList.add('c--scrolled');
+			} else {
+				document.querySelector('div.table-header').classList.remove('c--scrolled');
+			}
+		});
+	})
 </script>
 
 <div class="table-header">
-    {#each headers as header}
-        <div class="table-cell">
-            <b>{header.field}</b>
-            <i>{header.field_type}</i>
-        </div>
-    {/each}
+	<div class="col-name-row">
+	    {#each tableData as col,i}
+			<div class="column-header">
+				<div class="table-title table-cell {cell}">
+					<b class="{cell}">{col.field}</b>
+					<i>{col.field_type}</i>
+				</div>
+			</div>
+		{/each}
+	</div>
+	<div class="histogram-row">
+		{#each tableData as col,i}
+			<div class="column-header" id="data-column-{i}">
+				<div class="histogram-container table-cell {cell}">
+					<TableHistogram
+						data={col}
+						maxBins=20
+						histHeight={width/3}
+						histWidth={width}
+					/>
+				</div>
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
-    .table-header {
-    position: relative;
-        position: sticky;
-        top: 0;
-        background-color: white;
-        font-size: 14px;
-        display: flex;
-        flex-direction: row;
-    }
 
-    .table-cell {
-        min-width: 100px;
-        width: 100px;
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        border: 1px solid black;
-    }
+	.table-header {
+		display: flex;
+		position: sticky;
+		top: 0px;
+		font-size: 12px;
+		flex-direction: column;
+		background-color: #ffffff;
+		border-top: 1px solid #efefef;
 
-    .table-cell:not(:first-child) {
-        border-left: 0;
-    }
+		height: fit-content;
+		width: fit-content;
+	}
 
-    b {
-        white-space: initial;
-        word-break: break-all;
-    }
+	:global(.c--scrolled) {
+		box-shadow: #4f4f4f30 0px 4px 4px 0px, #4f4f4f30 0px 8px 12px 6px
+	}
+
+	.col-name-row {
+		display: flex;
+		flex-direction: row;
+		border-bottom: 1px solid #efefef;
+	}
+
+	.histogram-row {
+		display: flex;
+		flex-direction: row;
+		border-bottom: 1px solid #efefef;
+	}
+
+	.column-header {
+		display: flex;
+		flex-direction: column;
+		align-content: space-between;
+	}
+
+	.column-header:not(:first-child) {
+		border-left: 1px solid #efefef;
+	}
+
+	.table-cell {
+		display: flex;
+		flex-direction: column;
+		padding: 8px;
+	}
+
+	.histogram-container {
+		overflow: auto;
+/*        border-right: 1px solid #efefef;*/
+	}
+
+	b {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
 </style>
