@@ -4,40 +4,32 @@
 	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { createEventDispatcher } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import Minimise from './icons/minimise.svelte';
+	import Maximise from './icons/maximise.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let message;
 	export let step;
-	export let position;
-	export let adjust;
-	export let direction;
-	export let pointer;
 	export let steps;
 	export let containsImage;
 
-	let pw = demo.width;
-	// if (containsImage) {
-	// 	pw = 496;
-	// } else {
-	// 	pw = demo.width;
-	// }
+	let minimised = false, status = true;
 
-	console.log(pw)
+	let pw;
+	if (containsImage) {
+		pw = '80%';
+	} else {
+		pw = '40%';
+	}
 
 	const infoPopup = css`
-		width: ${pw}px;
+		width: ${pw};
+		min-height: 64px;
 		background-color: ${colors.popup};
 		color: ${colors.text};
 	`;
-
-	const shift = css`
-		transform: translate(-50%, -50%);
-	`
-
-	const shadow = css`
-		box-shadow: 0px 2px 2px 0px #cccccc;
-	`
 
 	const highlight_btn = css`
 		background-color: ${colors.active};
@@ -48,8 +40,7 @@
 		color: ${colors.text};
 		background-color: ${colors.popup};
 	`
-	let next;
-	let activePrev  = false, activeSkip = false, activeNext = false;
+	let next, position, minified_position;
 
 	function incrementCount() {
 		step += 1
@@ -72,54 +63,182 @@
 	}
 
 	function removeTutorial() {
-		console.log("skipping tutorial...")
-		dispatch('skip', {
+		dispatch('close', {
+			step: step
+		});
+	}
+
+	function minimiseTutorial() {
+
+		dispatch('minimise', {
+			state: minimised,
 			step: step
 		});
 	}
 
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--secondaryColor', colors.secondary)
+
+	onMount(() => {
+		let element = document.querySelector('.demo-container')
+		position = element.getBoundingClientRect();
+		minified_position = {'x': (window.innerWidth - position.left - position.width/2 - 120) + "px", 'y': (position.bottom - position.height/2 - window.innerHeight + 40) + "px"}
+
+		console.log(window.innerHeight, window.innerWidth, position, minified_position);
+
+		document.documentElement.style.setProperty('--min-x', minified_position.x)
+		document.documentElement.style.setProperty('--min-y', minified_position.y)
+
+		element.addEventListener('transitionend', () => {
+			status = true;
+		});
+	});
 </script>
 
-<div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
-	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} on:click={removeTutorial}>
-		<svg class="svg" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-			<path d="M6 5.293L10.646.646l.707.708L6.708 6l4.647 4.646-.708.708L6 6.707l-4.646 4.647-.708-.707L5.293 6 .646 1.354l.708-.707L6 5.293z" fill-rule="evenodd" fill-opacity="1" fill="#666666" stroke="none"></path>
-		</svg>
-	</button>
-	<p>{@html message}</p>
-	{#if step > 0 & step <= steps}
-		<p class="progress-indicator">{step}/{steps}</p>
+<div class="demo-container {infoPopup}" class:minimised="{minimised}">
+	{#if (status && !minimised)}
+		<div class="action-btn" on:click={removeTutorial}>
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M7.64645 7.29944L8.00024 7.65323L8.35379 7.2992L14.9367 0.707346L15.2837 1.05436L8.70033 7.64669L8.34725 8.00024L8.70056 8.35355L15.2929 14.9459L14.9459 15.2929L8.35355 8.70056L8 8.34701L7.64645 8.70056L1.05412 15.2929L0.707107 14.9459L7.29944 8.35355L7.65299 8L7.29944 7.64645L0.707107 1.05412L1.05412 0.707107L7.64645 7.29944Z" fill="#979797" stroke="#979797"/>
+			</svg>
+		</div>
 	{/if}
-	<button class="{highlight_btn}" class:activeNext on:mouseenter={() => activeNext = true} on:mouseleave={() => activeNext = false} on:click={incrementCount}>{next}</button>
-	{#if step > 0}
-		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
+
+	{#if (status && !minimised)}
+		<div class="action-btn" on:click={() => { status = false; minimised = true; minimiseTutorial() }}>
+			<Minimise h={18} w={18} fill={colors.gray70}/>
+		</div>
+	{:else if (status && minimised)}
+		<div class="center-pos" on:click={() => { status = false; minimised = false; minimiseTutorial() }}>
+			<Maximise h={18} w={18} fill={colors.white}/>
+		</div>
+	{/if}
+
+	{#if (status && !minimised)}
+		<div class="info-container">
+			<p>{@html message}</p>
+			{#if step > 0 & step <= steps}
+				<p class="progress-indicator">{step}/{steps}</p>
+			{/if}
+			<button class="{highlight_btn} progress-btn next-btn" on:click={incrementCount}>{next}</button>
+			{#if step > 0}
+				<button class="{plain_btn} progress-btn plain-btn" on:click={decrementCount}>Prev</button>
+			{/if}
+		</div>
 	{/if}
 </div>
 
 <style type="text/css">
-	p {
-		margin: 0px 80px 32px 8px;
+	.demo-container {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		padding: 4px;
+		border-radius: 8px;
+		white-space: pre-wrap;
+		transform: translate(-50%, -50%);
+		box-shadow: 0px 2px 2px 0px #cccccc;
+		transition: ease-in-out .5s;
+		z-index: 99;
+	}
+	
+	.minimised {
+		position: fixed;
+		height: 64px;
+		width: 64px;
+		border-radius: 64px;
+		white-space: nowrap;
+		color: #ffffff;
+		background-color: #99A3E0;
+		margin: 0px;
+		padding: 0px;
+		transform: translate(var(--min-x), var(--min-y));
+		transition: ease-in-out .5s;
+		box-shadow: 0px 0px 5px 0px #979797;
+		cursor: pointer;
+	}
+
+	.action-btn {
+		border-radius: 4px;
+		padding: 12px;
+		cursor: pointer;
+		float: right;
+		background-color: transparent;
+	}
+
+	.action-btn:hover,
+	.action-btn:active,
+	.action-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.center-pos {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		border-radius: 64px;
+	}
+
+	.center-pos:hover,
+	.center-pos:active,
+	.center-pos:focus {
+		background-color: var(--secondaryColor);
+	}
+
+	button {
 		font-family: 'Avenir Next';
+		border: none;
+		border-radius: 4px;
+	}	
+
+	p {
+		font-family: 'Avenir Next';
+		margin: 16px;
+		font-size: 14px;
+		line-height: 20px;
 	}
 
 	p.progress-indicator {
 		color: #aaaaaa;
 	}
 
-	:global(.definition) {
-		font-style: italic;
-		color: var(--secondaryColor);
+	:global(.demo-list) {
+		margin: 0px 0px 32px 8px;
 	}
 
-	button {
+	:global(.emphasis) {
+		color: var(--activeColor);
+		font-style: italic;
+		font-weight: 700;
+	}
+
+	:global(.demo-list > li) {
+		margin: 8px 0px !important;
+	}
+
+	:global(video) {
+		border-radius: 8px;
+	}
+
+	.progress-btn {
 		margin: 0px 4px;
-		font-family: 'Avenir Next';
-		border: none;
 		padding: 8px 16px;
+		cursor: pointer;
 		float: right;
-		border-radius: 4px;
+	}
+
+	.plain-btn:hover,
+	.plain-btn:active,
+	.plain-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.next-btn:hover,
+	.next-btn:active,
+	.next-btn:focus {
+		background-color: var(--hoverColor);
 	}
 
     .progress-indicator {
@@ -128,44 +247,15 @@
     	margin: 0px;
     }
 
-	.activePrev  {
-		background-color: #e0e0e0;
-		cursor: pointer;
+    .info-container {
+    	padding: 12px;
+    }
+
+    .info-container:after { 
+		content: "."; 
+		visibility: hidden; 
+		display: block; 
+		height: 0; 
+		clear: both;
 	}
-
-	.activeSkip {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeNext {
-    	background-color: var(--hoverColor);
-    	cursor: pointer;
-    }
-
-    .popup {
-    	position: absolute;
-		top: 50%;
-		left: 50%;
-		padding: 16px;
-		border-radius: 8px;
-		white-space: pre-wrap;
-		z-index: 99;
-    }
-
-    .pointer {
-		content: "";
-		position: absolute;
-		width: 0;
-		height: 0;
-		box-sizing: border-box;
-		border: 8px solid black;
-		border-color: transparent transparent #f0f0f0 #f0f0f0;
-		box-shadow: -2px 2px 2px 0px #cccccc;
-		transform-origin: 0 0;
-		margin-left: 0em;
-		bottom: 0em;
-		left: 100%;
-		z-index: 99;
-    }
 </style>

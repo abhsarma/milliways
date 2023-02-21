@@ -186,12 +186,15 @@
 			/>
 		</div>
 
-		<Code code={code} />
+		<!-- CREATES THE CODE PANEL FOR ANALYSIS CODE OUTPUT -->
+		<div class="code-container"  style="height: {(windowHeight - groupPadding)/2}px">
+			<Code code={code} />
+		</div>
 		{#if showInterfaceTutorial}
-			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
+			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
 		{#if showDemo}
-			<Demo bind:visible={showDemo} parameters={m.parameters}/>
+			<Demo bind:visible_demo={showDemo} parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
@@ -293,6 +296,18 @@
 		position: relative;
 		margin-left: 16px;
 		border-radius: 8px;
+		overflow-y: scroll;
+		-ms-overflow-style: none;  /* IE and Edge */
+	}
+
+	div.code-container {
+		display: inline-flex;
+		position: absolute;
+		margin-left: 16px;
+		margin-right: 16px;
+		background-color: var(--bgColor);
+		border-radius: 8px;
+		
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */
 	}

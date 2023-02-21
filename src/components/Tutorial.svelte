@@ -6,18 +6,18 @@
 	import Popup from './Popup.svelte';
 	import { parameter_scale, option_scale } from '../utils/stores.js'
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
-	import mcdf from '../assets/images/mcdf.png'
+	import mcdf from '../assets/images/mcdf.gif'
 	import groupsort from '../assets/images/grouped-sort.gif'
 
 	export let parameters;
-	export let visible;
+	export let visible_tutorial;
 
 	export const popupBg = css`
 		position:absolute;
 		top: 0;
 		left: 0;
-		height: 100%;
-		width: 100%;
+		min-height: 100%;
+		min-width: 100%;
 		background-color: ${colors.gray70 + "80"}; // rgba(151, 151, 151, 0.5)
 		backdrop-filter: blur(3px);
 		z-index: 20;
@@ -32,7 +32,7 @@
 		background-color: ${colors.popup};
 	`
 
-	let activePrev  = false, activeSkip = false, activeNext = false, positions;
+	let positions;
 	let step = 0;
 	let N = 15;
 	$: first_param = "";
@@ -43,23 +43,14 @@
 
 	function incrementCount() {
 		step += 1;
-		activePrev  = false;
-		activeSkip = false;
-		activeNext = false;
 	}
 
 	function decrementCount() {
 		step -= 1;
-		activePrev  = false;
-		activeSkip = false;
-		activeNext = false;
 	}
 
 	function resetCount() {
 		step = 0;
-		activePrev  = false;
-		activeSkip = false;
-		activeNext = false;
 	}
 
 	function setLayout(toFront = "", highlightElem = "") {
@@ -92,24 +83,7 @@
 			elFront.forEach(e => {
 				e.classList.remove("to-front");
 			})
-
 		}
-
-		// // understate all elements which were highlighted
-		// let elFocus = Array.from(document.getElementsByClassName("focus-elem"));
-		// if (elFocus.length) {
-		// 	elFocus.forEach(e => {
-		// 		e.classList.remove("focus-elem");
-		// 	})
-		// }
-
-		// // understate all elements which were highlighted
-		// let elFocusBorder = Array.from(document.getElementsByClassName("focus-elem-border"));
-		// if (elFocusBorder.length) {
-		// 	elFocusBorder.forEach(e => {
-		// 		e.classList.remove("focus-elem-border");
-		// 	})
-		// }
 
 		if (toFront) {
 			document.querySelector(toFront).classList.add("to-front");
@@ -123,19 +97,12 @@
 			document.querySelector('div.highlight').style.transform = `translate(${coords.x + coords.width/2 - 3}px, ${coords.y + coords.height/2 - 3}px)`;
 		}
 
-		// if (focusBorder) {
-		// 	// document.querySelector(focusBorder).classList.add("focus-elem-border");
-
-		// 	let coords = document.querySelector(focusBorder).getBoundingClientRect();
-		// 	document.querySelector('div.highlight').classList.remove("hidden")
-		// 	document.querySelector('div.highlight').style.transform = `translate(${coords.x + coords.width/2 - 3}px, ${coords.y + coords.height/2 - 3}px)`;
-		// }
-
 		return ""
 	}
 
 	function updatePopup(event) {
-		step = Number(event.detail.step)
+		step = Number(event.detail.step);
+		console.log(step);
 		if (step > (N + 1)) {
 			removePopup(event)
 		}
@@ -143,7 +110,7 @@
 
 	function removePopup(event) {
 		setLayout();
-		visible = false
+		visible_tutorial = false
 	}
 
 	function getPosition(el, right = false, offset = {"x": 0, "y": 0}) {
@@ -179,7 +146,7 @@
 	{#if step == 0}
 		{setLayout()}
 		<Popup 
-			message = "Welcome to the multiverse visualisation tool"
+			message = "Welcome to the multiverse visualisation tool."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:0}}
@@ -207,7 +174,7 @@
 	{:else if step == 2}
 		{setLayout("div.grid-container", `div.parameter-name.${first_param}`)}
 		<Popup 
-			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree<br><br>You can change the order of the parameters by dragging on them."
+			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification.<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree.<br><br>You can change the order of the parameters by dragging on them."
 			step = {step}
 			position = {positions.parameter}
 			adjust = {{x:0,y:-0}}
@@ -333,7 +300,7 @@
 	{:else if step == 11}
 		{setLayout("div.vis-container")}
 		<Popup 
-			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img src={mcdf} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf} width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
 			position = {positions.result0}
 			adjust = {{x:0,y:-0}}
@@ -350,7 +317,7 @@
 			message = "This horizontal slider allows you to perform a <span class='definition'>sort based on group means</span>. Options of parameters to the right of the slider are sorted based on their group means, while those to the left are sorted within each group: <br><br><img style='border-radius: 8px;' src={groupsort} width='250' alt='how sorting based on group means work'/>"
 			step = {step}
 			position = {positions.gsort}
-			adjust = {{x:0,y:-210}}
+			adjust = {{x:0,y:-280}}
 			direction = "right"
 			pointer = "left"
 			on:next={updatePopup}
@@ -412,6 +379,7 @@
 			on:next={updatePopup}
 			on:skip = {removePopup}
 			steps = {N}
+			containsImage = {false}
 		/>
 	{/if}
 </div>
@@ -430,20 +398,5 @@
 
 	:global(.to-front) {
 		z-index: 99;
-    }
-
-	.activePrev  {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeSkip {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeNext {
-    	background-color: #ED8A68;
-    	cursor: pointer;
     }
 </style>

@@ -4,13 +4,11 @@
 	import { header, cell, nameContainer, gridNamesHeight, popup } from '../utils/dimensions.js';
 	import { colors } from '../utils/colorPallete.js';
 	import Popup from './PopupDemo.svelte';
-	import { parameter_scale, option_scale } from '../utils/stores.js'
-	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
-	import mcdf from '../assets/images/mcdf.png'
-	import groupsort from '../assets/images/grouped-sort.gif'
+
 
 	export let parameters;
-	export let visible;
+	export let visible_demo;
+	let minimise_demo = false;
 
 	export const popupBg = css`
 		position:absolute;
@@ -34,10 +32,7 @@
 
 	let activePrev  = false, activeSkip = false, activeNext = false, positions;
 	let step = 0;
-	let N = 15;
-
-	// div positioning css variables
-	$: position = {x: window.innerWidth/2, y: window.innerHeight/2};
+	let N = 7;
 
 	function incrementCount() {
 		step += 1;
@@ -62,27 +57,114 @@
 
 	function updatePopup(event) {
 		step = Number(event.detail.step)
+		console.log(step);
 		if (step > (N + 1)) {
+			console.log(step, "exceeded limit");
 			removePopup(event)
 		}
 	}
 
 	function removePopup(event) {
-		visible = false
+		visible_demo = false
+	}
+
+	function minimisePopup(event) {
+		minimise_demo = event.detail.state;
 	}
 </script>
 
 <div class="popup-demo">
-	<div class={popupBg}></div>
+	{#if !minimise_demo}
+		<div class={popupBg}></div>
+	{/if}
 	{#if step == 0}
 		<Popup 
-			message = "In this demonstration, we show how this interactive visualisation tool can be used to interpret the results of a multiverse analysis investigating whether hurricanes with more feminine names cause more deaths."
+			message = "In this demo, we show how this tool can be used to interpret the results of a multiverse analysis investigating <i>whether hurricanes with more feminine names cause more deaths</i>.<br>Interpreting the results of a multiverse analysis typically involves:<ul class='demo-list'><li>looking at the range and frequency of results to determine whether the result is consistent across all the specifications</li><li><i>if the result does exhibit variation</i>, identifying which choices or combinations of choices in the data analysis process it is most sensitive to</li></ul>"
 			step = {step}
-			position = {position}
-			adjust = {{x:0,y:0}}
-			direction = "centre"
+			containsImage = {false}
 			on:next = {updatePopup}
-			on:skip = {removePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 1}
+		<Popup 
+			message = "This demo will consist of a set of three videos. After each video, please minimise this popup window and try to recreate the steps shown. Please note that the steps shown are not <span class='emphasis'>prescriptive</span>, but rather an example of how to use the tool for inference."
+			step = {step}
+			containsImage = {false}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 2}
+		<Popup 
+			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			step = {step}
+			containsImage = {true}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 3}
+		<Popup 
+			message = "Please minimise the popup window and try to recreate the steps shown."
+			step = {step}
+			containsImage = {false}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 4}
+		<Popup 
+			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			step = {step}
+			containsImage = {true}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 5}
+		<Popup 
+			message = "Please minimise the popup window and try to recreate the steps shown."
+			step = {step}
+			containsImage = {false}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 6}
+		<Popup 
+			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			step = {step}
+			containsImage = {true}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else if step == 7}
+		<Popup 
+			message = "Please minimise the popup window and try to recreate the steps shown."
+			step = {step}
+			containsImage = {false}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
+			steps = {N}
+		/>
+	{:else}
+		<Popup 
+			message = "The steps shown in this demonstration are not prescriptive. Rather they are a demonstration of how this interface can be used to analyse and interpret the results of a multiverse analysis."
+			step = {step}
+			containsImage = {false}
+			on:next = {updatePopup}
+			on:minimise = {minimisePopup}
+			on:close = {removePopup}
 			steps = {N}
 		/>
 	{/if}

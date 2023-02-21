@@ -75,6 +75,8 @@
 		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
+	$: console.log(h)
+
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--textColor', colors.gray90)
 

@@ -41,6 +41,8 @@
 
 	.help-button {
 		height: 40px;
+		width: 64px;
+		text-align: center;
 		cursor: pointer;
 	}
 
@@ -74,7 +76,7 @@
 		width: 180px;
 		background-color: #fafafa;
 		box-shadow: 0px 4px 5px -2px #c0c0c0;
-		position: fixed;
+		position: relative;
 		z-index: 999;
 
 	}
