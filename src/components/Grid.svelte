@@ -68,14 +68,17 @@
 
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
-	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
+	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding) + 8;
 	$: h = cell.padding + data.length * cellHeight + 2*margin.bottom;
 	$: y = d3.scaleBand()
 		.domain(d3.range(data.length))
 		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
+	$: console.log(h)
+
 	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--textColor', colors.gray90)
 
 	let order = {};
 
@@ -84,13 +87,19 @@
 		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
 	});
 
-	let bgRect;
+	let bgRect, scrollY = 0;
 
 	onMount(() => {
 		d3.selectAll(".option-headers").call(drag_options(order));
 		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
 		d3.select("g.grouped-sort-divider").call(dragSortDivider());
 		bgRect = document.querySelector("#bg-rect");
+
+		const grid_body = document.querySelector(".grid-container");
+
+		grid_body.addEventListener("scroll", event => {
+			scrollY = grid_body.scrollTop;
+		}, { passive: true });
 	})
 
 	let mvWindow;
@@ -98,8 +107,6 @@
 	function openFile() {
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
-
-		console.log(spec);
 
 		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(process.env.ANALYSIS_DOC,
@@ -145,7 +152,9 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}"><p class='{parameter_label}'>{parameter}</p></div>
+					<a class="tooltip-link" data-toggle="tooltip" title="{parameter}">
+						<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
+					</a>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
@@ -167,7 +176,9 @@
 							height="{namingDim}" 
 							class="option-name {option}">
 								<OptionToggle {parameters} {parameter} {option} on:hide/>
-								<div class="option-label {option_names} {option}">{option}</div>
+								<a class="tooltip-link" data-toggle="tooltip" title="{option}">
+									<div class="option-label parameter-{parameter} {option_names} {option}">{option}</div>
+								</a>
 						</foreignObject>
 					</g>
 				{/each}
@@ -185,7 +196,6 @@
 		{#each Object.keys(parameters) as parameter}
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, 0)">
 				{#each parameters[parameter] as option, i}
-					<!-- {console.log(option, i, $option_scale[parameter].domain(), $option_scale[parameter].range()), $option_scale[parameter](i)} -->
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
@@ -216,7 +226,7 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} bind:h={h}/>
+		<SortByGroupDivider parameters={parameters} bind:h={h} bind:y={scrollY}/>
 	</svg>
 	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
 		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>
@@ -266,5 +276,10 @@
 
 	div.parameter-name, .option-label {
 		cursor: move;
+	}
+
+	a.tooltip-link {
+		text-decoration: none;
+		color: var(--textColor) ;
 	}
 </style>

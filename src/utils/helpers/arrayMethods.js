@@ -17,3 +17,5 @@ export const any = (...x) => {
 	}
 
 export const is2dArray = (array) =>  array.every(item => Array.isArray(item));
+
+export const indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);

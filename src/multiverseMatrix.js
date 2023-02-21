@@ -39,9 +39,7 @@ class multiverseMatrix {
 
 	_parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
-		// is there a better way to do this?
 		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
-
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -179,11 +177,6 @@ class multiverseMatrix {
 		// deep copy data structures
 		let g_data = structuredClone(this.gridDataAll);
 	
-		// let combined_options = combine
-		// 			.map( d => d[1].map( j => [d[0], j]) )
-		// 			.flat(1)
-		// 			.map( i => ({"parameter": i[0], "option": i[1], "replace": i[1][0]}) );
-	
 		let exclude = Object.entries(toExclude).filter(d => (d[1].length != 0))
 					.map( d => d[1].map( j => [d[0], j]) )
 					.flat(1)
@@ -198,21 +191,32 @@ class multiverseMatrix {
 			let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-	
+		
+
+			// vec is a modified version of g_data where the options (say op1, op2) 
+			// which are joined are replaced by an array [op1, op2]
 			let vec = g_data.map((d, i) => {
-				let options = Object.values(d).flat();
+				// let options = Object.values(d).flat();
 				let g = groups.forEach(x => {
-						let includes = options.map(d => x['group'].includes(d)).reduce((a, b) => (a || b));
+						let options = d[x['parameter']];
+						let includes = options.map(y => x['group'].includes(y)).reduce((a, b) => (a || b));
 						if (includes) {
 							d[x['parameter']] = x['group']
 						}
 					})
 				return d
 			});
+
+			// vec.map((d, i) => {
+			// 	console.log(i, d);
+			// })
+
+			// console.log(vec)
 	
-			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()))
+			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
 	
 			let non_duplicates = duplicates_data.map((d, i) => {
+				// console.log(d, duplicates_data.indexOf(d), i)
 				return duplicates_data.indexOf(d) == i;
 			})
 	
@@ -242,22 +246,10 @@ class multiverseMatrix {
 
 		let size = g_data.length;
 
+
 		let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
 		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
 		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
-
-		// we need to update the term and the associated data for creating CDFs
-		// if (graph == CI) {
-		// 	o_data = this.data.map(function(d) { 
-		// 		return Object.assign({}, ...d["results"].filter(i => i.term == term).map(
-		// 			i => Object.assign({}, ...["estimate", "conf.low", "conf.high"].map((j) => ({[j]: i[j]})))
-		// 		))
-		// 	});
-		// } else {
-		// 	let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
-		// 	o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
-		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
-		// }
 
 		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
@@ -305,7 +297,6 @@ class multiverseMatrix {
 
 			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
-
 			this.gridData = g_data;
 
 			// if we want estimates for only the vector which is being sorted by: e_data[this.sortIndex]

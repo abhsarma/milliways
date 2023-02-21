@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import json from "@rollup/plugin-json";
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
+import image from '@rollup/plugin-image';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -71,8 +72,10 @@ export default {
 		
 		injectProcessEnv({ 
 			NODE_ENV: 'production',
-			ANALYSIS_DOC: "analysis-doc.html"
+			ANALYSIS_DOC: "analysis-hurricane.html"
 		}),
+
+		image(),
 
 
 		// In dev mode, call `npm run start` once

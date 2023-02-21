@@ -5,18 +5,19 @@
 	import { gridCollapse } from '../utils/stores.js';
 
 	export let menu;
-	export let interfaceTutorial
+	export let interfaceTutorial;
+	export let demo;
 
 	function showMenu() {
 		menu = !menu;
 	}
 
 	function showInterfaceTutorial() {
-		interfaceTutorial = true
+		interfaceTutorial = true;
 	}
 
-	function showHandsOnTutorial() {
-		// nothing for now
+	function showDemo() {
+		demo = true; // nothing for now
 	}
 </script>
 
@@ -26,8 +27,8 @@
 	</div>
 	{#if menu}
 		<div class="help-dropdown-menu" >
-			<p class="help-option" on:click={showInterfaceTutorial}>Interface Help</p>
-			<p class="help-option" on:click={showHandsOnTutorial}>Hands-on Tutorial</p>
+			<p class="help-option" on:click={showInterfaceTutorial}>Quick Tour</p>
+			<p class="help-option" on:click={showDemo}>Demo</p>
 		</div>
 	{/if}
 </div>
@@ -35,11 +36,13 @@
 <style>
 	.help-dropdown {
 		height: 40px;
-		padding: 12px 16px;
+		padding: 12px 32px;
 	}
 
 	.help-button {
 		height: 40px;
+		width: 64px;
+		text-align: center;
 		cursor: pointer;
 	}
 
@@ -73,7 +76,7 @@
 		width: 180px;
 		background-color: #fafafa;
 		box-shadow: 0px 4px 5px -2px #c0c0c0;
-		position: fixed;
+		position: relative;
 		z-index: 999;
 
 	}
