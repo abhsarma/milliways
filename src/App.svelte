@@ -289,7 +289,6 @@
 		position: absolute;
 		margin-left: 16px;
 		margin-right: 16px;
-		width: 500px; /* TEST */
 	}
 	
 	.code-container {
