@@ -1,8 +1,8 @@
 export const colors = {
-	active : "#E0797D",
-	vis: "#99A3E0",
-	// active: "#99A3E0",
-	// vis: "#E0797D",
+	active : "#E0797D", // coral
+	vis: "#99A3E0", // muted purple
+	// active: "#99A3E0", // muted purple
+	// vis: "#0d99ff", // bright blue
 	inactive : "#DCE0E6",
 	secondary : "#595994",
 	median : "#084C61",

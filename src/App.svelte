@@ -2,7 +2,7 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data.json';
+	import * as data from '../static/data/data.json'; // change 
     import * as code from '../static/data/code.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
@@ -11,16 +11,18 @@
 	import { calculateParamPosition } from './utils/drag.js';
 	import Vis from './components/Vis.svelte';
 	import Grid from './components/Grid.svelte';
-	import Tutorial from './components/Tutorial.svelte';
 	import ToggleSize from './components/toggle-gridSize.svelte'
 	import Help from './components/help.svelte'
+	import Tutorial from './components/Tutorial.svelte';
+	import Demo from './components/Demo.svelte';
 	import Code from './components/Code.svelte';
-	import Table from './components/Table.svelte';
+	import DataTable from './components/DataTable.svelte';
 	import * as tableData from '../static/data/durante.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
 	let showInterfaceTutorial = false;
+	let showDemo = false;
 	let showMenu = false;
 
 	let m;
@@ -73,7 +75,7 @@
 		if (event.detail.state) {
 			$join_options = [...$join_options, {'parameter': parameter, 'options': option_pair, 'indices': indices}];
 		} else {
-			$join_options = $join_options.filter( i => (JSON.stringify(i['options']) !== JSON.stringify(option_pair)) );
+			$join_options = $join_options.filter( i => !((i.parameter === parameter) && JSON.stringify(i['options']) === JSON.stringify(option_pair)));
 		}
 	}
 
@@ -96,6 +98,8 @@
 			currBrushIdx = idx;
 		}
 	}
+
+	let coords_x1 = 150, coords_y1 = 150;
 
 	onMount(() => {
 		let isSyncingLeftScroll = false;
@@ -142,7 +146,7 @@
 
 			<ToggleSize/>
 
-			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial}/>
+			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial} bind:demo={showDemo}/>
 		</div>
 	</div>
 
@@ -155,6 +159,7 @@
 
 	<!-- CREATES THE OUTCOME GRAPH(S) -->
 	<div class="main">
+		<div class="highlight hidden"></div>
 		<div class="vis-container" style="height: {windowHeight}px;">
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
@@ -184,19 +189,26 @@
 		</div>
 
 		<div class="right-container" style="height: {windowHeight}px;">
-			<div class="code-container">
+			<!-- CREATES THE CODE PANEL FOR ANALYSIS CODE OUTPUT -->
+			<div class="code-container" style="height: {windowHeight/2 - groupPadding}px">
 				<Code code={code} />
 			</div>
-			<div class="table-container">
-				<!-- don't make cellWidth<105. doesn't look good -->
-				<Table
+
+			<!-- CREATES THE DATA PANEL FOR PROVIDING OVERVIEW OF THE DATA -->
+			<div class="table-container" style="">
+				<DataTable
 					tableData={tableData.default}
 					cellWidth=150
+					h={windowHeight/2}
 				/>
 			</div>
 		</div>
+
 		{#if showInterfaceTutorial}
-			<Tutorial bind:visible={showInterfaceTutorial} parameters={m.parameters}/>
+			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
+		{/if}
+		{#if showDemo}
+			<Demo bind:visible_demo={showDemo} parameters={m.parameters}/>
 		{/if}
 	</div>
 </main>
@@ -204,6 +216,25 @@
 <style>
 	main {
 		white-space: nowrap;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
+	div.highlight {
+		position: absolute;
+		animation: highlightElem 2s ease-in-out infinite;
+		border: 3px solid #E0797D;
+		height: 12px;
+		width: 12px;
+		border-radius: 40px;
+		z-index: 999;
+	}
+
+	@keyframes highlightElem{
+		0% { width: 12px; height: 12px; top: -6px; left: -6px; opacity: 100% }
+		50%, 100% { width: 40px; height: 40px; top: -20px; left: -20px; opacity: 0% }
 	}
 
 	div.main {
@@ -292,18 +323,22 @@
 	}
 	
 	.code-container {
+		/*display: inline-flex;
+		position: absolute;*/
+
 		background-color: var(--bgColor);
-		min-height: calc(25% - 16px);
 		overflow-x: auto;
 		margin-bottom: 8px;
-		padding: 16px;
 		border-radius: 8px;
+
+		overflow-y: scroll;
+		-ms-overflow-style: none;  /* IE and Edge */
 	}
 
 	.table-container {
-		background-color: var(--bgColor);
+		/*	background-color: var(--bgColor);
+		padding: 8px; */
 		margin-top: 8px;
-		overflow: auto;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

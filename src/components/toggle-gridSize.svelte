@@ -5,13 +5,16 @@
 
 	let active = false;
 	let r = 22;
+	let state = "out"
 
 	function handleClick() {
 		active = !active;
 
 		if (active) {
+			state = "in"
 			gridCollapse.set(1);
 		} else { 
+			state = "out"
 			gridCollapse.set(0);
 		}
 	}
@@ -19,7 +22,7 @@
 
 <div class="toggle">
 	<div class="text-container">
-		<p>collapse grid</p>
+		<p>zoom {state}</p>
 	</div>
 	<div class="toggle-button" class:active={active} on:click="{handleClick}" style="height: {r}px">
 		<div class="state-indicator" class:active={active} style="width: {r}px; height: {r}px"></div>
@@ -29,7 +32,7 @@
 <style>
 	.toggle {
 		position: relative;
-		padding: 8px 16px;
+		padding: 8px 32px;
 		height: 48px;
 		background-color: #ffffff;
 		border-radius: 4px;
@@ -38,15 +41,16 @@
 
 	p {
 		display: inline-block;
-		margin: 0px 12px 0px 0px;
+		margin: 0px 4px 0px 0px;
 		line-height: 32px;
 		font-family: 'Avenir Next';
 		font-size: 14px;
 		font-weight: 300;
 		align-items: center;
-		text-align: right;
+		text-align: left;
 		vertical-align: middle;
 		margin-top: 8px;
+		width: 64px;
 	}
 
 	.text-container {

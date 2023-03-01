@@ -97,7 +97,7 @@
 			.brushX()
 			.on('start', brushStart)
 			.on('end', brushEnd)
-			.extent([[margin.left,-y(1)],[w - margin.right,0]]);
+			.extent([[margin.left, 2], [w - margin.right, yscaleHist.range()[1]]]);
 
 		brushContainer.call(brush);
 	})
@@ -149,7 +149,7 @@
 		</div>
 	</div>
 
-	<svg class="{outcomeAxis} vis-{i}" height={gridNamesHeight - visButtonHeight} width={w}>
+	<svg class="{outcomeAxis} vis-{i}" height="{gridNamesHeight - visButtonHeight}" width={w}>
 		<!-- Axes -->
 		<g id="axis-{i}" transform="translate(0, {axisAdjust})">
 			<!-- x axis -->
@@ -160,8 +160,6 @@
 					<text text-anchor="middle" dy="0em" y="{-text}" style="font-size: {text}">{tick}</text>
 				</g>
 			{/each}
-			<!-- brush is added onMount -->
-			<g class="brush-container" id="brush-container-{i}"></g>
 		</g>
 
 		<!-- Grid Lines -->
@@ -169,10 +167,14 @@
 			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
+					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="black" stroke-opacity="0.2"/>
+					}
 				</g>
 			{/each}
 		</g>
+
+		<!-- brush is added onMount -->
+		<g class="brush-container" id="brush-container-{i}" transform="translate(0, {axisAdjust})"></g>
 
 		<!-- Histogram -->
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 

@@ -1,13 +1,13 @@
 import * as d3 from 'd3';
 
-function which_option_index(option_list, curr_options) {
-	return option_list.map((d, i) => {
-		if (curr_options.includes(d)) {
-			return i;
-		} else {
-			return null;
-		}
-	}).filter(i => (i != null))
+function which_option_index(option_list, universe_specification) {
+	// check if option_list and universe_specification is of the same length
+	// else throw error
+	if ( ! (option_list.length == universe_specification.length) ) {
+		throw new Error('provided variables are not of the same length')
+	}
+
+	return option_list.map((d, i) => d.indexOf(universe_specification[i]))
 }
 
 function calculate_mirror_CDF(d1, d2) {
@@ -57,22 +57,37 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
-		// 
+		
+		// the grouping vector is used to indicate which 
+		// of the universes are being joined
 		let grouping_vector = g_data.map((d, i) => {
-			let options = Object.values(d).flat();
-			let idx = option_list.map(x => which_option_index(x, options)).flat();
+			let options = Object.values(d).flat(); // option names for the specification that comprises this universe
+			let parameters = Object.keys(d).flat(); // option names for the specification that comprises this universe
+
+			// gets the indices of options in option_list corresponding to this particular specification
+			// idx should always have length == parameters.length
+			let idx = which_option_index(option_list, options)
+
+			// g is an array of length groups.length
+			// each element in g is an array of length 2: 
+			// the first element is the index of the parameter whose options are being joined, 
+			// and the second element is the id from groups
 			let g = groups
 				.map(x => {
-					let includes = options.map(d => x['group'].includes(d)) // .reduce((a, b) => (a || b));
+					let match_options = options.map(d => x['group'].includes(d)) // identifies whether the option has been joined only based on the option name
+					let match_parameter = parameters.map(d => d == x.parameter) // identifies whether the option has been joined only based on the option name
+					let includes = match_options.map((d, i) => d && match_parameter[i]);
 					return [includes.indexOf(true), x['id']];
 				})
 
+			// for each universe specification, g indicates which parameter has an option being joined and which `id` in groups this join operation corresponds to
 			g.forEach(x => {
 				if (x[0] > -1) {
 					idx[x[0]] = size + x[1]
 				}
 			})
-
+			
+			// we use this information to create idx for each universe specification which will be used to actually join universe specifications
 			return JSON.stringify(idx);
 		});
 		
@@ -91,7 +106,6 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			})
 			.map(x => x.map(p => p.flat()))
 
-		// console.log(o_data_processed);
 
 		e_data_processed = d3.groups(
 			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),

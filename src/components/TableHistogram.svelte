@@ -2,10 +2,13 @@
 	import * as d3 from 'd3';
     import { colors } from '../utils/colorPallete.js';
 
+    // TODO: fix histogram logic. instead of bins from 1-2, capture 0.5-1.5 to get ints
+    // TODO: max/min-imize
+
     export let data, maxBins, histHeight, histWidth;
 
     let numUnique = new Set(data.values).size;
-    let numBins = Math.min(numUnique, maxBins);
+    let numBins = Math.min(numUnique, maxBins); // TODO: 2 bins doesn't work
 
     let values = [...data.values];
     
@@ -46,16 +49,13 @@
 
     // this is because the last bar is hidden and not all bars are the same width otherwise
     // numBins-1 / numBins is so that the bars don't overlap
-    let barWidth = (x(bins[widthIdx].x1) - x(bins[widthIdx].x0)) * ((numBins-1)/numBins);
+    let barWidth = (x(bins[widthIdx].x1) - x(bins[widthIdx].x0)) * ((numBins-1)/numBins); // TODO: add more space between bars
 
     // this is because the last bar is hidden
     x = x.range([0, histWidth-barWidth]);
 
     // this is to make all histograms use up all height given
-    let maxLength = 0;
-    for (let d of bins) {
-        maxLength = Math.max(maxLength, d.length);
-    }
+    let maxLength = Math.max(...bins.map(d => d.length));
     
     let y = d3.scaleLinear()
         .domain([0, maxLength])

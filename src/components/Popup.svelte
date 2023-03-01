@@ -12,6 +12,7 @@
 	export let position;
 	export let adjust;
 	export let direction;
+	export let pointer;
 	export let steps;
 	export let containsImage;
 
@@ -69,22 +70,26 @@
 		color: ${colors.text};
 		background-color: ${colors.popup};
 	`
-	let shift, shadow, pointer, next;
-	let activePrev  = false, activeSkip = false, activeNext = false;
+	let shift, shadow, next, pointerPos = null;
 
-	if (direction == "right") {
+	if (direction == "left") {
 		shift = shiftLeft;
-		pointer = pointerRight;
 		shadow = shadowRight;
-	} else if (direction == "left") {
+	} else if (direction == "right") {
 		shift = shiftRight;
-		pointer = pointerLeft;
 		shadow = shadowLeft;
-	} else {
+	} else if (direction == "centre") {
 		// center
 		shift = shiftCentre;
 		shadow = shadowCentre;
-		pointer = null;
+	}
+
+	if (pointer == "left") {
+		pointerPos = pointerLeft;
+	} else if (pointer == "right") {
+		pointerPos = pointerRight;
+	} else if (pointer == "hidden") {
+		pointerPos = null;
 	}
 
 	function incrementCount() {
@@ -121,24 +126,31 @@
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
+	<div class="action-btn" on:click={removeTutorial}>
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M7.64645 7.29944L8.00024 7.65323L8.35379 7.2992L14.9367 0.707346L15.2837 1.05436L8.70033 7.64669L8.34725 8.00024L8.70056 8.35355L15.2929 14.9459L14.9459 15.2929L8.35355 8.70056L8 8.34701L7.64645 8.70056L1.05412 15.2929L0.707107 14.9459L7.29944 8.35355L7.65299 8L7.29944 7.64645L0.707107 1.05412L1.05412 0.707107L7.64645 7.29944Z" fill="#979797" stroke="#979797"/>
+		</svg>
+	</div>
 	<p>{@html message}</p>
 	{#if step > 0 & step <= steps}
 		<p class="progress-indicator">{step}/{steps}</p>
 	{/if}
-	<button class="{highlight_btn}" class:activeNext on:mouseenter={() => activeNext = true} on:mouseleave={() => activeNext = false} on:click={incrementCount}>{next}</button>
+	<button class="{highlight_btn} progress-btn next-btn" on:click={incrementCount}>{next}</button>
 	{#if step > 0}
-		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
+		<button class="{plain_btn} progress-btn plain-btn" on:click={decrementCount}>Prev</button>
 	{/if}
-	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} on:click={removeTutorial}>Skip</button>
 </div>
-{#if step > 0 & step <= steps}
-	<div class="pointer {pointer}" style="top: {position.y}px; left: {position.x}px;"></div>
+{#if pointerPos}
+	<div class="pointer {pointerPos}" style="top: {position.y}px; left: {position.x}px;"></div>
+}
 {/if}
 
 <style type="text/css">
 	p {
 		margin: 8px 8px 32px 8px;
 		font-family: 'Avenir Next';
+		font-size: 14px;
+		line-height: 20px;
 	}
 
 	p.progress-indicator {
@@ -151,33 +163,50 @@
 	}
 
 	button {
-		margin: 0px 4px;
 		font-family: 'Avenir Next';
 		border: none;
-		padding: 8px 16px;
-		float: right;
 		border-radius: 4px;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.action-btn {
+		border-radius: 4px;
+		padding: 12px;
+		cursor: pointer;
+		float: right;
+		background-color: transparent;
+	}
+
+	.action-btn:hover,
+	.action-btn:active,
+	.action-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.progress-btn {
+		margin: 0px 4px;
+		padding: 8px 16px;
+		cursor: pointer;
+		float: right;
+	}
+
+	.plain-btn:hover,
+	.plain-btn:active,
+	.plain-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.next-btn:hover,
+	.next-btn:active,
+	.next-btn:focus {
+		background-color: var(--hoverColor);
 	}
 
     .progress-indicator {
     	display: inline-block;
     	padding: 8px 0px;
     	margin: 0px;
-    }
-
-	.activePrev  {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeSkip {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeNext {
-    	background-color: var(--hoverColor);
-    	cursor: pointer;
     }
 
     .popup {
