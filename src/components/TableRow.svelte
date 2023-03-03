@@ -23,12 +23,11 @@
 		border-bottom: 1px solid #efefef;
 		height: fit-content;
 		width: fit-content;
+		background-color: white;
 	}
 
     .table-cell {
-        background-color: white; /**/
         padding: 8px;
-        border: 1px solid var(--gray20); /***/
         border-top: 0;
         white-space: initial;
         word-break: break-all;

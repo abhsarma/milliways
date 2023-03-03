@@ -24,6 +24,7 @@
 	let showInterfaceTutorial = false;
 	let showDemo = false;
 	let showMenu = false;
+	let showMaximizedTable = false;
 
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -195,7 +196,7 @@
 			</div>
 
 			<!-- CREATES THE DATA PANEL FOR PROVIDING OVERVIEW OF THE DATA -->
-			<div class="table-container" style="">
+			<div class="table-container">
 				<DataTable
 					tableData={tableData.default}
 					cellWidth=150
@@ -204,6 +205,15 @@
 			</div>
 		</div>
 
+		{#if showMaximizedTable}
+			<div class="maximized-table-container">
+				<DataTable
+					tableData={tableData.default}
+					cellWidth=150
+					h="100%"
+				/>
+			</div>
+		{/if}
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
@@ -339,6 +349,17 @@
 		/*	background-color: var(--bgColor);
 		padding: 8px; */
 		margin-top: 8px;
+	}
+
+	.maximized-table-container {
+		z-index: 99;
+		position: absolute;
+		top:  0;
+		left: 0;
+		height: calc(100% - 36px);
+		width: calc(100% - 36px);
+		margin: 18px;
+		overflow: auto;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

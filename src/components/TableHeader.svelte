@@ -6,7 +6,7 @@
 
     export let tableData, width
     export let sortAscending, sortByIndex; // see Table.svelte for details on these variables
-
+	
 	let cell = css`
 		min-width: ${width}px;
 		width: ${width}px;
@@ -31,19 +31,26 @@
 </script>
 
 <div class="table-header">
+	<!-- The entire 1st row of the table -->
 	<div class="col-name-row">
 	    {#each tableData as col,i}
+			<!-- The top box of the column -->
 			<div class="column-header">
+				<!-- Contains contents -->
 				<div class="table-title table-cell {cell}">
 					<div class="title-top">
+
+						<!-- TITLE/FIELD -->
 						<b style="width: {width-24}px;">{col.field}</b>
+
+						<!-- Button changing based on sorting state-->
 						{#if sortByIndex === i+1}
 							{#if sortAscending === 1}
 								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> dispatch("changeSortDirection")}>
 									<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
 								</button>
 							{:else}
-								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", 0)}}>
+								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", 0);}}>
 									<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>					
 								</button>
 							{/if}
@@ -52,23 +59,26 @@
 								<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
 							</button>
 						{/if}
+
 					</div>
+
+					<!-- TYPE OF VALUES/FIELD NAME -->
 					<i>{col.field_type}</i>
+					
 				</div>
 			</div>
 		{/each}
 	</div>
+	<!-- The entire 2nd row of the table (that contains the histograms)-->
 	<div class="histogram-row">
 		{#each tableData as col,i}
-			<div class="column-header" id="data-column-{i}">
-				<div class="histogram-container table-cell {cell}">
-					<TableHistogram
-						data={col}
-						maxBins=20
-						histHeight={width/3}
-						histWidth={width}
-					/>
-				</div>
+			<div class="column-header histogram-container table-cell {cell}">
+				<TableHistogram
+					data={col}
+					maxBins=20
+					histHeight={width/3}
+					histWidth={width}
+				/>
 			</div>
 		{/each}
 	</div>
@@ -110,11 +120,10 @@
         display: flex;
         flex-direction: column;
         align-content: space-between;
-        border: 1px solid var(--gray20);
     }
 
 	.column-header:not(:first-child) {
-		border-left: 1px solid #efefef; /* 0 */
+		border-left: 1px solid #efefef;
 	}
 
     .table-title {
@@ -136,7 +145,6 @@
     }
 
     .histogram-container {
-        border-top: 1px solid var(--gray20);
         overflow: auto;
     }
 
