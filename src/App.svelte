@@ -2,8 +2,9 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data.json'; // change 
-    import * as code from '../static/data/code.json';
+	import * as data from '../static/data/sm-data.json'; // change 
+    import * as code from '../static/data/sm-code.json';
+    import * as tableData from '../static/data/sm-raw-data.json';
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
@@ -17,7 +18,6 @@
 	import Demo from './components/Demo.svelte';
 	import Code from './components/Code.svelte';
 	import DataTable from './components/DataTable.svelte';
-	import * as tableData from '../static/data/durante.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
@@ -164,7 +164,8 @@
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
 					i              		= {i}
-					data    			= {outcome}
+					data    			= {outcome}			
+					estimates			= {m.estimates}		
 					allOutcomeVars 		= {m.allOutcomeVars}
 					bind:term      		= {outcome.var}
 					bind:sortByIndex 	= {m.sortByIndex}

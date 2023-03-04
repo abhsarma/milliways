@@ -17,7 +17,6 @@
 	export let tableData, cellWidth, h;
 
 	let size = tableData[0].values.length;
-	console.log(size);
 
 	let rows = [];
 	for (let i = 0; i < tableData[0].values.length; i++) {

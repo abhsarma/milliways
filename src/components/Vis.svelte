@@ -14,10 +14,13 @@
 	
 	export let i;
 	export let data;
+	export let estimates;
 	export let allOutcomeVars;
 	export let sortAscending;
 	export let sortByIndex;
 	export let term = allOutcomeVars[0];
+
+	let brushContainer;
 
 	let visButtonHeight = 44;
 
@@ -48,7 +51,7 @@
 	$: h = cell.padding + data.density.length * cellHeight + 2*margin.bottom;
 
 	// scales
-	$: xscale = d3.scaleLinear()
+	const xscale = d3.scaleLinear()
 		.domain(d3.extent(data.density[0].map(d => d[0])))
 		.range([margin.left, outcomeVisWidth]);
 
@@ -75,27 +78,27 @@
 	// d's for axis paths
 	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`;
 
-	function brushStart(e) {
-		// $exclude_rows = []; // this will not exclude anything
-		dispatch("brush");
+	function brushed({selection}) {
+		sx = selection.map(xscale.invert);
 	}
 
-	function brushEnd(e) {
-		try {
-			let [p1,p2] = e.selection;
-			$exclude_rows = [i, [xscale.invert(p1), xscale.invert(p2)]];
-		}
-		catch (err) { // happens when the user clicks outside of selection rect without dragging
-			$exclude_rows = []; // this will not exclude anything
+	function brushEnd({selection}) {
+		if (selection === null) {
+			$exclude_rows = [];
+			sx = xscale.domain();
+		} else {
+			$exclude_rows = [i, selection.map(xscale.invert)];
+			sx = selection.map(xscale.invert);
 		}
 	}
+
+	$: sx = xscale.domain();
 
 	onMount(() => {
-		let brushContainer = d3.select(`#brush-container-${i}`);
+		brushContainer = d3.select(`#brush-container-${i}`);
 
-		let brush = d3
-			.brushX()
-			.on('start', brushStart)
+		let brush = d3.brushX()
+			.on('start brush', brushed)
 			.on('end', brushEnd)
 			.extent([[margin.left, 2], [w - margin.right, yscaleHist.range()[1]]]);
 
@@ -108,7 +111,7 @@
 		.domain(xscale.domain())  // then the domain of the graphic
 		.thresholds(xscale.ticks(70)); // then the numbers of bins
 
-	$: bins = histogram(data.estimate.flat());
+	$: bins = histogram(estimates[i]);
 
 	$: yscaleHist = d3.scaleLinear()
 		.domain([0, Math.round(data.mode / 10) * 10])
@@ -180,14 +183,13 @@
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
 			<!-- {axisAdjust + 8} -->
 			{#each bins as d}
-				<!-- y={yscaleHist.range()[1] - yscaleHist(d.length) + 4} // 4 is for padding -->
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
 					y = "{yscaleHist.range()[1] - yscaleHist(d.length)}"
 					width="{xscale(d.x1) - xscale(d.x0)}" 
 					height="{yscaleHist(d.length)}" 
-					fill="{colors.vis}"
+					fill="{((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]) ? colors.vis : colors.inactive}"
 					opacity=0.8></rect>
 				}
 			{/each}
