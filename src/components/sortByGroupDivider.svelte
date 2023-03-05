@@ -2,7 +2,6 @@
 	import { windowHeight, iconSize, groupPadding, gridNamesHeight } from '../utils/dimensions.js'
 	import { parameter_scale } from '../utils/stores.js';
 
-	export let parameters
 	export let h
 	export let y
 

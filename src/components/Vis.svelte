@@ -107,9 +107,9 @@
 
 	// histogram
 	$: histogram = d3.histogram()
-		.value(function(d) { return d; })   // I need to give the vector of value
-		.domain(xscale.domain())  // then the domain of the graphic
-		.thresholds(xscale.ticks(70)); // then the numbers of bins
+		.value( d => d)
+		.domain(xscale.domain())  // domain of the graphic
+		.thresholds(xscale.ticks(70)); // the numbers of bins
 
 	$: bins = histogram(estimates[i]);
 

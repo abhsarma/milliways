@@ -26,14 +26,15 @@ class multiverseMatrix {
 		this.size = this.universes.length;
 		this.allOutcomeVars = dat[0]["results"].map(i => i["term"]);
 		this.outcomes = []; //[this.allOutcomeVars[0]];
+		this.estimates = [];
 		this.gridData = null;
 		this.gridDataAll = null;
 		this.parameters = this._parameters();
 		this.invParameters = this._invParameters();
 		this.optionToIndex = this._optionToIndex();
 
-		// sorting index, initialized to -1 to indicate no default sort
-		this.sortByIndex = -1;
+		// sorting index, initialized to 0 to indicate ascending sort on the first visible panel
+		this.sortByIndex = 0;
 		this.sortAscending = true; 
 	}
 
@@ -145,14 +146,15 @@ class multiverseMatrix {
 
 		let limits = d3.extent(o_data_processed[0].map(d => d[0]));
 		let histogram = d3.histogram()
-			.value(function(d) { return d; })   // I need to give the vector of value
+			.value(function(d) { return d; })   //  provide a vector of values
 			.domain(limits)  // then the domain of the graphic
-			.thresholds(d3.scaleLinear().domain(limits).ticks(70)); // then the numbers of bins
+			.thresholds(d3.scaleLinear().domain(limits).ticks(70)); // the numbers of bins
 		let bins = histogram(e_data_processed.flat());
 
 		this.outcomes[i].density = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
 		this.outcomes[i].mode = d3.max(bins, function(d) { return d.length; })
+		this.estimates[i] = e_data_processed;
 	}
 	
 	updateGridData = (join_data = [], exclude_data = []) => {
@@ -256,6 +258,7 @@ class multiverseMatrix {
 		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
 		this.outcomes[index].density = o_data_processed;
 		this.outcomes[index].estimate = e_data_processed;
+		this.estimates[index] = e_data_processed;
 	}
 
 	updateHandler(join, exclude, excludeRows, sortByGroupParams = []) {
@@ -282,13 +285,16 @@ class multiverseMatrix {
 			else
 				mask = this.outcomes[idx].estimate.map(v => low<=v && v<=high);
 
-			// filter based off of mask
-			this.gridData = this.gridData.filter((_,i) => mask[i]);
-			this.outcomes = this.outcomes.map((d,_) => {
-				d.density = d.density.filter((_,i) => mask[i]);
-				d.estimate = d.estimate.filter((_,i) => mask[i]);
-				return d;
-			});
+			// check if mask is empty
+			if (mask.reduce((a, b) => a + b)) {
+				// filter based off of mask
+				this.gridData = this.gridData.filter((_,i) => mask[i]);
+				this.outcomes = this.outcomes.map((d,_) => {
+					d.density = d.density.filter((_,i) => mask[i]);
+					d.estimate = d.estimate.filter((_,i) => mask[i]);
+					return d;
+				});
+			}
 		}
 
 		if (this.sortByIndex != -1) {

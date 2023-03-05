@@ -206,7 +206,7 @@
 			</div>
 		</div>
 
-		{#if showMaximizedTable}
+		<!-- {#if showMaximizedTable}
 			<div class="maximized-table-container">
 				<DataTable
 					tableData={tableData.default}
@@ -214,12 +214,12 @@
 					h="100%"
 				/>
 			</div>
-		{/if}
+		{/if} -->
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
 		{/if}
 		{#if showDemo}
-			<Demo bind:visible_demo={showDemo} parameters={m.parameters}/>
+			<Demo bind:visible_demo={showDemo}/>
 		{/if}
 	</div>
 </main>
@@ -331,6 +331,7 @@
 		position: absolute;
 		margin-left: 16px;
 		margin-right: 16px;
+		width: 640px;
 	}
 	
 	.code-container {

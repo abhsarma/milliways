@@ -150,6 +150,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
+					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="tooltip-link" data-toggle="tooltip" title="{parameter}">
 						<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
 					</a>
@@ -174,6 +175,7 @@
 							height="{namingDim}" 
 							class="option-name {option}">
 								<OptionToggle {parameters} {parameter} {option} on:hide/>
+								<!-- svelte-ignore a11y-missing-attribute -->
 								<a class="tooltip-link" data-toggle="tooltip" title="{option}">
 									<div class="option-label parameter-{parameter} {option_names} {option}">{option}</div>
 								</a>
@@ -205,6 +207,7 @@
 									class="{options_container} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
@@ -216,6 +219,7 @@
 									class="{options_container} {option} option-cell"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{/if}
@@ -224,7 +228,7 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} bind:h={h} bind:y={scrollY}/>
+		<SortByGroupDivider bind:h={h} bind:y={scrollY}/>
 	</svg>
 	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
 		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>
@@ -255,12 +259,6 @@
 		float: left;
 		position: relative;
 		z-index: 1;
-	}
-
-	svg.grid-group-divider {
-		position: sticky;
-		top: 188px;
-		z-index: 10;
 	}
 
 	svg, rect {

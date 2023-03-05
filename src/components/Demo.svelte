@@ -5,8 +5,6 @@
 	import { colors } from '../utils/colorPallete.js';
 	import Popup from './PopupDemo.svelte';
 
-
-	export let parameters;
 	export let visible_demo;
 	let minimise_demo = false;
 
@@ -171,10 +169,6 @@
 </div>
 
 <style type="text/css">
-	i {
-		color: red;
-	}
-
 	:global(.to-front) {
 		z-index: 99;
 	}

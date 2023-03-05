@@ -106,14 +106,14 @@
 	<div class="table-label">
 		<h4>Data</h4>
         <div class="label-right">
+            <p id="dataset-size">n: {size}</p>
             <button class="toggle-button" on:click={toggleSize}>
                 {#if maximised}
-                    <Maximise h=18 w=18 fill="black" />
-                {:else}
                     <Minimise h=18 w=18 fill="black" />
+                {:else}
+                    <Maximise h=18 w=18 fill="black" />
                 {/if}
             </button>
-            <p>n: {size}</p>
         </div>
 	</div>
 	<TableHeader
@@ -133,7 +133,6 @@
 </div>
 
 <style>
-
 	.table-label {
 		height: 32px;
 		padding: 8px 12px;
@@ -141,7 +140,15 @@
         display: flex;
         flex-direction: row;
         background-color: white;
+        position: sticky;
+        left: 0px;
 	}
+
+    p#dataset-size {
+        margin: 0px 24px;
+        display: inline-block;
+        font-size: 12px;
+    }
 
     .toggle-button {
         display: flex;
@@ -179,15 +186,6 @@
 		display: inline-block;
 		/* position: absolute;
 		left: 12px; */
-	}
-
-	p {
-		display: inline-block;
-		font-size: 12px;
-        margin: 0;
-        margin-left: 12px;
-		/* position: absolute;
-		right: 12px; */
 	}
 	
 	.table {
