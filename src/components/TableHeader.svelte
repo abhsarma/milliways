@@ -3,6 +3,7 @@
     import { createEventDispatcher } from "svelte";
 	import TableHistogram from "./TableHistogram.svelte";
 	import { onMount } from 'svelte';
+	import Sort from './Sort.svelte'
 
     export let tableData, width
     export let sortAscending, sortByIndex; // see Table.svelte for details on these variables
@@ -44,7 +45,7 @@
 						<b style="width: {width-24}px;">{col.field}</b>
 
 						<!-- Button changing based on sorting state-->
-						{#if sortByIndex === i+1}
+						<!-- {#if sortByIndex === i+1}
 							{#if sortAscending === 1}
 								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> dispatch("changeSortDirection")}>
 									<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
@@ -58,7 +59,17 @@
 							<button class="histogram-button sort-btn" id="column-{i}" on:click={() => dispatch("setSortIndex", i+1)}>
 								<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
 							</button>
-						{/if}
+						{/if} -->
+
+						<Sort 
+							i={i+1} 
+							w={20}
+							padding={0}
+							bind:index={sortByIndex} 
+							bind:order={sortAscending}
+							on:setSortIndex = {(e) => {dispatch('setSortIndex', e.detail)} }
+							on:changeSortDirection = {(e) => dispatch('changeSortDirection', e.detail)}
+						/>
 
 					</div>
 

@@ -1,6 +1,6 @@
 <script>
 	import { css } from '@emotion/css';
-	import { header, cell, nameContainer, gridNamesHeight, demo } from '../utils/dimensions.js';
+	import { header, cell, nameContainer, gridNamesHeight } from '../utils/dimensions.js';
 	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { createEventDispatcher } from 'svelte';
@@ -21,7 +21,7 @@
 	if (containsImage) {
 		pw = '80%';
 	} else {
-		pw = '40%';
+		pw = '30%';
 	}
 
 	const infoPopup = css`
@@ -56,7 +56,7 @@
 		});
 	}
 
-	if (step <= steps) {
+	if (step < steps) {
 		next = "Next"
 	} else {
 		next = "Finish"
@@ -84,8 +84,6 @@
 		let element = document.querySelector('.demo-container')
 		position = element.getBoundingClientRect();
 		minified_position = {'x': (window.innerWidth - position.left - position.width/2 - 120) + "px", 'y': (position.bottom - position.height/2 - window.innerHeight + 40) + "px"}
-
-		console.log(window.innerHeight, window.innerWidth, position, minified_position);
 
 		document.documentElement.style.setProperty('--min-x', minified_position.x)
 		document.documentElement.style.setProperty('--min-y', minified_position.y)
@@ -209,7 +207,6 @@
 	}
 
 	:global(.emphasis) {
-		color: var(--activeColor);
 		font-style: italic;
 		font-weight: 700;
 	}

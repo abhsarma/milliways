@@ -68,17 +68,12 @@
 						width="{xscale(d.x1) - xscale(d.x0)}" 
 						height="{yscale(d.length)}" 
 						fill="{colors.vis}"
+						stroke="#ffffff"
+						paint-order="stroke"
+						stroke-width="1"
 					></rect>
 				{/each}
 			</g>
-			<!-- <g class="axis">
-				{#each xscale.ticks(5) as tick}
-					<g class="tick" transform="translate({xscale(tick)}, 0)">
-						<line class="tick" y2="6" stroke="black"/>
-						<text text-anchor="middle" dy="0em" y="{text}" style="font-size: {text}">{tick}</text>
-					</g>
-				{/each}
-			</g> -->
 		</g>
 	</svg>
 
