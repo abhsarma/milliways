@@ -7,9 +7,11 @@
 	import { parameter_scale, option_scale } from '../utils/stores.js'
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
 	import mcdf from '../assets/images/mcdf.gif'
+	import tree from '../assets/images/tree.png'
 	import groupsort from '../assets/images/grouped-sort.gif'
 
 	export let parameters;
+	export let multiverse;
 	export let visible_tutorial;
 
 	export const popupBg = css`
@@ -34,7 +36,7 @@
 
 	let positions;
 	let step = 0;
-	let N = 15;
+	let N = 16;
 	$: first_param = "";
 	$: first_option = "";
 
@@ -75,7 +77,7 @@
 
 		// reset all styles
 		// reset highlight button
-		document.querySelector('div.highlight').classList.add("hidden")
+		document.querySelector('div.highlight').classList.add("hidden");
 
 		// send to back all elements which were brought forward
 		let elFront = Array.from(document.getElementsByClassName("to-front"));
@@ -90,7 +92,6 @@
 		}
 
 		if (highlightElem) {
-			// document.querySelector(highlight).classList.add("focus-elem");
 			let coords = document.querySelector(highlightElem).getBoundingClientRect();
 
 			document.querySelector('div.highlight').classList.remove("hidden")
@@ -102,7 +103,6 @@
 
 	function updatePopup(event) {
 		step = Number(event.detail.step);
-		console.log(step);
 		if (step > (N + 1)) {
 			removePopup(event)
 		}
@@ -110,6 +110,7 @@
 
 	function removePopup(event) {
 		setLayout();
+		location.reload();
 		visible_tutorial = false
 	}
 
@@ -146,7 +147,7 @@
 	{#if step == 0}
 		{setLayout()}
 		<Popup 
-			message = "Welcome to the multiverse visualisation tool."
+			message = "Take a quick tour of mvis?<br>Walk through the interface elements and interactions to understand what you can do with mvis."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:0}}
@@ -160,7 +161,7 @@
 	{:else if step == 1}
 		{setLayout("div.grid-container")}
 		<Popup 
-			message = "This panel shows the analytical decisions that comprise this multiverse analysis."
+			message = "This is the <span class='definition'>specification</span> panel. It shows the decisions that comprise the multiverse analysis."
 			step = {step}
 			position = {positions.grid}
 			adjust = {{x:0,y:-0}}
@@ -174,7 +175,7 @@
 	{:else if step == 2}
 		{setLayout("div.grid-container", `div.parameter-name.${first_param}`)}
 		<Popup 
-			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification.<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree.<br><br>You can change the order of the parameters by dragging on them."
+			message = "The column headers indicate the <span class='definition'>parameters</span> declared in the multiverse specification.<br><br>If we represent the decisions that comprises a multiverse as a tree, a parameter represents a decision point in the tree.<br><img style='border-radius: 8px;' src={tree} width='280' alt='representing the multiverse specification as a tree of analysis'/><br>You can change the order of the parameters by dragging on them."
 			step = {step}
 			position = {positions.parameter}
 			adjust = {{x:0,y:-0}}
@@ -230,7 +231,7 @@
 	{:else if step == 6}
 		{setLayout("div.grid-container", `svg.exclude-icon`)}
 		<Popup 
-			message = "<span class='definition'>Excluding</span> an option means that every universe which includes that option will be hidden."
+			message = "The <span class='definition'>exclude</span> button removes every universe which includes that option from the multiverse."
 			step = {step}
 			position = {positions.exclude}
 			adjust = {{x:0,y:-0}}
@@ -244,7 +245,7 @@
 	{:else if step == 7}
 		{setLayout("div.grid-container", `svg.link-icon`)}
 		<Popup 
-			message = "<span class='definition'>Joining</span> options mean that the estimates from the universes with those options will be aggregated."
+			message = "The <span class='definition'>join</span> button aggregates the estimates from the universes with those options. In other words, when aggregated, we show the upper and lower bounds of the uncertainty from the pooled universes."
 			step = {step}
 			position = {positions.join}
 			adjust = {{x:0,y:-0}}
@@ -257,8 +258,10 @@
 		/>
 	{:else if step == 8}
 		{setLayout("div.vis-container")}
+		{multiverse.setInteractions()}
+		<!-- For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse. -->
 		<Popup 
-			message = "This panel shows the analysis outcomes (or estimates) from each universe in the multiverse.<br><br>For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse."
+			message = "This is the <span class='definition'>outcome</span> panel. It shows the analysis outcomes (or estimates) from each universe in the multiverse."
 			step = {step}
 			position = {positions.vis}
 			adjust = {{x:0,y:-0}}
@@ -284,7 +287,7 @@
 			containsImage = {false}
 		/>
 	{:else if step == 10}
-		{setLayout("div.vis-container", "button.sort-btn")}
+		{setLayout("div.vis-container", "button.sort-button")}
 		<Popup 
 			message = "You can sort a variable based on the median estimate from each universe."
 			step = {step}
@@ -312,6 +315,36 @@
 			containsImage = {true}
 		/>
 	{:else if step == 12}
+		{setLayout("div.vis-container")}
+		{multiverse.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']])}
+		<Popup 
+			message = "What happens when aggregated --> p-boxes!! TODO"
+			step = {step}
+			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+	{:else if step == 13}
+		{setLayout("div.toggle")}
+		{multiverse.setInteractions()}
+		<Popup 
+			message = "The toggle button lets you to zoom out by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
+			step = {step}
+			position = {positions.toggle}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 14}
 		{setLayout("div.grid-container", `g.grouped-sort-divider`)}
 		<Popup 
 			message = "This horizontal slider allows you to perform a <span class='definition'>sort based on group means</span>. Options of parameters to the right of the slider are sorted based on their group means, while those to the left are sorted within each group: <br><br><img style='border-radius: 8px;' src={groupsort} width='250' alt='how sorting based on group means work'/>"
@@ -325,10 +358,10 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 13}
+	{:else if step == 15}
 		{setLayout("div.code-container")}
 		<Popup 
-			message = "This panel shows the R code used to implement the analysis. This code was used to obtain the estimates on the left most panel"
+			message = "This panel shows the R code used to implement the analysis. This code was used to obtain the estimates shown on the outcome panel"
 			step = {step}
 			position = {positions.code}
 			adjust = {{x:0,y:0}}
@@ -339,10 +372,10 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 14}
+	{:else if step == 16}
 		{setLayout("div.grid-container")}
 		<Popup 
-			message = "If you click on any of the rows in this grid, it will bring up the corresponding <span  class='definition'>Exploratory Multiverse Analysis Report (EMARs)</span>, if the authors have prepared one.<br><br>EMARs are an interactive document which describe a end-to-end analysis of one universe in the multiverse at a time"
+			message = "If you click on any of the rows in this grid, it will bring up the corresponding <span  class='definition'>Exploratory Multiverse Analysis Report (EMARs)</span>.<br><br>EMARs are an interactive document which describe a end-to-end analysis of one universe in the multiverse at a time."
 			step = {step}
 			position = {positions.universe0}
 			adjust = {{x:0,y:-0}}
@@ -352,25 +385,11 @@
 			on:skip = {removePopup}
 			steps = {N}
 			containsImage = {false}
-		/>
-	{:else if step == 15}
-		{setLayout("div.toggle")}
-		<Popup 
-			message = "The toggle button lets you to zoom out by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
-			step = {step}
-			position = {positions.toggle}
-			adjust = {{x:0,y:-0}}
-			direction = "right"
-			pointer = "left"
-			on:next={updatePopup}
-			on:skip = {removePopup}
-			steps = {N}
-			containsImage = {false}
-		/>
+		/>		
 	{:else}
 		{setLayout()}
 		<Popup 
-			message = "You are at the end of the tutorial"
+			message = "You are at the end of the tutorial."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:-0}}

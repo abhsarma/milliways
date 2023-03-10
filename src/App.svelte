@@ -1,9 +1,16 @@
 <script>
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import * as d3 from 'd3';
-	import * as data from '../static/data/data.json'; // change 
-    import * as code from '../static/data/code.json';
+	import * as data_hr from '../static/data/hurricane-data.json'; // change 
+    import * as code_hr from '../static/data/hurricane-code.json';
+    import * as tableData_hr from '../static/data/hurricane-raw-data.json';
+
+	import * as data_sm from '../static/data/sm-data.json'; // change 
+    import * as code_sm from '../static/data/sm-code.json';
+    import * as tableData_sm from '../static/data/sm-raw-data.json';
+
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
 	import { colors } from './utils/colorPallete.js';
@@ -17,7 +24,6 @@
 	import Demo from './components/Demo.svelte';
 	import Code from './components/Code.svelte';
 	import DataTable from './components/DataTable.svelte';
-	import * as tableData from '../static/data/durante.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
@@ -25,6 +31,23 @@
 	let showDemo = false;
 	let showMenu = false;
 	let showMaximizedTable = false;
+
+	let data = data_hr, code = code_hr, tableData = tableData_hr, analysis_doc = "analysis-hurricane.html";
+	// let data = data_sm, code = code_sm, tableData = tableData_sm;
+	function toggleDataSet(mode) {
+		if (mode === 'train') {
+			data = data_hr;
+			code = code_hr;
+			tableData = tableData_hr;
+			analysis_doc = "analysis-hurricane.html"
+		} else if (mode === 'task') {
+			data = data_sm;
+			code = code_sm;
+			tableData = tableData_sm;
+			analysis_doc = "analysis-doc.html"
+		}
+	}
+	toggleDataSet('train');
 
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -103,6 +126,9 @@
 	let coords_x1 = 150, coords_y1 = 150;
 
 	onMount(() => {
+		// m.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']]);
+		// console.log($join_options);
+
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
 		let leftDiv = d3.select('.vis-container').node();
@@ -148,6 +174,17 @@
 			<ToggleSize/>
 
 			<Help bind:menu={showMenu} bind:interfaceTutorial={showInterfaceTutorial} bind:demo={showDemo}/>
+
+			<div class="multiverse-size">
+				<p>
+					# of total universes: {m.size}
+					<br/>
+					# of selected universes: 
+					{#key m.gridData.length}
+						<span style="display: inline-block" in:fade>{m.gridData.length}</span>
+					{/key}
+				</p>
+			</div>
 		</div>
 	</div>
 
@@ -165,7 +202,8 @@
 			{#each m.outcomes as outcome, i (outcome.id)}
 				<Vis
 					i              		= {i}
-					data    			= {outcome}
+					data    			= {outcome}			
+					estimates			= {m.estimates}		
 					allOutcomeVars 		= {m.allOutcomeVars}
 					bind:term      		= {outcome.var}
 					bind:sortByIndex 	= {m.sortByIndex}
@@ -184,6 +222,7 @@
 			<Grid 
 				data={m.gridData} 
 				parameters={m.parameters}
+				analysis_doc={analysis_doc}
 				on:join={joinOptions}
 				on:hide={hideOption}
 			/>
@@ -204,12 +243,11 @@
 				/>
 			</div>
 		</div>
-		
 		{#if showInterfaceTutorial}
-			<Tutorial bind:visible_tutorial={showInterfaceTutorial} parameters={m.parameters}/>
+			<Tutorial bind:visible_tutorial={showInterfaceTutorial} bind:multiverse={m} parameters={m.parameters}/>
 		{/if}
 		{#if showDemo}
-			<Demo bind:visible_demo={showDemo} parameters={m.parameters}/>
+			<Demo bind:visible_demo={showDemo}/>
 		{/if}
 	</div>
 </main>
@@ -231,6 +269,25 @@
 		width: 12px;
 		border-radius: 40px;
 		z-index: 999;
+		pointer-events: none;
+	}
+
+	.multiverse-size {
+		position: relative;
+		padding: 12px 32px;
+		height: 40px;
+		background-color: #ffffff;
+		border-radius: 4px;
+		display: inline-flex;
+	}
+
+	.multiverse-size > p {
+		font-family: 'Avenir Next', sans-serif;
+		margin: 0px;
+		line-height: 21px;
+		font-size: 14px;
+		font-weight: 300;
+		vertical-align: middle;
 	}
 
 	@keyframes highlightElem{
@@ -321,6 +378,7 @@
 		position: absolute;
 		margin-left: 16px;
 		margin-right: 16px;
+		width: 640px;
 	}
 	
 	.code-container {

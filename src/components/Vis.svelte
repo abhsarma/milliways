@@ -6,6 +6,7 @@
 	import { colors } from '../utils/colorPallete.js';
 	import { mean } from '../utils/helpers/arrayMethods.js'
 	import { gridCollapse, exclude_rows } from '../utils/stores.js'
+	import Sort from './Sort.svelte'
 	
 	// svg is used to bind the svg HTML element in line 135
 	let cellHeight, min = 32;
@@ -14,10 +15,13 @@
 	
 	export let i;
 	export let data;
+	export let estimates;
 	export let allOutcomeVars;
 	export let sortAscending;
 	export let sortByIndex;
 	export let term = allOutcomeVars[0];
+
+	let brushContainer, sx;
 
 	let visButtonHeight = 44;
 
@@ -75,27 +79,27 @@
 	// d's for axis paths
 	$: xPath = `M${margin.left}, -6V0H${w - margin.right}V-6`;
 
-	function brushStart(e) {
-		// $exclude_rows = []; // this will not exclude anything
-		dispatch("brush");
+	function brushed({selection}) {
+		sx = selection.map(xscale.invert);
 	}
 
-	function brushEnd(e) {
-		try {
-			let [p1,p2] = e.selection;
-			$exclude_rows = [i, [xscale.invert(p1), xscale.invert(p2)]];
-		}
-		catch (err) { // happens when the user clicks outside of selection rect without dragging
-			$exclude_rows = []; // this will not exclude anything
+	function brushEnd({selection}) {
+		if (selection === null) {
+			$exclude_rows = [];
+			sx = xscale.domain();
+		} else {
+			$exclude_rows = [i, selection.map(xscale.invert)];
+			sx = selection.map(xscale.invert);
 		}
 	}
+
+	$: if (!sx) sx = xscale?.domain();
 
 	onMount(() => {
-		let brushContainer = d3.select(`#brush-container-${i}`);
+		brushContainer = d3.select(`#brush-container-${i}`);
 
-		let brush = d3
-			.brushX()
-			.on('start', brushStart)
+		let brush = d3.brushX()
+			.on('start brush', brushed)
 			.on('end', brushEnd)
 			.extent([[margin.left, 2], [w - margin.right, yscaleHist.range()[1]]]);
 
@@ -104,11 +108,11 @@
 
 	// histogram
 	$: histogram = d3.histogram()
-		.value(function(d) { return d; })   // I need to give the vector of value
-		.domain(xscale.domain())  // then the domain of the graphic
-		.thresholds(xscale.ticks(70)); // then the numbers of bins
+		.value( d => d)
+		.domain(xscale.domain())  // domain of the graphic
+		.thresholds(xscale.ticks(70)); // the numbers of bins
 
-	$: bins = histogram(data.estimate.flat());
+	$: bins = histogram(estimates[i]);
 
 	$: yscaleHist = d3.scaleLinear()
 		.domain([0, Math.round(data.mode / 10) * 10])
@@ -118,6 +122,7 @@
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 	document.documentElement.style.setProperty('--visColor', colors.vis)
+	document.documentElement.style.setProperty('--grayColor', colors.gray70)
 </script>
 
 <div class="vis" id="vis-{i}">
@@ -128,22 +133,16 @@
 					<option value={t}> {t} </option>
 				{/each}
 			</select>
-			{#if sortByIndex == i}
-				{#if sortAscending}
-					<button class="vis-button sort-btn" id="vis-{i}" on:click={()=> dispatch("changeSortDirection")}>
-						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
-					</button>
-				{:else}
-					<button class="vis-button sort-btn" id="vis-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", -1)}}>
-						<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>					
-					</button>
-				{/if}
-			{:else}
-				<button class="vis-button sort-btn" id="vis-{i}" on:click={() => dispatch("setSortIndex", i)}>
-					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
-				</button>
-			{/if}
-			<button class="vis-button close-btn" id="vis-{i}" on:click={() => dispatch("remove")}>
+			<Sort 
+				i={i} 
+				w={24}
+				padding={6}
+				bind:index={sortByIndex} 
+				bind:order={sortAscending}
+				on:setSortIndex = {(e) => {dispatch('setSortIndex', e.detail)} }
+				on:changeSortDirection = {(e) => dispatch('changeSortDirection', e.detail)}
+			/>
+			<button class="close-button" id="vis-{i}" on:click={() => dispatch("remove")}>
 				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
 			</button>
 		</div>
@@ -180,14 +179,14 @@
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
 			<!-- {axisAdjust + 8} -->
 			{#each bins as d}
-				<!-- y={yscaleHist.range()[1] - yscaleHist(d.length) + 4} // 4 is for padding -->
+				<!-- {console.log((d.x0+d.x1)/2, (d.x0+d.x1)/2, sx[0], sx[1], ((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]))}	 -->
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
 					y = "{yscaleHist.range()[1] - yscaleHist(d.length)}"
 					width="{xscale(d.x1) - xscale(d.x0)}" 
 					height="{yscaleHist(d.length)}" 
-					fill="{colors.vis}"
+					fill="{((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]) ? colors.vis : colors.inactive}"
 					opacity=0.8></rect>
 				}
 			{/each}
@@ -271,29 +270,37 @@
 		padding: 0px;
 	}
 
-	.vis-button {
+	.close-button {
 		/* 34px is the height of the dropdown */
 		position: sticky;
 		top: 0;
 		z-index: 2;
-		width: 36px;
-		height: 36px;
-		padding: 0px;
-		border: 1px solid var(--bgColor);
-		background-color: var(--bgColor);
+		width: 24px;
+		height: 24px;
+		padding: 6px;
+		background-color: transparent !important;
+		border: none;
 		border-radius: 4px;
-		flex:1;
+		box-sizing: content-box;
 		align-content: center;
+		cursor: pointer;
 	}
 
-	.vis-button:hover > svg {
-		background-color: var(--hoverColor);
+	.close-button:hover > svg {
+		background-color: var(--grayColor);
 		fill: white;
 	}
-	.vis-button:active > svg {
-		background-color: var(--hoverColor);
-		color: white;
+
+	.close-button:active > svg {
+		background-color: var(--grayColor);
+		fill: white;
 	}
+
+	.close-button:focus > svg {
+		background-color: var(--grayColor);
+		fill: white;
+	}
+
 	.vis {
 		display: inline-block;
 		margin-left: 3px;
@@ -301,10 +308,9 @@
 	.vis:first-child {
 		margin-left: 0;
 	}
-	
-	.active_svg {
-		background-color: var(--hoverColor);
-		fill: white;
+
+	svg {
+		border-radius: 4px;
 	}
 
 	select {
@@ -312,5 +318,7 @@
 		border: none;
 		background-color: var(--bgColor);
 		text-align: center;
+		font-family: 'Avenir Next', sans-serif;
+		font-size: 14px;
 	}
 </style>

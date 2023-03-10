@@ -1,100 +1,103 @@
 <script>
 	import * as d3 from 'd3';
-    import { colors } from '../utils/colorPallete.js';
-    import { validType } from '../utils/helpers/dataTableUtils';
+	import { colors } from '../utils/colorPallete.js';
+	import { validType } from '../utils/helpers/dataTableUtils';
+	import { text } from '../utils/dimensions.js'
 
-    // TODO: max/min-imize
+	// TODO: max/min-imize
+	export let data, maxBins, histHeight, histWidth;
+	
+	// removing and counting non-values
+	let na = 0;
+	// for (let i = 0; i < values.length; i++) {
+	// 	if (
+	// 		(data.field_type === "numeric" && typeof values[i] !== "number") ||
+	// 		(data.field_type === "Date" && values[i] === null)
+	// 	) {
+	// 		values.splice(i, 1);
+	// 		na++;
+	// 		i--;
+	// 	}
+	// }
 
-    export let data, maxBins, histHeight, histWidth;
+	// // this is done so that we can compare dates
+	// if (data.field_type === "Date")
+	// 	values = values.map(v => new Date(v));
+	
+	// // to be displayed below the histogram
+	// let range = d3.extent(values);
 
-    let numUnique = new Set(data.values).size;
-    const NUM_BINS = Math.min(numUnique, maxBins);
+	// // convert back to string 
+	// if (data.field_type === "Date")
+	// 	range = range.map(date => date.toISOString().split('T')[0])
 
-    // this will stay constant, so this is defined here
-    const BAR_WIDTH = histWidth / NUM_BINS;
+	let x = [...data.values];
+	let uniqueValues = new Set(x).size;
+	let tickCount = Math.min(uniqueValues, 10);
+	let xDomain = uniqueValues < 20 ? d3.extent(x).map((d, i) => Math.pow(-1, i+1)*0.5 + d) : d3.extent(x);
 
-    // copied so that the original is certainly not modified
-    let values = [...data.values];
-    
-    // removing and counting non-values
-    let na = 0;
-    for (let i = 0; i < values.length; i++) {
-        if (!validType(values[i], data.field_type)) {
-            values.splice(i, 1);
-            na++;
-            i--;
-        }
-    }
+	let xscale = d3.scaleLinear()
+		.domain(xDomain)
+		.range([8, histWidth - 8]);	
 
-    // this is done so that we can compare dates
-    if (data.field_type === "Date")
-        values = values.map(v => new Date(v));
-    
-    // === [Math.min(values), Math.max(values)]
-    let range = d3.extent(values);
+	let histogram = d3.histogram()
+		.value( d => d )
+		.domain(xscale.domain())
+		.thresholds(
+			(data, min, max) => uniqueValues >= 20 ? xscale.ticks(20) : d3.range(uniqueValues).map(t => min + (t / uniqueValues) * (max - min))
+		);
 
-    // explicitly define the range of values of each bin in histogram
-    let thresholds = [];
-    for (let i = 1; i < NUM_BINS; i++)
-        thresholds.push(((range[1]-range[0]) * i/NUM_BINS) + Number(range[0]));
+	let bins = histogram(x) // .filter( d => (d.x1 - d.x0) > 0);
 
-    // convert to string to be displayed
-    if (data.field_type === "Date")
-        range = range.map(date => date.toISOString().split('T')[0])
+	let yscale = d3.scaleLinear()
+		.domain([0, d3.max(bins.map(d => d.length))])
+		.range([0, histHeight]);
 
-    let histogram = d3.histogram()
-        .thresholds(thresholds);
-    let bins = histogram(values);
-
-    // this is to make all histograms use up all height given
-    let maxLength = Math.max(...bins.map(d => d.length));
-
-    let y = d3.scaleLinear()
-        .domain([0, maxLength])
-        .range([0, histHeight]);
 </script>
 
 <div class="table-histogram">
+	<!-- HISTOGRAM -->
+	<svg height={histHeight} width={histWidth}>
+		<g id="data-{data.field}">
+			<g class="histogram">
+				{#each bins as d,i}
+					<rect 
+						class="d3-histogram" 
+						x="{xscale(d.x0)}" 
+						y="{histHeight - yscale(d.length)}"
+						width="{xscale(d.x1) - xscale(d.x0)}" 
+						height="{yscale(d.length)}" 
+						fill="{colors.vis}"
+						stroke="#ffffff"
+						paint-order="stroke"
+						stroke-width="1"
+					></rect>
+				{/each}
+			</g>
+		</g>
+	</svg>
 
-    <!-- HISTOGRAM -->
-    <svg height={histHeight} width={histWidth}>
-        <!-- 
-            In width="{barWidth - x}" for some x,
-            x essentially acts as padding between bars
-        -->
-        {#each bins as d,i}
-        <rect 
-            class="d3-histogram" 
-            x="{BAR_WIDTH * i}" 
-            y="{histHeight - y(d.length)}"
-            width="{BAR_WIDTH - 0.5}" 
-            height="{y(d.length)}" 
-            fill="{colors.vis}"
-        ></rect>
-        {/each}
-    </svg>
+	<!-- Displays the range of values in the histogram -->
+	<div class="histogram-range">
+		<p>{d3.extent(x)[0]}</p>
+		<p>{d3.extent(x)[1]}</p>
+	</div>
 
-    <!-- Displays the range of values in the histogram -->
-    <div class="histogram-range">
-        <p>{range[0]}</p>
-        <p>{range[1]}</p>
-    </div>
-
-    <!-- Displays # of invalid values -->
-    <div class="invalid-value-container">
-        <p>invalid values: {na}</p>
-    </div>
+	<!-- Displays # of invalid values -->
+	<!-- <div class="invalid-value-container">
+		<p>invalid values: {na}</p>
+	</div> -->
 </div>
 
 <style>
-    .histogram-range {
-        display: flex;
-        justify-content: space-between;
-    }
+	.histogram-range {
+		display: flex;
+		justify-content: space-between;
+	}
 
-    p {
-        font-size: 11px;
-        padding: 0;
-        margin: 0;
-    }
+	p {
+		font-size: 11px;
+		padding: 0;
+		margin: 0;
+	}
 </style>

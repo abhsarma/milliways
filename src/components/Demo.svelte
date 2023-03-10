@@ -5,8 +5,6 @@
 	import { colors } from '../utils/colorPallete.js';
 	import Popup from './PopupDemo.svelte';
 
-
-	export let parameters;
 	export let visible_demo;
 	let minimise_demo = false;
 
@@ -32,7 +30,7 @@
 
 	let activePrev  = false, activeSkip = false, activeNext = false, positions;
 	let step = 0;
-	let N = 7;
+	let N = 8;
 
 	function incrementCount() {
 		step += 1;
@@ -89,7 +87,7 @@
 		/>
 	{:else if step == 1}
 		<Popup 
-			message = "This demo will consist of a set of three videos. After each video, please minimise this popup window and try to recreate the steps shown. Please note that the steps shown are not <span class='emphasis'>prescriptive</span>, but rather an example of how to use the tool for inference."
+			message = "This demo consists of three videos. After each video, <span class='emphasis'>please minimise this popup window and try to recreate the steps shown</span>. Please note that the steps shown are <span class='emphasis'>not prescriptive</span>, but rather an example of how the tool can be used to analyse and interpret the results of a multiverse analysis."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}
@@ -99,7 +97,7 @@
 		/>
 	{:else if step == 2}
 		<Popup 
-			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			message = "<video width='100%' controls autoplay><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
 			step = {step}
 			containsImage = {true}
 			on:next = {updatePopup}
@@ -109,7 +107,7 @@
 		/>
 	{:else if step == 3}
 		<Popup 
-			message = "Please minimise the popup window and try to recreate the steps shown."
+			message = "Please minimise the popup window and try to recreate the steps shown. Once you are finished, please click on the  button on the top-right corner to resume the demo."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}
@@ -119,7 +117,7 @@
 		/>
 	{:else if step == 4}
 		<Popup 
-			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			message = "<video width='100%' controls autoplay><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-2.mp4></video>"
 			step = {step}
 			containsImage = {true}
 			on:next = {updatePopup}
@@ -129,7 +127,7 @@
 		/>
 	{:else if step == 5}
 		<Popup 
-			message = "Please minimise the popup window and try to recreate the steps shown."
+			message = "Please minimise the popup window and try to recreate the steps shown. Once you are finished, please click on the  button on the top-right corner to resume the demo."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}
@@ -139,7 +137,7 @@
 		/>
 	{:else if step == 6}
 		<Popup 
-			message = "<video width='100%' controls><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-1.mp4></video>"
+			message = "<video width='100%' controls autoplay><source src=https://abhsarma.github.io/assets/multiverse-vis/demos/sequence-part-3.mp4></video>"
 			step = {step}
 			containsImage = {true}
 			on:next = {updatePopup}
@@ -149,7 +147,7 @@
 		/>
 	{:else if step == 7}
 		<Popup 
-			message = "Please minimise the popup window and try to recreate the steps shown."
+			message = "Please minimise the popup window and try to recreate the steps shown. Once you are finished, please click on the  button on the top-right corner to resume the demo."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}
@@ -159,7 +157,7 @@
 		/>
 	{:else}
 		<Popup 
-			message = "The steps shown in this demonstration are not prescriptive. Rather they are a demonstration of how this interface can be used to analyse and interpret the results of a multiverse analysis."
+			message = "After examining the results, and removing choices that are not equally justifiable or reasonable, we still observe a lot of variation in the outcome based on decisions in the data analysis process. Thus, it is reasonable to conclude that the effect being studied is sensitive to arbitrary decisions in the data analysis process.<br>Please note that the steps shown in this demonstration are <span class='emphasis'>not prescriptive</span>, but rather an example of how the tool can be used to analyse and interpret the results of a multiverse analysis."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}
@@ -171,10 +169,6 @@
 </div>
 
 <style type="text/css">
-	i {
-		color: red;
-	}
-
 	:global(.to-front) {
 		z-index: 99;
 	}

@@ -12,6 +12,7 @@
 
 	export let data;
 	export let parameters;
+	export let analysis_doc;
 
 	// CSS Styles
 	export const parameter_name = css`
@@ -75,8 +76,6 @@
 		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
-	$: console.log(h)
-
 	document.documentElement.style.setProperty('--bgColor', colors.background)
 	document.documentElement.style.setProperty('--textColor', colors.gray90)
 
@@ -109,8 +108,11 @@
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
 		if (!mvWindow || mvWindow.closed) {
-			mvWindow = open(process.env.ANALYSIS_DOC,
-							process.env.ANALYSIS_DOC,
+			mvWindow = open(
+							analysis_doc,
+							analysis_doc,
+							// process.env.ANALYSIS_DOC,
+							// process.env.ANALYSIS_DOC,
 							`top=0,
 							 left=${screen.width}-960,
 							 width=960,
@@ -152,6 +154,7 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
+					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="tooltip-link" data-toggle="tooltip" title="{parameter}">
 						<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
 					</a>
@@ -176,6 +179,7 @@
 							height="{namingDim}" 
 							class="option-name {option}">
 								<OptionToggle {parameters} {parameter} {option} on:hide/>
+								<!-- svelte-ignore a11y-missing-attribute -->
 								<a class="tooltip-link" data-toggle="tooltip" title="{option}">
 									<div class="option-label parameter-{parameter} {option_names} {option}">{option}</div>
 								</a>
@@ -204,9 +208,23 @@
 									y={y(j)}
 									width={cellWidth} 
 									height={y.bandwidth()}
-									class="{options_container} {option} option-cell {selected_option} universe-{j}"
+									class="{options_container} {parameter} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
+									on:mouseover={() => moveBgRect(y(j))}
+								/>
+							{:else if $exclude_options[parameter].includes(option)}
+								<!-- {console.log(parameter, option)} -->
+								<rect 
+									x={(cell.width - cellWidth)/2} 
+									y={y(j)}
+									width={cellWidth}
+									height={y.bandwidth()}
+									class="{options_container} {parameter} {option} option-cell exclude-rect universe-{j}"
+									row={j}
+									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
@@ -215,9 +233,10 @@
 									y={y(j)}
 									width={cellWidth}
 									height={y.bandwidth()}
-									class="{options_container} {option} option-cell"
+									class="{options_container} {parameter} {option} option-cell universe-{j}"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{/if}
@@ -226,7 +245,7 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} bind:h={h} bind:y={scrollY}/>
+		<SortByGroupDivider bind:h={h} bind:y={scrollY}/>
 	</svg>
 	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
 		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>
@@ -259,12 +278,6 @@
 		z-index: 1;
 	}
 
-	svg.grid-group-divider {
-		position: sticky;
-		top: 188px;
-		z-index: 10;
-	}
-
 	svg, rect {
 		transition: width .5s linear, height .5s linear, x .5s linear, y .5s linear;
 	}
@@ -281,5 +294,9 @@
 	a.tooltip-link {
 		text-decoration: none;
 		color: var(--textColor) ;
+	}
+
+	.exclude-rect {
+		fill: #efefef !important;
 	}
 </style>
