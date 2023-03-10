@@ -12,6 +12,7 @@
 
 	export let data;
 	export let parameters;
+	export let analysis_doc;
 
 	// CSS Styles
 	export const parameter_name = css`
@@ -107,8 +108,11 @@
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
 		if (!mvWindow || mvWindow.closed) {
-			mvWindow = open(process.env.ANALYSIS_DOC,
-							process.env.ANALYSIS_DOC,
+			mvWindow = open(
+							analysis_doc,
+							analysis_doc,
+							// process.env.ANALYSIS_DOC,
+							// process.env.ANALYSIS_DOC,
 							`top=0,
 							 left=${screen.width}-960,
 							 width=960,
@@ -204,7 +208,20 @@
 									y={y(j)}
 									width={cellWidth} 
 									height={y.bandwidth()}
-									class="{options_container} {option} option-cell {selected_option} universe-{j}"
+									class="{options_container} {parameter} {option} option-cell {selected_option} universe-{j}"
+									row={j}
+									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
+									on:mouseover={() => moveBgRect(y(j))}
+								/>
+							{:else if $exclude_options[parameter].includes(option)}
+								<!-- {console.log(parameter, option)} -->
+								<rect 
+									x={(cell.width - cellWidth)/2} 
+									y={y(j)}
+									width={cellWidth}
+									height={y.bandwidth()}
+									class="{options_container} {parameter} {option} option-cell exclude-rect universe-{j}"
 									row={j}
 									on:click={openFile}
 									on:focus={() => moveBgRect(y(j))}
@@ -216,7 +233,7 @@
 									y={y(j)}
 									width={cellWidth}
 									height={y.bandwidth()}
-									class="{options_container} {option} option-cell"
+									class="{options_container} {parameter} {option} option-cell universe-{j}"
 									row={j}
 									on:click={openFile}
 									on:focus={() => moveBgRect(y(j))}
@@ -277,5 +294,9 @@
 	a.tooltip-link {
 		text-decoration: none;
 		color: var(--textColor) ;
+	}
+
+	.exclude-rect {
+		fill: #efefef !important;
 	}
 </style>

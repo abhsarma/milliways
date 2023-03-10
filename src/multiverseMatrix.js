@@ -315,9 +315,9 @@ class multiverseMatrix {
 		}
 	}
 
-	updateWrapper(joinOptions=[], excludeOptions=[], excludeRows={}) {
+	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) {
 		/*
-			Updates the store variables join_options, exclude_options, and exclude_rows which then should be handled elsewhere
+			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
 			PARAMETERS:
 				joinArr : array[array[string]]
@@ -337,70 +337,79 @@ class multiverseMatrix {
 				Let there be 2 outcome variables o_1, o_2 and only o_1 is shown on the vis.
 				Assuming the parameters & options haven't been moved around, some example calls are
 
-				updateWrapper([ ['p_1','p_2'], ['q_2', q_3'] ]);
+				m.setInteractions([ ['p_1','p_2'], ['q_2', q_3'] ]);
 					This will join options p_1 and p_2, and it will also join q_2, q_3.
 
-				updateWrapper([ ['p_2','p_1'], ['q_3', q_2'] ]);
+				m.setInteractions([ ['p_2','p_1'], ['q_3', q_2'] ]);
 					This will behave the same as above.
 				
-				updateWrapper([ ['p_1', 'p_3'] ]);
+				m.setInteractions([ ['p_1', 'p_3'] ]);
 					This does nothing, as p_1 and p_3 are not adjacent.
 					If p_1 and p_3  are moved in the visualization such that they are adjacent, this will join.
 				
-				updateWrapper([ ['p_1', 'p_2'], ['p_2', 'p_3'] ]);
+				m.setInteractions([ ['p_1', 'p_2'], ['p_2', 'p_3'] ]);
 					This will join all three options together.
 
-				updateWrapper([ ['p_1, 'p_2'], ['p_1', 'p_3'] ]);
+				m.setInteractions([ ['p_1, 'p_2'], ['p_1', 'p_3'] ]);
 					This will only join p_1 and p_2.
 				
-				updateWrapper(excludeOptions=['p_1','p_3','q_1']);
+				m.setInteractions(excludeOptions=['p_1','p_3','q_1']);
 					This will exclude the respective options.
 				
-				updateWrapper([ ['p_1', 'p_2'], ['p_2', 'p_3'] ], ['p_3']);
+				m.setInteractions([ ['p_1', 'p_2'], ['p_2', 'p_3'] ], ['p_3']);
 					This will join all three options, but also exclude p_3
 
-				updateWrapper(excludeRows={ outcomeVar: "o_1", range: [4.123, 4.987] })
+				m.setInteractions(excludeRows={ outcomeVar: "o_1", range: [4.123, 4.987] })
 					Only the rows such that the intercept value for o_1 is between 4.123 and 4.987 are included.
 
-				updateWrapper(excludeRows={ outcomeVar: "o_1", range: ["4.123", "4.987"] })
+				m.setInteractions(excludeRows={ outcomeVar: "o_1", range: ["4.123", "4.987"] })
 					This does nothing as the elements in range are not the right type.
 
-				updateWrapper(excludeRows={ outcomeVar: "o_1", range: [0] })
+				m.setInteractions(excludeRows={ outcomeVar: "o_1", range: [0] })
 					This does nothing as range is not in the right format.
 
-				updateWrapper(excludeRows={ outcomeVar: "o_2", range: [0,0.5] })
+				m.setInteractions(excludeRows={ outcomeVar: "o_2", range: [0,0.5] })
 					This does nothing as o_2 is not being visualized.
 				
-				updateWrapper(excludeRows={ outcomeVar: "o_3", range: [1,2] })
+				m.setInteractions(excludeRows={ outcomeVar: "o_3", range: [1,2] })
 					This does nothing as o_3 does not exist.
 		*/
 
+		let newJoinOptions = [];
+
 		// filter excludes option groups that are not valid
 		// map produces the proper format
-		let newJoinOptions = joinOptions.filter(arr => {
-			let x=arr[0], y=arr[1];
-			return x in this.invParameters && y in this.invParameters && // checks options exist
-				this.invParameters[x] === this.invParameters[y] && // checks options are in the same parameter
-				(() => { // checks options are visually next to each other in the mv vis document
-					const param = this.invParameters[x]
-					const ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
-					    iy = opt_scale[param].domain().indexOf(this.optionToIndex[y]);
-					return Math.abs(ix-iy) === 1; // also ensures x !== y
-				})();
-		}).map(arr => {
-			const x=arr[0], y=arr[1];
-			const param = this.invParameters[x];
-			const indices = [
-				opt_scale[param].domain().indexOf(this.optionToIndex[x]),
-				opt_scale[param].domain().indexOf(this.optionToIndex[y])
-			];
-			let reversed = indices[0] > indices[1]; // true=>[0] comes after (on the right) of [1] in the vis
-			return {
-				indices: reversed ? [indices[1],indices[0]] : indices,
-				options: reversed ? [arr[1],arr[0]] : arr,
-				parameter: param
-			}
-		});
+		if (joinOptions.length) {
+			newJoinOptions = joinOptions.filter(arr => {
+				// check if arr is a list
+				if (! Array.isArray(arr)) {
+					throw new Error('Argument joinOptions should be of the form: array[array[string]]')
+				}
+
+				let x=arr[0], y=arr[1];
+				return x in this.invParameters && y in this.invParameters && // checks options exist
+					this.invParameters[x] === this.invParameters[y] && // checks options are in the same parameter
+					(() => { // checks options are visually next to each other in the mv vis document
+						const param = this.invParameters[x]
+						const ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+						    iy = opt_scale[param].domain().indexOf(this.optionToIndex[y]);
+						return Math.abs(ix-iy) === 1; // also ensures x !== y
+					})();
+			}).map(arr => {
+				const x=arr[0], y=arr[1];
+				const param = this.invParameters[x];
+				const indices = [
+					opt_scale[param].domain().indexOf(this.optionToIndex[x]),
+					opt_scale[param].domain().indexOf(this.optionToIndex[y])
+				];
+				let reversed = indices[0] > indices[1]; // true=>[0] comes after (on the right) of [1] in the vis
+				return {
+					indices: reversed ? [indices[1],indices[0]] : indices,
+					options: reversed ? [arr[1],arr[0]] : arr,
+					parameter: param
+				}
+			});
+		}
 		
 		excludeOptions = Array.from(new Set(excludeOptions)); // remove duplicates
 		let newExcludeOptions = {};
@@ -412,11 +421,13 @@ class multiverseMatrix {
 		
 		let newExcludeRows = [];
 		// make sure range is in the right format
-		if (excludeRows.range.length===2 && excludeRows.range.every(v => typeof v === 'number')) {
-			for (let i = 0; i < this.outcomes.length; i++) {
-				if (this.outcomes[i].var === excludeRows.outcomeVar) {
-					newExcludeRows = [i, excludeRows.range];
-					break;
+		if (excludeRows.length) {
+			if (excludeRows.range.length===2 && excludeRows.range.every(v => typeof v === 'number')) {
+				for (let i = 0; i < this.outcomes.length; i++) {
+					if (this.outcomes[i].var === excludeRows.outcomeVar) {
+						newExcludeRows = [i, excludeRows.range];
+						break;
+					}
 				}
 			}
 		}

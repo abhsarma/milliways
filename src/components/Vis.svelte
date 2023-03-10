@@ -21,7 +21,7 @@
 	export let sortByIndex;
 	export let term = allOutcomeVars[0];
 
-	let brushContainer;
+	let brushContainer, sx;
 
 	let visButtonHeight = 44;
 
@@ -52,7 +52,7 @@
 	$: h = cell.padding + data.density.length * cellHeight + 2*margin.bottom;
 
 	// scales
-	const xscale = d3.scaleLinear()
+	$: xscale = d3.scaleLinear()
 		.domain(d3.extent(data.density[0].map(d => d[0])))
 		.range([margin.left, outcomeVisWidth]);
 
@@ -93,7 +93,7 @@
 		}
 	}
 
-	$: sx = xscale.domain();
+	$: if (!sx) sx = xscale?.domain();
 
 	onMount(() => {
 		brushContainer = d3.select(`#brush-container-${i}`);
@@ -179,6 +179,7 @@
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
 			<!-- {axisAdjust + 8} -->
 			{#each bins as d}
+				<!-- {console.log((d.x0+d.x1)/2, (d.x0+d.x1)/2, sx[0], sx[1], ((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]))}	 -->
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 

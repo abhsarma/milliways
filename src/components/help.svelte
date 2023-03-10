@@ -36,6 +36,7 @@
 <style>
 	.help-dropdown {
 		height: 40px;
+		width: 180px;
 		padding: 12px 32px;
 	}
 
