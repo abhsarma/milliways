@@ -211,6 +211,7 @@
         width: calc(100% - 200px);
         top: 100px;
         left: 100px;
+        box-shadow: 2px 2px 4px 0px #cccccc;
     }
 
     :global(.maximised-table > *) {

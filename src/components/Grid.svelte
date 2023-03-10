@@ -266,7 +266,7 @@
 		display: flex;
 		position: sticky;
 		top: 0;
-		box-shadow: 0px 4px 5px -2px #c0c0c0;
+		box-shadow: 0px 4px 5px -2px #cccccc;
 		z-index: 10;
 	}
 

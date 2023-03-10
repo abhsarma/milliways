@@ -153,7 +153,7 @@
 		padding: 0px;
 		transform: translate(var(--min-x), var(--min-y));
 		transition: ease-in-out .5s;
-		box-shadow: 0px 0px 5px 0px #979797;
+		box-shadow: 0px 0px 5px 0px #cccccc;
 		cursor: pointer;
 	}
 

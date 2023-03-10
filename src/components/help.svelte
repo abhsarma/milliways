@@ -76,7 +76,7 @@
 	.help-dropdown-menu {
 		width: 180px;
 		background-color: #fafafa;
-		box-shadow: 0px 4px 5px -2px #c0c0c0;
+		box-shadow: 0px 4px 5px -2px #cccccc;
 		position: relative;
 		z-index: 999;
 
