@@ -243,16 +243,6 @@
 				/>
 			</div>
 		</div>
-
-		<!-- {#if showMaximizedTable}
-			<div class="maximized-table-container">
-				<DataTable
-					tableData={tableData.default}
-					cellWidth=150
-					h="100%"
-				/>
-			</div>
-		{/if} -->
 		{#if showInterfaceTutorial}
 			<Tutorial bind:visible_tutorial={showInterfaceTutorial} bind:multiverse={m} parameters={m.parameters}/>
 		{/if}

@@ -18,7 +18,9 @@
 		]
 		Each {} is a column.
 	*/
-	export let tableData, cellWidth, h, maximised;
+	export let tableData, cellWidth, h;
+
+    let maximised = false;
 
 	let size = tableData[0].values.length;
 
@@ -96,12 +98,21 @@
     }
 
     function toggleSize() {
-        console.log(maximised)
+        maximised = !maximised;
+        if (maximised) {
+            document.querySelector('.table').classList.add('maximised-table');
+            document.querySelector('.table-bg').classList.add('show');
+        }
+        else {
+            document.querySelector('.table').classList.remove('maximised-table');
+            document.querySelector('.table-bg').classList.remove('show');
+        }
     }
 
     document.documentElement.style.setProperty('--gray20', colors.gray20);
 </script>
 
+<div class="table-bg"></div>
 <div class="table" style="height:{h}px">
 	<div class="table-label">
 		<h4>Data</h4>
@@ -152,7 +163,6 @@
 
     .toggle-button {
         display: flex;
-        z-index: 2;
 		align-items: center;
         justify-content: center;
 
@@ -193,4 +203,29 @@
 		border-radius: 8px;
 		overflow: auto;
 	}
+
+    :global(.maximised-table) {
+        z-index: 99;
+        position: fixed;
+        height: calc(100% - 200px) !important;
+        width: calc(100% - 200px);
+        top: 100px;
+        left: 100px;
+    }
+
+    :global(.maximised-table > *) {
+        z-index: 99;
+    }
+
+    :global(.table-bg.show) {
+        content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		background-color: #efefef80;
+		backdrop-filter: blur(3px);
+		z-index: 20;
+    }
 </style>
