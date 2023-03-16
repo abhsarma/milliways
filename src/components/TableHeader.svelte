@@ -3,6 +3,7 @@
     import { createEventDispatcher } from "svelte";
 	import TableHistogram from "./TableHistogram.svelte";
 	import { onMount } from 'svelte';
+	import Sort from './Sort.svelte'
 
     export let tableData, width
     export let sortAscending, sortByIndex; // see Table.svelte for details on these variables
@@ -44,21 +45,15 @@
 						<b style="width: {width-24}px;">{col.field}</b>
 
 						<!-- Button changing based on sorting state-->
-						{#if sortByIndex === i+1}
-							{#if sortAscending === 1}
-								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> dispatch("changeSortDirection")}>
-									<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
-								</button>
-							{:else}
-								<button class="histogram-button sort-btn" id="column-{i}" on:click={()=> {dispatch("changeSortDirection"); dispatch("setSortIndex", 0);}}>
-									<svg class="active_svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>					
-								</button>
-							{/if}
-						{:else}
-							<button class="histogram-button sort-btn" id="column-{i}" on:click={() => dispatch("setSortIndex", i+1)}>
-								<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
-							</button>
-						{/if}
+						<Sort 
+							i={i+1} 
+							w={20}
+							padding={0}
+							bind:index={sortByIndex} 
+							bind:order={sortAscending}
+							on:setSortIndex = {(e) => {dispatch('setSortIndex', e.detail)} }
+							on:changeSortDirection = {(e) => dispatch('changeSortDirection', e.detail)}
+						/>
 
 					</div>
 
@@ -72,14 +67,20 @@
 	<!-- The entire 2nd row of the table (that contains the histograms)-->
 	<div class="histogram-row">
 		{#each tableData as col,i}
-			<div class="column-header histogram-container table-cell {cell}">
-				<TableHistogram
-					data={col}
-					maxBins=20
-					histHeight={width/3}
-					histWidth={width}
-				/>
-			</div>
+			{#if col.field_type === 'character'}
+				<div class="column-header histogram-container table-cell {cell}">
+					<p><span class="large">{new Set(col.values).size}</span><br/>unique values</p>
+				</div>
+			{:else}
+				<div class="column-header histogram-container table-cell {cell}">
+					<TableHistogram
+						data={col}
+						maxBins=20
+						histHeight={width/3}
+						histWidth={width}
+					/>
+				</div>
+			{/if}
 		{/each}
 	</div>
 </div>
@@ -126,6 +127,15 @@
 		border-left: 1px solid #efefef;
 	}
 
+	p {
+		text-align: center;
+		vertical-align: middle;
+	}
+
+	span.large {
+		font-size: 21px;
+	}
+
     .table-title {
         display: flex;
         flex-direction: row;
@@ -153,30 +163,6 @@
         overflow: hidden;
         white-space: nowrap;
     }
-
-    .histogram-button {
-		z-index: 2;
-        margin: 0;
-		padding: 0;
-		border: 1px solid var(--bgColor);
-		background-color: var(--bgColor);
-		border-radius: 4px;
-		align-content: center;
-	}
-
-    .histogram-button > svg {
-        width: 18px;
-        height: 18px;
-    }
-
-	.histogram-button:hover > svg {
-		background-color: var(--hoverColor);
-		fill: white;
-	}
-	.histogram-button:active > svg {
-		background-color: var(--hoverColor);
-		color: white;
-	}
     
     .active_svg {
 		background-color: var(--hoverColor);

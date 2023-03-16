@@ -71,8 +71,8 @@ export default {
 		commonjs(),
 		
 		injectProcessEnv({ 
-			NODE_ENV: 'production',
-			ANALYSIS_DOC: "analysis-hurricane.html"
+			// ANALYSIS_DOC: "analysis-hurricane.html",
+			NODE_ENV: 'production'
 		}),
 
 		image(),
