@@ -1,6 +1,6 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import * as d3 from 'd3';
+	import { select } from 'd3-selection';
 	import { createEventDispatcher } from 'svelte';
 	import { text, iconSize } from '../utils/dimensions.js'
 	import { exclude_options } from '../utils/stores.js';
@@ -14,11 +14,9 @@
 
 	$: {
 		if (selected) {
-			d3.select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "1");
-			// d3.selectAll(`rect.option-cell.${parameter}.${option}`).classed('exclude-rect', false);
+			select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "1");
 		} else {
-			d3.select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "0.2");
-			// d3.selectAll(`rect.option-cell.${parameter}.${option}`).classed('exclude-rect', true);
+			select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "0.2");
 		}
 	}
 

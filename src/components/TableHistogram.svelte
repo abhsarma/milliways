@@ -1,5 +1,7 @@
 <script>
-	import * as d3 from 'd3';
+	import { range, extent, max, histogram } from 'd3-array';
+	import { scaleLinear, scaleBand } from 'd3-scale';
+	import { select, selectAll } from 'd3-selection';
 	import { colors } from '../utils/colorPallete.js';
 	import { validType } from '../utils/helpers/dataTableUtils';
 	import { text } from '../utils/dimensions.js'
@@ -25,7 +27,7 @@
 	// 	values = values.map(v => new Date(v));
 	
 	// // to be displayed below the histogram
-	// let range = d3.extent(values);
+	// let range = extent(values);
 
 	// // convert back to string 
 	// if (data.field_type === "Date")
@@ -34,23 +36,23 @@
 	let x = [...data.values];
 	let uniqueValues = new Set(x).size;
 	let tickCount = Math.min(uniqueValues, 10);
-	let xDomain = uniqueValues < 20 ? d3.extent(x).map((d, i) => Math.pow(-1, i+1)*0.5 + d) : d3.extent(x);
+	let xDomain = uniqueValues < 20 ? extent(x).map((d, i) => Math.pow(-1, i+1)*0.5 + d) : extent(x);
 
-	let xscale = d3.scaleLinear()
+	let xscale = scaleLinear()
 		.domain(xDomain)
 		.range([8, histWidth - 8]);	
 
-	let histogram = d3.histogram()
+	let hist = histogram()
 		.value( d => d )
 		.domain(xscale.domain())
 		.thresholds(
-			(data, min, max) => uniqueValues >= 20 ? xscale.ticks(20) : d3.range(uniqueValues).map(t => min + (t / uniqueValues) * (max - min))
+			(data, min, max) => uniqueValues >= 20 ? xscale.ticks(20) : range(uniqueValues).map(t => min + (t / uniqueValues) * (max - min))
 		);
 
-	let bins = histogram(x) // .filter( d => (d.x1 - d.x0) > 0);
+	let bins = hist(x) // .filter( d => (d.x1 - d.x0) > 0);
 
-	let yscale = d3.scaleLinear()
-		.domain([0, d3.max(bins.map(d => d.length))])
+	let yscale = scaleLinear()
+		.domain([0, max(bins.map(d => d.length))])
 		.range([0, histHeight]);
 
 </script>
@@ -79,8 +81,8 @@
 
 	<!-- Displays the range of values in the histogram -->
 	<div class="histogram-range">
-		<p>{d3.extent(x)[0]}</p>
-		<p>{d3.extent(x)[1]}</p>
+		<p>{extent(x)[0]}</p>
+		<p>{extent(x)[1]}</p>
 	</div>
 
 	<!-- Displays # of invalid values -->

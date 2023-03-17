@@ -2,7 +2,9 @@
 	import { css, cx } from '@emotion/css'
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import * as d3 from 'd3';
+	import { select } from 'd3-selection';
+	import { scaleOrdinal, scaleBand } from 'd3-scale';
+	import { range } from 'd3-array';
 	import * as data_hr from '../static/data/hurricane-data.json'; // change 
     import * as code_hr from '../static/data/hurricane-code.json';
     import * as tableData_hr from '../static/data/hurricane-raw-data.json';
@@ -63,15 +65,15 @@
 	// initialise parameter and option scales
 	// these are updated as stores whenever there
 	// is a relevant interaction
-	$parameter_scale = d3.scaleOrdinal()
+	$parameter_scale = scaleOrdinal()
 		.domain(Object.keys(parameters))
 		.range(calculateParamPosition(Object.values(param_n_options)));
 
 	Object.keys(parameters).forEach(function(d, i) {
 		let n = Object.values(parameters)[i].length;
 
-		$option_scale[d] = d3.scaleBand()
-								.domain( d3.range(n) )
+		$option_scale[d] = scaleBand()
+								.domain( range(n) )
 								.range( [0, n * (cell.width + cell.padding)] );
 	})
 
@@ -131,8 +133,8 @@
 
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
-		let leftDiv = d3.select('.vis-container').node();
-		let rightDiv = d3.select('.grid-container').node();
+		let leftDiv = select('.vis-container').node();
+		let rightDiv = select('.grid-container').node();
 		leftDiv.onscroll = function() {
 			if (!isSyncingLeftScroll) {
 				isSyncingRightScroll = true;

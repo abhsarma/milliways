@@ -1,6 +1,10 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import * as d3 from 'd3';
+	import { range, extent, groups, zip, max, histogram } from 'd3-array';
+	import { scaleLinear, scaleBand } from 'd3-scale';
+	import { area, line } from 'd3-shape';
+	import { select, selectAll } from 'd3-selection';
+	import { brushX } from 'd3-brush';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { windowHeight, margin, cell, text, gridNamesHeight, scrollbarWidth, outcomeVisWidth, namingDim } from '../utils/dimensions.js'
 	import { colors } from '../utils/colorPallete.js';
@@ -52,27 +56,27 @@
 	$: h = cell.padding + data.density.length * cellHeight + 2*margin.bottom;
 
 	// scales
-	$: xscale = d3.scaleLinear()
-		.domain(d3.extent(data.density[0].map(d => d[0])))
+	$: xscale = scaleLinear()
+		.domain(extent(data.density[0].map(d => d[0])))
 		.range([margin.left, outcomeVisWidth]);
 
 	// scale for position of g corresponding to each universe
-	$: y = d3.scaleBand()
-		.domain(d3.range(data.density.length))
+	$: y = scaleBand()
+		.domain(range(data.density.length))
 		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 	
 	// scale for CDF of each universe
-	$: yscale = d3.scaleLinear()
+	$: yscale = scaleLinear()
 		.domain([0, 0.5])
 		.range([y.step() - cell.padding, 0]);
 
-	$: area = d3.area()
+	$: areaGeom = area()
 		.x(d => xscale(d[0]))
 		.y0(d => yscale(d[1]))
 		.y1(d => yscale(d[2]))
 
-	$: line = d3.line()
+	$: lineGeom = line()
 		.x(d => xscale(d[0]))
 		.y(d => yscale(d[1]));
 
@@ -96,9 +100,9 @@
 	$: if (!sx) sx = xscale?.domain();
 
 	onMount(() => {
-		brushContainer = d3.select(`#brush-container-${i}`);
+		brushContainer = select(`#brush-container-${i}`);
 
-		let brush = d3.brushX()
+		let brush = brushX()
 			.on('start brush', brushed)
 			.on('end', brushEnd)
 			.extent([[margin.left, 2], [w - margin.right, yscaleHist.range()[1]]]);
@@ -107,14 +111,14 @@
 	})
 
 	// histogram
-	$: histogram = d3.histogram()
+	$: histGeom = histogram()
 		.value( d => d)
 		.domain(xscale.domain())  // domain of the graphic
 		.thresholds(xscale.ticks(70)); // the numbers of bins
 
-	$: bins = histogram(estimates[i].flat());
+	$: bins = histGeom(estimates[i].flat());
 
-	$: yscaleHist = d3.scaleLinear()
+	$: yscaleHist = scaleLinear()
 		.domain([0, Math.round(data.mode / 10) * 10])
 		.range([0, gridNamesHeight - (visButtonHeight + axisAdjust + 2)]); // 24 is for padding
 
@@ -213,16 +217,16 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={area(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={areaGeom(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
-						d={line([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
+						d={lineGeom([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
 					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(0.5)}" r="0.5"></circle>
 				{:else}
 					<path class="median" 
-						d={line([[Math.min(...data.estimate[i]), 0.5], [Math.max(...data.estimate[i]), 0.5]])}
+						d={lineGeom([[Math.min(...data.estimate[i]), 0.5], [Math.max(...data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
 					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(0.5)}" r="0.5"></circle>
 				{/if}

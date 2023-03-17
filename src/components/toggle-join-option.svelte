@@ -1,7 +1,6 @@
 <script>
 	import { css, cx } from '@emotion/css'
 	import { createEventDispatcher } from 'svelte';
-	import * as d3 from 'd3';
 	import { text, iconSize, header, namingDim, cell } from '../utils/dimensions.js'
 	import { join_options, option_scale } from '../utils/stores.js';
 	import { arrayEqual, any, indexOfAll } from '../utils/helpers/arrayMethods.js'

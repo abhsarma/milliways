@@ -1,6 +1,5 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import * as d3 from 'd3';
 	import { text, header, cell, iconSize } from '../utils/dimensions.js'
 	import { gridCollapse } from '../utils/stores.js';
 

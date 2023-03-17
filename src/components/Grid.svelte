@@ -1,6 +1,8 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import * as d3 from 'd3';
+	import { range, extent, groups, zip, max, histogram } from 'd3-array';
+	import { scaleLinear, scaleBand } from 'd3-scale';
+	import { select, selectAll } from 'd3-selection';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { windowHeight, margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
@@ -63,16 +65,16 @@
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	const cols = [...Object.keys(parameters)].length;
-	const x2 = d3.scaleBand()
-				.domain( d3.range(d3.max(Object.values(param_n_options))) )
-				.range( [0, d3.max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
+	const x2 = scaleBand()
+				.domain( range(max(Object.values(param_n_options))) )
+				.range( [0, max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
 
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
 	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding) + 8;
 	$: h = cell.padding + data.length * cellHeight + 2*margin.bottom;
-	$: y = d3.scaleBand()
-		.domain(d3.range(data.length))
+	$: y = scaleBand()
+		.domain(range(data.length))
 		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
@@ -83,15 +85,15 @@
 
   	Object.keys(parameters).forEach(function(d, i) {
   		let n = Object.values(parameters)[i].length;
-		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
+		order[d] = { name: range(n).sort(function(a, b) { return a - b; }) }
 	});
 
 	let bgRect, scrollY = 0;
 
 	onMount(() => {
-		d3.selectAll(".option-headers").call(drag_options(order));
-		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
-		d3.select("g.grouped-sort-divider").call(dragSortDivider());
+		selectAll(".option-headers").call(drag_options(order));
+		selectAll(".parameter").call(drag_parameters(param_n_options, y));
+		select("g.grouped-sort-divider").call(dragSortDivider());
 		bgRect = document.querySelector("#bg-rect");
 
 		const grid_body = document.querySelector(".grid-container");
@@ -163,7 +165,7 @@
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
-				{#each d3.range(parameters[parameter].length - 1) as d, i}
+				{#each range(parameters[parameter].length - 1) as d, i}
 					<foreignObject 
 						class="option-join {d}" 
 						x="{ (x2(i) + x2(i+1))/2 }"
