@@ -47,7 +47,7 @@
 			analysis_doc = "analysis-doc.html"
 		}
 	}
-	toggleDataSet('train');
+	toggleDataSet('task');
 
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -398,17 +398,6 @@
 		/*	background-color: var(--bgColor);
 		padding: 8px; */
 		margin-top: 8px;
-	}
-
-	.maximized-table-container {
-		z-index: 99;
-		position: absolute;
-		top:  0;
-		left: 0;
-		height: calc(100% - 36px);
-		width: calc(100% - 36px);
-		margin: 18px;
-		overflow: auto;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

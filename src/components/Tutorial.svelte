@@ -7,6 +7,7 @@
 	import { parameter_scale, option_scale } from '../utils/stores.js'
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
 	import mcdf from '../assets/images/mcdf.gif'
+	import pbox from '../assets/images/p-boxes.gif'
 	import tree from '../assets/images/tree.png'
 	import groupsort from '../assets/images/grouped-sort.gif'
 
@@ -129,7 +130,7 @@
 			grid: getPosition("div.grid"),
 			parameter: getPosition(`div.parameter-name.${first_param}`),
 			option: getPosition(`div.option-label.${first_option}`),
-			universe0: getPosition(`rect.universe-0`), // get position of first universe which also needs to be highlighted somehow!!
+			universe0: getPosition(`rect.universe-0`),
 			option_interaction: getPosition(`g.parameter-col.${first_param}`),
 			exclude: getPosition(`svg.exclude-icon.${first_option}`),
 			join: getPosition(`.option-join`),
@@ -147,7 +148,7 @@
 	{#if step == 0}
 		{setLayout()}
 		<Popup 
-			message = "Take a quick tour of mvis?<br>Walk through the interface elements and interactions to understand what you can do with mvis."
+			message = "<h3>Take a quick tour of mvis?</h3>Walk through the interface elements and interactions to understand what you can do with mvis."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:0}}
@@ -318,7 +319,7 @@
 		{setLayout("div.vis-container")}
 		{multiverse.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']])}
 		<Popup 
-			message = "What happens when aggregated --> p-boxes!! TODO"
+			message = "We use probability boxes (p-boxes) to show aggregated uncertainty across specifications.<br><br><img style='border-radius: 8px;' src={pbox} width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
 			position = {positions.result0}
 			adjust = {{x:0,y:-0}}
@@ -333,7 +334,7 @@
 		{setLayout("div.toggle")}
 		{multiverse.setInteractions()}
 		<Popup 
-			message = "The toggle button lets you to zoom out by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
+			message = "The toggle button lets you to zoom out by reducing the size of the rectangles representing each universe, and hides the uncertainty for each point estimate.<br><br>This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
 			step = {step}
 			position = {positions.toggle}
 			adjust = {{x:0,y:-0}}

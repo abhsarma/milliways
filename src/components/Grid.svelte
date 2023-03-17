@@ -107,6 +107,8 @@
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
+		console.log(spec);
+
 		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(
 							analysis_doc,

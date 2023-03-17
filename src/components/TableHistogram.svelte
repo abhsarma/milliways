@@ -5,7 +5,7 @@
 	import { text } from '../utils/dimensions.js'
 
 	// TODO: max/min-imize
-	export let data, maxBins, histHeight, histWidth;
+	export let data, histHeight, histWidth;
 	
 	// removing and counting non-values
 	let na = 0;

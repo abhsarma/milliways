@@ -75,7 +75,6 @@
 				<div class="column-header histogram-container table-cell {cell}">
 					<TableHistogram
 						data={col}
-						maxBins=20
 						histHeight={width/3}
 						histWidth={width}
 					/>

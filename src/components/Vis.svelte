@@ -112,7 +112,7 @@
 		.domain(xscale.domain())  // domain of the graphic
 		.thresholds(xscale.ticks(70)); // the numbers of bins
 
-	$: bins = histogram(estimates[i]);
+	$: bins = histogram(estimates[i].flat());
 
 	$: yscaleHist = d3.scaleLinear()
 		.domain([0, Math.round(data.mode / 10) * 10])
@@ -167,7 +167,6 @@
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
 					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="black" stroke-opacity="0.2"/>
-					}
 				</g>
 			{/each}
 		</g>
@@ -177,7 +176,6 @@
 
 		<!-- Histogram -->
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
-			<!-- {axisAdjust + 8} -->
 			{#each bins as d}
 				<!-- {console.log((d.x0+d.x1)/2, (d.x0+d.x1)/2, sx[0], sx[1], ((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]))}	 -->
 				<rect 
@@ -188,7 +186,6 @@
 					height="{yscaleHist(d.length)}" 
 					fill="{((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]) ? colors.vis : colors.inactive}"
 					opacity=0.8></rect>
-				}
 			{/each}
 			<line class="histogram-xgrid-major" 
 				x1="{xscale.range()[0]}" x2="{xscale.range()[1]}" y1="{yscaleHist.range()[1]}" y2="{yscaleHist.range()[1]}"

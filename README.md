@@ -64,4 +64,9 @@ to **after** the `<body/>` tag:
 </html>
 ```
 
+We use [svelte-template](https://github.com/sveltejs/template) format for creating this project. Svelte template is no longer maintained, but I have had some issues in migrating to vite and Sveltekit. Here, I have outlined some resources for using svelte-template:
+
+- https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_getting_started
+
+
 
