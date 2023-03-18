@@ -165,20 +165,17 @@
         display: flex;
 		align-items: center;
         justify-content: center;
-
-		background-color: var(--bgColor);
-
+		background-color: #ffffff;
         margin: 0;
         padding: 0;
-		border: 1px solid var(--bgColor);
+		border: none;
 		border-radius: 4px;
-        
         height: 24px;
         width:  24px;
     }
 
     .toggle-button:hover {
-        background-color: var(--hoverColor);
+        background-color: #efefef;
     }
 
     .label-right {

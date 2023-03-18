@@ -1,4 +1,5 @@
-import * as d3 from 'd3';
+import { drag } from 'd3-drag';
+import { select, selectAll, selection } from 'd3-selection';
 import { join_options, group_params, parameter_scale, option_scale } from './stores.js';
 import { cell, margin, groupPadding } from './dimensions.js';
 import { whichDiff, any } from './helpers/arrayMethods.js'
@@ -16,7 +17,7 @@ group_params.subscribe(value => sortByGroupParams=value);
 let option_dragging = {}, previous_option_order = {}, parameter_dragging = {};
 let target, target_class, trigger;
 
-d3.selection.prototype.moveToFront = function() {
+selection.prototype.moveToFront = function() {
 	return this.each(function(){
 		this.parentNode.appendChild(this);
 	});
@@ -30,7 +31,7 @@ function transition(g) {
 // defines drag interaction to re-order 
 //  options within each parameter
 **/
-export let drag_options = (order) => d3.drag()
+export let drag_options = (order) => drag()
 	.subject(function(event) {
 		let parameter = this.className.baseVal.split(' ')[1]
 		let index = this.className.baseVal.split(' ')[3].split('-')[1]
@@ -50,8 +51,8 @@ export let drag_options = (order) => d3.drag()
 				option_dragging[index] = x_scale_options[parameter](index);
 
 				// Move the column that is moving on the front
-				d3.select(this).moveToFront();
-				d3.select(`g.option-value.${parameter}.option-${index}`).moveToFront();
+				select(this).moveToFront();
+				select(`g.option-value.${parameter}.option-${index}`).moveToFront();
 			}
 		}
 	})
@@ -74,7 +75,7 @@ export let drag_options = (order) => d3.drag()
 			x_scale_options[parameter].domain(order[parameter].name);
 			option_scale.update(v => v = x_scale_options);
 			
-			d3.selectAll(`g.option-value.${parameter}, g.option-headers.${parameter}`).attr("transform", function(d) { 
+			selectAll(`g.option-value.${parameter}, g.option-headers.${parameter}`).attr("transform", function(d) { 
 				let p = this.className.baseVal.split(' ')[1]
 				let i = this.className.baseVal.split(' ')[3].split('-')[1]
 				return `translate(${cPosition(p, Number(i), x_scale_options)}, 0)`; 
@@ -107,8 +108,8 @@ export let drag_options = (order) => d3.drag()
 	});
 
 export function moveOptions(xscale, parameter, option, index) {
-	transition(d3.select(`g.option-headers.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
-	transition(d3.select(`g.option-value.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
+	transition(select(`g.option-headers.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
+	transition(select(`g.option-value.${parameter}.option-${index}`)).attr("transform", `translate(${xscale[parameter](index)}, 0)`);
 }
 
 
@@ -122,7 +123,7 @@ function cPosition(p, d, xscale) {
 // defines drag interaction to re-order 
 // parameters (while keeping options in the same order)
 **/
-export let drag_parameters = (param_n_options, y) => d3.drag()
+export let drag_parameters = (param_n_options, y) => drag()
 	.subject(function(event) {
 		let d = this.className.baseVal.split(' ')[1]
 		return {x: x_scale_params(d)}
@@ -134,8 +135,8 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 		if (target == "P" & trigger == "parameter-label") {
 			parameter_dragging[d] = x_scale_params(d);
 			// Move the column that is moving on the front
-			d3.select(this).moveToFront();
-			d3.selectAll(`g.parameter-col.${d}`).moveToFront();
+			select(this).moveToFront();
+			selectAll(`g.parameter-col.${d}`).moveToFront();
 		}
 	})
 	.on("drag", function(event) {
@@ -156,17 +157,17 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 			x_scale_params.range(param_order_range);
 			parameter_scale.update(v => v = x_scale_params);
 			
-			d3.select('svg.grid-header').selectAll('g.parameter').select('foreignObject')
+			select('svg.grid-header').selectAll('g.parameter').select('foreignObject')
 				.attr("x", function(d) {
 					let p = this.parentNode.className.baseVal.split(' ')[1]
 					return pPosition(p, x_scale_params)
 				});
-			d3.select('svg.grid-header').selectAll(`g.parameter-col`)
+			select('svg.grid-header').selectAll(`g.parameter-col`)
 				.attr("transform", function(d) {
 					let p = this.className.baseVal.split(' ')[1]
 					return `translate(${pPosition(p, x_scale_params)}, ${margin.top})`
 				});
-			d3.select('svg.grid-body').selectAll(`g.parameter-col`)
+			select('svg.grid-body').selectAll(`g.parameter-col`)
 				.attr("transform", function(d) {
 					let p = this.className.baseVal.split(' ')[1]
 					return `translate(${pPosition(p, x_scale_params)}, 0)`
@@ -179,9 +180,9 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 		delete parameter_dragging[d];
 
 		let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
-		let dividerPositionIndex = d3.select("g.grouped-sort-divider").attr("class").split(" ")[1];
+		let dividerPositionIndex = select("g.grouped-sort-divider").attr("class").split(" ")[1];
 
-		d3.select("g.grouped-sort-divider")
+		select("g.grouped-sort-divider")
 			 .transition()
 			 .attr("transform", `translate(${boundaries[dividerPositionIndex]}, 0)`)
 			 // .attr("transform", boundaries[dividerPositionIndex])
@@ -193,9 +194,9 @@ export let drag_parameters = (param_n_options, y) => d3.drag()
 	});
 
 export function moveParams(xscale, d) {
-	transition(d3.select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 40)`));
-	transition(d3.select('svg.grid-header').select(`g.parameter.${d}`).select('foreignObject').attr("x", xscale(d)));
-	transition(d3.select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 0)`));
+	transition(select('svg.grid-header').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 40)`));
+	transition(select('svg.grid-header').select(`g.parameter.${d}`).select('foreignObject').attr("x", xscale(d)));
+	transition(select('svg.grid-body').select(`g.parameter-col.${d}`).attr("transform", `translate(${xscale(d)}, 0)`));
 }
 
 // parameter positions
@@ -208,7 +209,7 @@ function pPosition(d, x_scale_params) {
 // defines drag interaction for the grouped-sort-divider
 // which defines input to the groupedSortFunction
 **/
-export let dragSortDivider = () => d3.drag()
+export let dragSortDivider = () => drag()
 	// .subject(function(event, d) {} )
 	.on("start", function(event) { 
 		return null 
@@ -219,8 +220,8 @@ export let dragSortDivider = () => d3.drag()
 		let maxBarPosition = boundaries[boundaries.length - 1];
 
 		if (event.x > minBarPosition && event.x < maxBarPosition) {
-			d3.select(this).raise().attr("transform", `translate(${event.x}, 0)`);
-			d3.select(this).raise().attr("transform", `translate(${event.x}, 0)`);
+			select(this).raise().attr("transform", `translate(${event.x}, 0)`);
+			select(this).raise().attr("transform", `translate(${event.x}, 0)`);
 		}
 	})
 	.on("end", function(event) { 
@@ -228,7 +229,7 @@ export let dragSortDivider = () => d3.drag()
 		let nearestDivision = findClosestDivision(event.x, x_scale_params);
 		let dividerPositionIndex = boundaries.indexOf(nearestDivision);
 
-		d3.select(this)
+		select(this)
 			.attr("class", `grouped-sort-divider ${dividerPositionIndex}`)
 			.transition()
 			.attr("transform", `translate(${nearestDivision}, 0)` )

@@ -1,4 +1,5 @@
-import * as d3 from 'd3';
+import { range, extent, groups, zip, max, histogram } from 'd3-array';
+import { scaleLinear } from 'd3-scale';
 
 //helpers
 import combineJoinOptions from './utils/helpers/combineJoinOptions'
@@ -44,7 +45,7 @@ class multiverseMatrix {
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
-		return Object.assign( {}, ...param_names.map( (x) => ({[x]: d3.groups(dat, d => d[x]).map( i => i[0] )}) ) );
+		return Object.assign( {}, ...param_names.map( (x) => ({[x]: groups(dat, d => d[x]).map( i => i[0] )}) ) );
 	}
 
 	_invParameters = () => {
@@ -120,7 +121,7 @@ class multiverseMatrix {
 		});
 
 		let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
-		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+		o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
 		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
 		// We only support mirrored CDFs at this point, but in the future we may consider supporting other chart types
 		// if (graph == CI) {
@@ -131,7 +132,7 @@ class multiverseMatrix {
 		// 	});
 		// } else {
 		// 	let formattedCDFOutcomeData = formatCDFOutcomeData(this.data, term)
-		// 	o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
+		// 	o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']))
 		// 	e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate'])
 		// }
 
@@ -144,16 +145,16 @@ class multiverseMatrix {
 			e_data
 		)
 
-		let limits = d3.extent(o_data_processed[0].map(d => d[0]));
-		let histogram = d3.histogram()
+		let limits = extent(o_data_processed[0].map(d => d[0]));
+		let histGeom = histogram()
 			.value(function(d) { return d; })   //  provide a vector of values
 			.domain(limits)  // then the domain of the graphic
-			.thresholds(d3.scaleLinear().domain(limits).ticks(70)); // the numbers of bins
-		let bins = histogram(e_data_processed.flat());
+			.thresholds(scaleLinear().domain(limits).ticks(70)); // the numbers of bins
+		let bins = histGeom(e_data_processed.flat());
 
 		this.outcomes[i].density = o_data_processed;
 		this.outcomes[i].estimate = e_data_processed;
-		this.outcomes[i].mode = d3.max(bins, function(d) { return d.length; })
+		this.outcomes[i].mode = max(bins, function(d) { return d.length; })
 		this.estimates[i] = e_data_processed;
 	}
 	
@@ -250,7 +251,7 @@ class multiverseMatrix {
 
 
 		let formattedCDFOutcomeData  = formatCDFOutcomeData(this.data, term);
-		o_data = formattedCDFOutcomeData.map((d, n) => d3.zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
+		o_data = formattedCDFOutcomeData.map((d, n) => zip(d['cdf.x'], d['cdf.y'], d['cdf.y']));
 		e_data = formattedCDFOutcomeData.map((d,n)=>d['estimate']);
 
 		let option_list = Object.entries(this.parameters).map(d => d[1]);

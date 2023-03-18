@@ -7,6 +7,7 @@
 	import { parameter_scale, option_scale } from '../utils/stores.js'
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
 	import mcdf from '../assets/images/mcdf.gif'
+	import pbox from '../assets/images/p-boxes.gif'
 	import tree from '../assets/images/tree.png'
 	import groupsort from '../assets/images/grouped-sort.gif'
 
@@ -129,7 +130,7 @@
 			grid: getPosition("div.grid"),
 			parameter: getPosition(`div.parameter-name.${first_param}`),
 			option: getPosition(`div.option-label.${first_option}`),
-			universe0: getPosition(`rect.universe-0`), // get position of first universe which also needs to be highlighted somehow!!
+			universe0: getPosition(`rect.universe-0`),
 			option_interaction: getPosition(`g.parameter-col.${first_param}`),
 			exclude: getPosition(`svg.exclude-icon.${first_option}`),
 			join: getPosition(`.option-join`),
@@ -147,7 +148,7 @@
 	{#if step == 0}
 		{setLayout()}
 		<Popup 
-			message = "Take a quick tour of mvis?<br>Walk through the interface elements and interactions to understand what you can do with mvis."
+			message = "<h3>Take a quick tour of mvis?</h3>Walk through the interface elements and interactions to understand what you can do with mvis."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:0}}
@@ -215,48 +216,6 @@
 			containsImage = {false}
 		/>
 	{:else if step == 5}
-		{setLayout("div.grid-container")}
-		<Popup 
-			message = "You can interact with the multiverse by <span>excluding</span> an option or <span>joining</span> two (or more) options together, and inspect which parameters and options have the greatest influence on the outcome."
-			step = {step}
-			position = {positions.option_interaction}
-			adjust = {{x:0,y:-0}}
-			direction = "left"
-			pointer = "hidden"
-			on:next={updatePopup}
-			on:skip = {removePopup}
-			steps = {N}
-			containsImage = {false}
-		/>
-	{:else if step == 6}
-		{setLayout("div.grid-container", `svg.exclude-icon`)}
-		<Popup 
-			message = "The <span class='definition'>exclude</span> button removes every universe which includes that option from the multiverse."
-			step = {step}
-			position = {positions.exclude}
-			adjust = {{x:0,y:-0}}
-			direction = "left"
-			pointer = "right"
-			on:next={updatePopup}
-			on:skip = {removePopup}
-			steps = {N}
-			containsImage = {false}
-		/>
-	{:else if step == 7}
-		{setLayout("div.grid-container", `svg.link-icon`)}
-		<Popup 
-			message = "The <span class='definition'>join</span> button aggregates the estimates from the universes with those options. In other words, when aggregated, we show the upper and lower bounds of the uncertainty from the pooled universes."
-			step = {step}
-			position = {positions.join}
-			adjust = {{x:0,y:-0}}
-			direction = "left"
-			pointer = "right"
-			on:next={updatePopup}
-			on:skip = {removePopup}
-			steps = {N}
-			containsImage = {false}
-		/>
-	{:else if step == 8}
 		{setLayout("div.vis-container")}
 		{multiverse.setInteractions()}
 		<!-- For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse. -->
@@ -272,7 +231,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 9}
+	{:else if step == 6}
 		{setLayout("div.vis-container", "select.vis-dropdown")}
 		<Popup 
 			message = "The dropdown menu allows you to change which outcome variable (eg. model coefficients or effect size estimates) is being visualised in this panel."
@@ -286,7 +245,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 10}
+	{:else if step == 7}
 		{setLayout("div.vis-container", "button.sort-button")}
 		<Popup 
 			message = "You can sort a variable based on the median estimate from each universe."
@@ -300,7 +259,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 11}
+	{:else if step == 8}
 		{setLayout("div.vis-container")}
 		<Popup 
 			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf} width='480' alt='mirrored CDF (mCDF) calculation'/>"
@@ -314,11 +273,53 @@
 			steps = {N}
 			containsImage = {true}
 		/>
+	{:else if step == 9}
+		{setLayout("div.grid-container")}
+		<Popup 
+			message = "You can interact with the multiverse by <span>excluding</span> an option or <span>joining</span> two (or more) options together, and inspect which parameters and options have the greatest influence on the outcome."
+			step = {step}
+			position = {positions.option_interaction}
+			adjust = {{x:0,y:-0}}
+			direction = "left"
+			pointer = "hidden"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 10}
+		{setLayout("div.grid-container", `svg.exclude-icon`)}
+		<Popup 
+			message = "The <span class='definition'>exclude</span> button removes every universe which includes that option from the multiverse."
+			step = {step}
+			position = {positions.exclude}
+			adjust = {{x:0,y:-0}}
+			direction = "left"
+			pointer = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
+	{:else if step == 11}
+		{setLayout("div.grid-container", `svg.link-icon`)}
+		<Popup 
+			message = "The <span class='definition'>join</span> button aggregates the estimates from the universes with those options. We show the result of this aggregation on the next page."
+			step = {step}
+			position = {positions.join}
+			adjust = {{x:0,y:-0}}
+			direction = "left"
+			pointer = "right"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {false}
+		/>
 	{:else if step == 12}
 		{setLayout("div.vis-container")}
 		{multiverse.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']])}
 		<Popup 
-			message = "What happens when aggregated --> p-boxes!! TODO"
+			message = "We use probability boxes (p-boxes) to show aggregated uncertainty across specifications.<br><br><img style='border-radius: 8px;' src={pbox} width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
 			position = {positions.result0}
 			adjust = {{x:0,y:-0}}
@@ -333,7 +334,7 @@
 		{setLayout("div.toggle")}
 		{multiverse.setInteractions()}
 		<Popup 
-			message = "The toggle button lets you to zoom out by reducing the height and width of the rectangles representing each universe. This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
+			message = "The toggle button lets you to zoom out by reducing the size of the rectangles representing each universe, and hides the uncertainty for each point estimate.<br><br>This allows you to view a larger slice of the multiverse specification (if not the entire multiverse) at a time on the screen, and can make it easier to identify patterns n the multiverse specification."
 			step = {step}
 			position = {positions.toggle}
 			adjust = {{x:0,y:-0}}

@@ -50,18 +50,15 @@
 
 <style>
 	.sort-button:hover > svg {
-		background-color: var(--grayColor);
-		fill: white;
+		background-color: #efefef;
 	}
 
 	.sort-button:active > svg {
-		background-color: var(--grayColor);
-		color: white;
+		background-color: #efefef;
 	}
 
 	.sort-button:focus > svg {
-		background-color: var(--grayColor);
-		color: white;
+		background-color: #efefef;
 	}
 
 	svg {
@@ -69,7 +66,6 @@
 	}
 
 	.active_svg {
-		background-color: var(--grayColor);
-		fill: white;
+		background-color: rgb(220, 224, 230);
 	}
 </style>

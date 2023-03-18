@@ -1,5 +1,5 @@
 import sortByOutcome from "./sortByOutcome"
-import * as d3 from 'd3';
+import { transpose } from 'd3-array';
 import { mean, is2dArray } from './arrayMethods.js'
 
 
@@ -93,14 +93,14 @@ function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, asc
 		// to get this we first need to transpose to get:
 		// [ [ [ ... (m/p elements)], [], ... (p elements) ], [], ... (k elements) ]
 		// then we can flatten each of [ [ ... (m/p elements)], [], ... (p elements) ] to get what we want
-		let o_data = d3.transpose( 
+		let o_data = transpose( 
 							groupedSortResult.map(d => d.o_data) 
 						)
 						.map(d => d.flat(1))
 
 		// estimate data
 		// the structure is similar to that of o_data, so we follow the same steps
-		let e_data = d3.transpose( 
+		let e_data = transpose( 
 							groupedSortResult.map(d => d.e_data) 
 						)
 						.map(d => d.flat(1));

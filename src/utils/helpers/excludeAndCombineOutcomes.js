@@ -1,4 +1,5 @@
-import * as d3 from 'd3';
+import { min, max, rollups, groups } from 'd3-array';
+import { select, selectAll } from 'd3-selection';
 
 function which_option_index(option_list, universe_specification) {
 	// check if option_list and universe_specification is of the same length
@@ -91,23 +92,23 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			return JSON.stringify(idx);
 		});
 		
-		o_data_processed = d3.groups(
+		o_data_processed = groups(
 			o_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
 				d => d.group
 			).map(d => d[1].map(x => {
 				delete x.group;
 				return Object.values(x).flat();
 			})).map(x => {
-				let mod = d3.rollups(x.flat(), v => {
-					return calculate_mirror_CDF(...[d3.min(v, d => d[1]), d3.max(v, d => d[1])]);
-					// return [d3.min(v, d => d[1]), d3.max(v, d => d[1])]
+				let mod = rollups(x.flat(), v => {
+					return calculate_mirror_CDF(...[min(v, d => d[1]), max(v, d => d[1])]);
+					// return [min(v, d => d[1]), max(v, d => d[1])]
 				}, d => d[0]);
 				return mod
 			})
 			.map(x => x.map(p => p.flat()))
 
 
-		e_data_processed = d3.groups(
+		e_data_processed = groups(
 			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),
 				d => d.group
 			).map(d => d[1].map(x => {
