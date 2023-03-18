@@ -157,12 +157,12 @@ class multiverseMatrix {
 		this.estimates[i] = e_data_processed;
 	}
 	
-	updateGridData = (join_data = [], exclude_data = []) => {
+	updateGridData = (join_data = [], exclude_data = {}) => {
 		/*
 			Updates this.gridData
 
 			PARAMETERS:
-				join_data : array[Object(string:?)
+				join_data : array[Object(string:?)]
 					each Object looks like the following:
 					{
 						indices   : {array[int]}    the indices corresponding to the order displayed on vis
@@ -170,7 +170,7 @@ class multiverseMatrix {
 						parameter : {string}        the parameter that the options belong to
 					}
 				exclude_data : Object(string:array[string])
-					has format { parameter : options to exclude, ... }
+					has format { parameter : {array[string]} the options to be excluded }
 		*/
 		let toJoin = structuredClone(join_data);
 		let toExclude = structuredClone(exclude_data);
@@ -315,7 +315,7 @@ class multiverseMatrix {
 		}
 	}
 
-	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) {
+	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) { // TODO: add slider position (sliderPosition:int)
 		/*
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
