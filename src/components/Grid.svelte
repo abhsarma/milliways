@@ -19,7 +19,7 @@
 	// CSS Styles
 	export const parameter_name = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		text-transform: uppercase;
 		padding: 0px ${cell.padding/2 + "px"};
 		background-color: ${colors.background};
@@ -41,7 +41,7 @@
 
 	export const option_names = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		line-height: ${cell.width}px;
 		overflow: hidden;
 		text-overflow: ellipsis;

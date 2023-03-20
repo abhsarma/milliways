@@ -9,7 +9,7 @@
 	let minimise_demo = false;
 
 	export const popupBg = css`
-		position:absolute;
+		position: absolute;
 		top: 0;
 		left: 0;
 		height: 100%;
@@ -55,9 +55,7 @@
 
 	function updatePopup(event) {
 		step = Number(event.detail.step)
-		console.log(step);
-		if (step > (N + 1)) {
-			console.log(step, "exceeded limit");
+		if (step > N) {
 			removePopup(event)
 		}
 	}
@@ -157,7 +155,7 @@
 		/>
 	{:else}
 		<Popup 
-			message = "After examining the results, and removing choices that are not equally justifiable or reasonable, we still observe a lot of variation in the outcome based on decisions in the data analysis process. Thus, it is reasonable to conclude that the effect being studied is sensitive to arbitrary decisions in the data analysis process.<br>Please note that the steps shown in this demonstration are <span class='emphasis'>not prescriptive</span>, but rather an example of how the tool can be used to analyse and interpret the results of a multiverse analysis."
+			message = "After examining the results, and removing choices that are not equally justifiable or reasonable, we still observe a lot of variation in the outcome based on decisions in the data analysis process. Thus, it is reasonable to conclude that the effect being studied is sensitive to decisions in the data analysis process.<br>Please note that the steps shown in this demonstration are <span class='emphasis'>not prescriptive</span>, but rather an example of how the tool can be used to analyse and interpret the results of a multiverse analysis."
 			step = {step}
 			containsImage = {false}
 			on:next = {updatePopup}

@@ -321,8 +321,8 @@ class multiverseMatrix {
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
 			PARAMETERS:
-				joinArr : array[array[string]]
-					array of arrays of length 2 containing options to join
+				joinArr : {'parameter': array[string]}
+					Object of arrays containing list of options to join
 				excludeArr : array[string]
 					array of options to exclude
 				excludeRows : Object
@@ -378,38 +378,27 @@ class multiverseMatrix {
 
 		let newJoinOptions = [];
 
+
 		// filter excludes option groups that are not valid
 		// map produces the proper format
-		if (joinOptions.length) {
-			newJoinOptions = joinOptions.filter(arr => {
-				// check if arr is a list
+		if (Object.entries(joinOptions).length) {
+			newJoinOptions = Object.entries(joinOptions).filter((arr, i) => {
 				if (! Array.isArray(arr)) {
 					throw new Error('Argument joinOptions should be of the form: array[array[string]]')
 				}
-
-				let x=arr[0], y=arr[1];
-				return x in this.invParameters && y in this.invParameters && // checks options exist
-					this.invParameters[x] === this.invParameters[y] && // checks options are in the same parameter
-					(() => { // checks options are visually next to each other in the mv vis document
-						const param = this.invParameters[x]
-						const ix = opt_scale[param].domain().indexOf(this.optionToIndex[x]),
-						    iy = opt_scale[param].domain().indexOf(this.optionToIndex[y]);
-						return Math.abs(ix-iy) === 1; // also ensures x !== y
-					})();
-			}).map(arr => {
-				const x=arr[0], y=arr[1];
-				const param = this.invParameters[x];
-				const indices = [
-					opt_scale[param].domain().indexOf(this.optionToIndex[x]),
-					opt_scale[param].domain().indexOf(this.optionToIndex[y])
-				];
-				let reversed = indices[0] > indices[1]; // true=>[0] comes after (on the right) of [1] in the vis
-				return {
-					indices: reversed ? [indices[1],indices[0]] : indices,
-					options: reversed ? [arr[1],arr[0]] : arr,
-					parameter: param
-				}
-			});
+				let p = arr[0], o = arr[1];
+				return (p in this.parameters) && // check if parameter exists
+					o.map(x => this.parameters[p].includes(x)).reduce((a, b) => a && b) // check if options for that parameter exists
+			}).flatMap( arr => {
+				let option_pairs = arr[1].map((_, i, a) => a.slice(i, i+2)).filter(d => d.length == 2);
+				return option_pairs.map(
+					d => ({
+							parameter: arr[0], 
+							options: d, 
+							indices: [this.parameters[arr[0]].indexOf(d[0]), this.parameters[arr[0]].indexOf(d[1])]
+						})
+				)
+			})
 		}
 		
 		excludeOptions = Array.from(new Set(excludeOptions)); // remove duplicates

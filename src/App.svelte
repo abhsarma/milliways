@@ -49,7 +49,7 @@
 			analysis_doc = "analysis-doc.html"
 		}
 	}
-	toggleDataSet('task');
+	toggleDataSet('train');
 
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -125,12 +125,7 @@
 		}
 	}
 
-	let coords_x1 = 150, coords_y1 = 150;
-
 	onMount(() => {
-		// m.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']]);
-		// console.log($join_options);
-
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
 		let leftDiv = select('.vis-container').node();
@@ -259,6 +254,10 @@
 		white-space: nowrap;
 	}
 
+	div.container-flex {
+		display: flex;
+	}
+
 	.hidden {
 		display: none !important;
 	}
@@ -284,7 +283,7 @@
 	}
 
 	.multiverse-size > p {
-		font-family: 'Avenir Next', sans-serif;
+		font-family: 'Av-Nx', sans-serif;
 		margin: 0px;
 		line-height: 21px;
 		font-size: 14px;
@@ -320,9 +319,9 @@
 		margin: 0px;
 		color: var(--activeColor) !important;
 		text-transform: uppercase;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		font-size: 36px;
-		font-weight: 300;
+		font-weight: 400;
 	}
 
 	.button-wrapper {

@@ -129,6 +129,8 @@
 	p {
 		text-align: center;
 		vertical-align: middle;
+		font-family: 'Av-Nx';
+		font-weight: 500;
 	}
 
 	span.large {
@@ -161,6 +163,11 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        font-family: 'Av-Nx';
+    }
+
+    i {
+        font-family: 'Av-Nx';
     }
     
     .active_svg {

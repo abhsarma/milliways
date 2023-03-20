@@ -57,7 +57,7 @@
 	h4 {
 		font-size: 18px;
 		margin: 4px 0px 12px 0px;
-		font-family: Avenir Next;
+		font-family: Av-Nx;
 		color: var(--textColor);
 	}
 
