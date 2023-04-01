@@ -165,7 +165,7 @@
 	<div class = "container-flex">
 		<div class="vertical-align">
 			<div class="page-header">
-				<h1>Multiverse Visualisation</h1>
+				<h1>MILLIWAYS</h1>
 			</div>
 
 			<ToggleSize/>
