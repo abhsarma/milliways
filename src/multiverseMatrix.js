@@ -6,16 +6,21 @@ import combineJoinOptions from './utils/helpers/combineJoinOptions'
 import sortByOutcome from './utils/helpers/sortByOutcome.js';
 import sortByGroup from './utils/helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './utils/helpers/excludeAndCombineOutcomes.js';
-import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
+import { exclude_options, exclude_rows, join_options, option_scale, parameter_scale, group_params } from './utils/stores.js'
+import { groupPadding } from './utils/dimensions.js';
 
 // Stores
 let options_to_exclude;
 // let options_to_join;
 let opt_scale;
+let x_scale_params;
+let sortByGroupParams;
 
 const e_unsub =  exclude_options.subscribe(value => options_to_exclude=value);
 // const j_unsub =  join_options.subscribe(value => options_to_join=value);
 const o_unsub = option_scale.subscribe(value => opt_scale=value);
+parameter_scale.subscribe(value => x_scale_params = value);
+group_params.subscribe(value => sortByGroupParams=value);
 
 class multiverseMatrix {
 	constructor (dat) {		
@@ -316,7 +321,7 @@ class multiverseMatrix {
 		}
 	}
 
-	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) {
+	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}, sliderPosition=this.size) {
 		/*
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
@@ -333,6 +338,8 @@ class multiverseMatrix {
 					}
 					<min> to <max> is the range of intercept values to exclude based on <outcomeVar>
 					NOTE: the outcomeVar must be visually on the visualization
+				sliderPosition : Number
+					index of where to place slider. 0 <= sliderPosition <= this.size
 			EXAMPLES:
 				Let there be 2 parameters p and q each with 3 options p_1, p_2, p_3 and q_1, q_2, q_3.
 				Let there be 2 outcome variables o_1, o_2 and only o_1 is shown on the vis.
@@ -374,6 +381,18 @@ class multiverseMatrix {
 				
 				m.setInteractions(excludeRows={ outcomeVar: "o_3", range: [1,2] })
 					This does nothing as o_3 does not exist.
+
+				m.setInteractions(sliderPosition=0)
+					This moves the slider to the 0th position (before the 1st parameter).
+
+				m.setInteractions(sliderPosition=2)
+					This moves the slider to the 2nd position (after the 2nd parameter).
+				
+				m.setInteractions(sliderPosition=3)
+					This does nothing as there is no 3rd position.
+
+				m.setInteractions(sliderPosition=1.3)
+					This does nothing as this is not an integer.
 		*/
 
 		let newJoinOptions = [];
@@ -420,6 +439,17 @@ class multiverseMatrix {
 					}
 				}
 			}
+		}
+
+
+		// code based on the "on end" portion of dragSortDivider in utils/drag.js
+		if (Number.isInteger(sliderPosition) && 0 <= sliderPosition && sliderPosition <= this.size) {
+			let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+			let slider = document.querySelector("g.grouped-sort-divider");
+			slider.setAttribute("class", `grouped-sort-divider ${sliderPosition}`);
+			slider.setAttribute("transform", `translate(${boundaries[sliderPosition]}, 0)`);
+			sortByGroupParams = x_scale_params.domain().slice(sliderPosition).reverse();
+			group_params.update(_ => sortByGroupParams);
 		}
 
 		// by updating these, it should reactively call this.updateHandler elsewhere (App.svelte)
