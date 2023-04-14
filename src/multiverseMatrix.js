@@ -316,7 +316,7 @@ class multiverseMatrix {
 		}
 	}
 
-	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) { // TODO: add slider position (sliderPosition:int)
+	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}) {
 		/*
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
@@ -338,7 +338,7 @@ class multiverseMatrix {
 				Let there be 2 outcome variables o_1, o_2 and only o_1 is shown on the vis.
 				Assuming the parameters & options haven't been moved around, some example calls are
 
-				m.setInteractions([ ['p_1','p_2'], ['q_2', q_3'] ]);
+				m.setInteractions([ ['p_1', 'p_2'], ['q_2', 'q_3'] ]);
 					This will join options p_1 and p_2, and it will also join q_2, q_3.
 
 				m.setInteractions([ ['p_2','p_1'], ['q_3', q_2'] ]);

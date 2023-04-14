@@ -84,8 +84,41 @@ describe('multiverseMatrix', () => {
         m.initializeData();
     });
 
-    describe('initialization', () => {
+    describe('when initialized', () => {
+        describe('gridData and gridDataAll ', () => {
+            // as there are two (gridData and gridDataAll),
+            // "it" should effectively be "they"
 
+            it('are not empty', () => {
+                expect(m.gridData.length).not.toBe(0);
+                expect(m.gridDataAll.length).not.toBe(0);
+            });
+            it('equal each other', () => {
+                expect(m.gridData).toEqual(m.gridDataAll);
+            });
+            // TODO: add tests about data itself: types, format, etc.
+        });
+
+        describe('outcomes', () => {
+            it('has a length of 1', () => {
+                expect(m.outcomes.length).toBe(1);
+            });
+            it('has the right keys in its outcome', () => {
+                let keys = Object.keys(m.outcomes[0]).sort();
+                expect(['density', 'estimate', 'id', 'mode', 'var']).toEqual(keys);
+            });
+            it('has values with the right types in its outcome', () => {
+                let o = m.outcomes[0];
+                expect(typeof o.density).toBe('object');
+                expect(typeof o.estimate).toBe('object');
+                expect(typeof o.id).toBe('number');
+                expect(typeof o.mode).toBe('number');
+                expect(typeof o.var).toBe('string');
+            });
+            // it('has values with certain qualities in its outcome', () => {
+
+            // })
+        });
     });
 
     describe('updateGridData', () => {
@@ -94,7 +127,7 @@ describe('multiverseMatrix', () => {
             expect(m.gridData).toEqual(m.gridDataAll);
         });
 
-        it('excludes an option from a parameter', () => {
+        it('excludes an option from a parameter with an input', () => {
             let exclude = {};
             exclude[parameters[0]] = [choices[parameters[0]][0]];
             m.updateGridData([], exclude);
@@ -107,7 +140,7 @@ describe('multiverseMatrix', () => {
             expect(m.gridData).toEqual(m.gridDataAll);
         });
 
-        it('joins two options from a parameter', () => {
+        it('joins two options from a parameter when called with join', () => {
             let join = [{
                 indices: [0,1],
                 options: [choices[parameters[0]][0], choices[parameters[0]][1]],
@@ -136,9 +169,46 @@ describe('multiverseMatrix', () => {
     });
 
     describe('updateOutcomeData', () => {
-        it('should have 1 outcome (after calling initializeData)', () => {
-            expect(m.outcomes.length).toBe(1);
-        });
-        it('')
+        
     });
+
+    describe('updateHandler', () => {
+
+    });
+
+    // describe('setInteractions', () => {
+    //     // look in function for explanation
+        
+    //     let choice0 = choices[parameters[0]], choice1 = [parameters[1]]
+
+    //     m.setInteractions([ [choice0[0], choice0[1]], [choice1[0], choice1[1]] ]);
+    //     m.setInteractions([ [choice0[0], choice0[1]], [choice1[1], choice1[0]] ]);
+        
+    //     m.setInteractions([ [choice0[0], choice0[2]] ]); // FAIL
+        
+    //     m.setInteractions([ [choice0[0], choice0[1]], [choice0[1], choice0[2]] ]);
+
+    //     m.setInteractions([ [choice0[0], choice0[1]], [choice0[0], choice0[2]] ]);
+        
+    //     m.setInteractions([], ['p_1','p_3','q_1']);
+        
+    //     m.setInteractions(
+    //         [
+    //             [choice0[0], choice0[1]],
+    //             [choice0[1], choice0[2]]
+    //         ], 
+    //         [choice0[2]]
+    //     );
+
+    //     // TODO: alter accordingly
+    //     m.setInteractions([], [], { outcomeVar: "o_1", range: [4.123, 4.987] })
+
+    //     m.setInteractions(excludeRows={ outcomeVar: "o_1", range: ["4.123", "4.987"] })
+
+    //     m.setInteractions(excludeRows={ outcomeVar: "o_1", range: [0] })
+
+    //     m.setInteractions(excludeRows={ outcomeVar: "o_2", range: [0,0.5] })
+        
+    //     m.setInteractions(excludeRows={ outcomeVar: "o_3", range: [1,2] })
+    // })
 });

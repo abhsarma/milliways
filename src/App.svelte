@@ -130,7 +130,7 @@
 	onMount(() => {
 		// m.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']]);
 		// console.log($join_options);
-
+console.log(m);
 		let isSyncingLeftScroll = false;
 		let isSyncingRightScroll = false;
 		let leftDiv = select('.vis-container').node();
