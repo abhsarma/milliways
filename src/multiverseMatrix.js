@@ -321,7 +321,7 @@ class multiverseMatrix {
 		}
 	}
 
-	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}, sliderPosition=this.size) {
+	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}, sliderPosition=Object.keys(this.parameters).length) {
 		/*
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
@@ -395,16 +395,84 @@ class multiverseMatrix {
 					This does nothing as this is not an integer.
 		*/
 
-		let newJoinOptions = [];
+		// --- ERROR CHECK ---
 
+		// isPureObject checks if val is a pure JS Object, as in not an array, not a class, etc.
+		// NOTE: technically fails in cases like 
+		// 		 `val == { constructor : 1 }` or `Object.create(null)`
+		// 		 but it should be fine in our case
+		const isPureObject = val => typeof val === 'object' && val.constructor.name == 'Object';
+
+		// -- joinOptions --
+
+		// Checks joinOptions follows array[array[string]]
+		if (!Array.isArray(joinOptions) || !joinOptions.every(arr => Array.isArray(arr) && arr.every(val => typeof val === 'string'))) {
+			throw new Error('Argument joinOptions should be of the form: array[array[string]]')
+		}
+
+		// -- excludeOptions --
+
+		// Checks that excludeOptions is array and every element is a string
+		// Note that it is true even when excludeOptions === []
+		if (!Array.isArray(excludeOptions) || !excludeOptions.every(val => typeof val === 'string')) {
+			throw new Error(`Argument excludeOptions should be of form: array[string] (given ${excludeOptions})`)
+		}
+
+		// -- excludeRows --
+
+		// checks type of excludeRows
+		if (!isPureObject(excludeRows)) {
+			throw new Error(`Argument excludeRows should be of form { outcomeVar : <string> , range : <array> } (given ${excludeRows})`);
+		}
+		// checks if both values exist (since if neither exists, do nothing)
+		else if (excludeRows.outcomeVar && excludeRows.range) {
+			// checks type of values of excludeRows
+			if (typeof excludeRows.outcomeVar !== 'string' || !Array.isArray(excludeRows.range)) {
+				throw new Error(`Argument excludeRows should be of form { outcomeVar : <string> , range : <array> } (given ${excludeRows})`);
+			}
+			// checks if excludeRows.range has length of 2
+			if (excludeRows.range.length !== 2) {
+				throw new Error(`Argument excludeRows.range should be of length 2 (given ${excludeRows.range})`);
+			}
+			// checks if the types of excludeRows.range is 'number'
+			if (typeof excludeRows.range[0] !== 'number' || typeof excludeRows.range[1] !== 'number') {
+				throw new Error(`Values of excludeRows.range should be of type 'number' (given ${excludeRows.range})`);
+			}
+			// compares values of excludeRows.range: first value should be smaller than the second
+			if (excludeRows.range[1] <= excludeRows.range[0]) { // ?: perhaps < instead of <= ?
+				throw new Error(`excludeRows.range[0] should be less than excludeRows.range[1] (given ${excludeRows.range})`);
+			}
+		}
+		// checks if one exists but not the other
+		else if (excludeRows.outcomeVar || excludeRows.range) {
+			throw new Error(`Argument excludeRows should be of form { outcomeVar : <string> , range : <array> } (given ${excludeRows})`);
+		}
+		// else, excludeRows is effectively empty
+
+		// -- sliderPosition --
+
+		if (!Number.isInteger(sliderPosition)) {
+			throw new Error(`sliderPosition is not an integer (given ${sliderPosition})`);
+		}
+		const numParameters = Object.keys(this.parameters).length;
+		if (sliderPosition < 0 || numParameters < sliderPosition) { // ?: <= 0 ?
+			throw new Error(`sliderPosition should be in range [0, ${numParameters}] (given ${sliderPosition})`);
+		}
+
+
+		// --- SET INTERACTIONS ---
+
+		// -- joinOptions --
+
+		let newJoinOptions = [];
 
 		// filter excludes option groups that are not valid
 		// map produces the proper format
 		if (Object.entries(joinOptions).length) {
 			newJoinOptions = Object.entries(joinOptions).filter((arr, i) => {
-				if (! Array.isArray(arr)) {
-					throw new Error('Argument joinOptions should be of the form: array[array[string]]')
-				}
+				// if (! Array.isArray(arr)) { // ?: keep here or keep above?
+				// 	throw new Error('Argument joinOptions should be of the form: array[array[string]]')
+				// }
 				let p = arr[0], o = arr[1];
 				return (p in this.parameters) && // check if parameter exists
 					o.map(x => this.parameters[p].includes(x)).reduce((a, b) => a && b) // check if options for that parameter exists
@@ -420,37 +488,40 @@ class multiverseMatrix {
 			})
 		}
 		
-		excludeOptions = Array.from(new Set(excludeOptions)); // remove duplicates
+		// -- excludeOptions --
+		// TODO: multiple options with the same name don't work
+
+		excludeOptions = Array.from(new Set(excludeOptions)); // remove duplicates | ?: notify if removed?
 		let newExcludeOptions = {};
+		// Reminder: `in` gets the keys of an Object
 		for (let key in this.parameters) newExcludeOptions[key] = [];
-		for (let option of excludeOptions) {
+		for (let option of excludeOptions) { // ?: notify if nothing?
 			if (option in this.invParameters) // makes sure is valid option
 				newExcludeOptions[this.invParameters[option]].push(option);
 		}
 		
+		// -- excludeRows --
+		// TODO: make the visual also show up
+
 		let newExcludeRows = [];
-		// make sure range is in the right format
-		if (excludeRows.length) {
-			if (excludeRows.range.length===2 && excludeRows.range.every(v => typeof v === 'number')) {
-				for (let i = 0; i < this.outcomes.length; i++) {
-					if (this.outcomes[i].var === excludeRows.outcomeVar) {
-						newExcludeRows = [i, excludeRows.range];
-						break;
-					}
-				}
+		// does nothing if excludeRows.outcomeVar is not present in the outcome visualizations
+		// ?: should we notify if nothing has been selected?
+		for (let i = 0; i < this.outcomes.length; i++) {
+			if (this.outcomes[i].var === excludeRows.outcomeVar) {
+				newExcludeRows = [i, excludeRows.range];
+				break;
 			}
 		}
 
+		// -- sliderPosition --
 
 		// code based on the "on end" portion of dragSortDivider in utils/drag.js
-		if (Number.isInteger(sliderPosition) && 0 <= sliderPosition && sliderPosition <= this.size) {
-			let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
-			let slider = document.querySelector("g.grouped-sort-divider");
-			slider.setAttribute("class", `grouped-sort-divider ${sliderPosition}`);
-			slider.setAttribute("transform", `translate(${boundaries[sliderPosition]}, 0)`);
-			sortByGroupParams = x_scale_params.domain().slice(sliderPosition).reverse();
-			group_params.update(_ => sortByGroupParams);
-		}
+		let boundaries = x_scale_params.range().map(d => (d - (groupPadding/2)));
+		let slider = document.querySelector("g.grouped-sort-divider");
+		slider.setAttribute("class", `grouped-sort-divider ${sliderPosition}`);
+		slider.setAttribute("transform", `translate(${boundaries[sliderPosition]}, 0)`);
+		sortByGroupParams = x_scale_params.domain().slice(sliderPosition).reverse();
+		group_params.update(_ => sortByGroupParams);
 
 		// by updating these, it should reactively call this.updateHandler elsewhere (App.svelte)
 		join_options.update(_ => newJoinOptions);
