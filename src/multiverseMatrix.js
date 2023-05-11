@@ -439,7 +439,7 @@ class multiverseMatrix {
 				throw new Error(`Values of excludeRows.range should be of type 'number' (given ${excludeRows.range})`);
 			}
 			// compares values of excludeRows.range: first value should be smaller than the second
-			if (excludeRows.range[1] <= excludeRows.range[0]) { // ?: perhaps < instead of <= ?
+			if (excludeRows.range[0] >= excludeRows.range[1]) { // ?: perhaps > instead of >= ?
 				throw new Error(`excludeRows.range[0] should be less than excludeRows.range[1] (given ${excludeRows.range})`);
 			}
 		}
@@ -455,7 +455,7 @@ class multiverseMatrix {
 			throw new Error(`sliderPosition is not an integer (given ${sliderPosition})`);
 		}
 		const numParameters = Object.keys(this.parameters).length;
-		if (sliderPosition < 0 || numParameters < sliderPosition) { // ?: <= 0 ?
+		if (sliderPosition < 0 || numParameters < sliderPosition) {
 			throw new Error(`sliderPosition should be in range [0, ${numParameters}] (given ${sliderPosition})`);
 		}
 
