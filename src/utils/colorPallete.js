@@ -1,14 +1,18 @@
 export const colors = {
-	active : "#D97959",
-	inactive : "#abb7c4",
-	secondary : "#8ecae6",
-	primary : "#084C61",
-	background : "#f7f7f7",
+	active : "#E0797D", // coral
+	vis: "#99A3E0", // muted purple
+	// active: "#99A3E0", // muted purple
+	// vis: "#0d99ff", // bright blue
+	inactive : "#DCE0E6",
+	secondary : "#595994",
+	median : "#084C61",
+	background : "#fafafa",
 	white : "#ffffff",
-	gray: '#777777',
 	popup: '#f0f0f0',
 	text: '#4f4f4f',
-	hover: '#ff3e00',
+	hover: '#D67477',
+	gray20: '#e0e0e0',
 	gray70: '#979797',
+	gray80: '#707070',
 	gray90: '#404040'
 };

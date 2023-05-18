@@ -1,15 +1,15 @@
+import { spawn } from 'child_process';
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import css from 'rollup-plugin-css-only';
 import json from "@rollup/plugin-json";
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
+import image from '@rollup/plugin-image';
 
 const production = !process.env.ROLLUP_WATCH;
-
-const pkg = require('./package.json');
 
 function serve() {
 	let server;
@@ -21,7 +21,7 @@ function serve() {
 	return {
 		writeBundle() {
 			if (server) return;
-			server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+			server = spawn('npm', ['run', 'start', '--', '--dev'], {
 				stdio: ['ignore', 'inherit', 'inherit'],
 				shell: true
 			});
@@ -34,17 +34,19 @@ function serve() {
 
 export default {
 	input: 'src/main.js',
+	treeshake: false,
 	output: {
-		sourcemap: true,
+		sourcemap: false,
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js'
 	},
-	// output: {
-	// 	format: 'umd',
-	// 	name: 'app',
-	// 	file: 'pkg.main'
-	// },
+
+	onwarn: function (warning, warn) {
+		if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+		warn(warning);
+	},
+
 	plugins: [
 		svelte({
 			compilerOptions: {
@@ -67,16 +69,19 @@ export default {
 			browser: true,
 			dedupe: ['svelte']
 		}),
-		commonjs(),
+		commonjs({
+			sourceMap: false
+		}),
 		
 		injectProcessEnv({ 
-			NODE_ENV: 'production',
-			ANALYSIS_DOC: "analysis-doc.html"
+			NODE_ENV: 'production'
 		}),
 
+		image(),
 
-		// In dev mode, call `npm run start` once
-		// the bundle has been generated
+
+		// // In dev mode, call `npm run start` once
+		// // the bundle has been generated
 		!production && serve(),
 
 		// Watch the `public` directory and refresh the

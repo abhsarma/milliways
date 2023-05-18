@@ -12,9 +12,14 @@ import { mean } from './arrayMethods.js'
  * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
  */
  function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
+ 	// console.log(gridData, outcomeData, estimateData)
 	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
 	if (!outcomeData.length){
 		return {gridData, outcomeData, estimateData}
+	}
+
+	if ((gridData.length != outcomeData[outcomeIndex].length) | (gridData.length != estimateData[outcomeIndex].length)) {
+		throw new Error(`gridData, outcomeData and estimateData for index ${outcomeIndex} are not of the same size`)
 	}
 
 	// Add the sorting factor (the outcome that we are sorting on) to the gridData

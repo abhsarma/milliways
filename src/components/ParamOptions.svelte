@@ -1,7 +1,7 @@
 <script>
 	import { css } from '@emotion/css';
 	import { colors } from '../utils/colorPallete.js';
-    export let param;
+    export let parameter;
     export let optionsData;
 
     const optionsContainer = css`
@@ -9,6 +9,17 @@
         margin: 5px;
         padding: 5px;
         border-radius: 5px;
+    `
+
+    const paramOption = css`
+        margin-bottom: 12px;
+    `
+
+    const optionName = css`
+        font-size: 14px;
+        font-family: "Av-Nx";
+        font-weight: 700;
+        cursor: default;
     `
 
     let options = [];
@@ -23,10 +34,10 @@
     }
 </script>
 
-<div class="options-container {optionsContainer}" id="paramOptions-{param}">
+<div class="options-container {optionsContainer}" id="paramOptions-{parameter}">
     {#each options as { name, content }, i }
-        <div class="param-option" id="{param}-{i}">
-            <h3>{name}</h3>
+        <div class="param-option {paramOption}" id="{parameter}-{i}">
+            <p class={optionName}>{name}</p>
             <code>{content}</code>
         </div>
     {/each}
@@ -36,7 +47,7 @@
     .options-container {
         margin-bottom: 10px;
     }
-    div.param-option > h3 {
+    div.param-option > p {
         margin: 0;
     }
     div.param-option > code {

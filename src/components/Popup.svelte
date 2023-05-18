@@ -7,99 +7,101 @@
 
 	const dispatch = createEventDispatcher();
 
-	export const popupBg = css`
-		position:absolute;
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-		background-color: ${colors.gray+"80"};
-		backdrop-filter: blur(3px);
-		z-index: 9;
-	`
+	export let message;
+	export let step;
+	export let position;
+	export let adjust;
+	export let direction;
+	export let pointer;
+	export let steps;
+	export let containsImage;
 
-	export const infoPopup = css`
-		width: ${popup.width}px;
+	let pw;
+	if (containsImage) {
+		pw = 496;
+	} else {
+		pw = popup.width;
+	}
+
+	const infoPopup = css`
+		width: ${pw}px;
 		background-color: ${colors.popup};
 		color: ${colors.text};
 	`;
 
-	export const pointerRight = css`
+	const pointerRight = css`
 		transform: translate(-${(popup.shift + cell.padding + 1)}px, ${3*popup.shift/2}px) rotate(-135deg);;
 	`;
 
-	export const pointerLeft = css`
+	const pointerLeft = css`
 		transform: translate(${popup.shift + cell.padding + 1}px, ${3*popup.shift/2}px) rotate(45deg);;
 	`;
 
-	export const shiftLeft = css`
+	const shiftLeft = css`
 		transform: translate(-${popup.width + 2*popup.padding + popup.shift + cell.padding}px, -${3*popup.shift/2}px);
 	`  // add some buffer
 
-	export const shiftRight = css`
+	const shiftRight = css`
 		transform: translate(${popup.shift + cell.padding}px, 0px);
 	`  // add some buffer
 
-	export const shiftCentre = css`
+	const shiftCentre = css`
 		transform: translate(-50%, -50%);
 	`
 
-	export const shadowLeft = css`
+	const shadowLeft = css`
 		box-shadow: -2px 2px 2px 0px #cccccc;
 	`
 
-	export const shadowRight = css`
+	const shadowRight = css`
 		box-shadow: 2px 2px 2px 0px #cccccc;
 	`
 
-	export const shadowCentre = css`
+	const shadowCentre = css`
 		box-shadow: 0px 2px 2px 0px #cccccc;
 	`
 
-	export const highlight_btn = css`
+	const highlight_btn = css`
 		background-color: ${colors.active};
 		color: ${colors.white};
 	`
 
-	export const plain_btn = css`
+	const plain_btn = css`
 		color: ${colors.text};
 		background-color: ${colors.popup};
 	`
+	let shift, shadow, next, pointerPos = null;
 
-	export let message;
-	export let step;
-	export let position;
-	export let direction;
-	export let steps;
-
-	let shift, shadow, pointer, next;
-	let activePrev  = false, activeSkip = false, activeNext = false;
-
-	if (direction == "right") {
+	if (direction == "left") {
 		shift = shiftLeft;
-		pointer = pointerRight;
 		shadow = shadowRight;
-	} else if (direction == "left") {
+	} else if (direction == "right") {
 		shift = shiftRight;
-		pointer = pointerLeft;
 		shadow = shadowLeft;
-	} else {
+	} else if (direction == "centre") {
 		// center
 		shift = shiftCentre;
 		shadow = shadowCentre;
-		pointer = null;
+	}
+
+	if (pointer == "left") {
+		pointerPos = pointerLeft;
+	} else if (pointer == "right") {
+		pointerPos = pointerRight;
+	} else if (pointer == "hidden") {
+		pointerPos = null;
 	}
 
 	function incrementCount() {
 		step += 1
-		dispatch('message', {
+		dispatch('next', {
 			step: step
 		});
 	}
 
 	function decrementCount() {
 		step -= 1
-		dispatch('message', {
+		dispatch('next', {
 			step: step
 		});
 	}
@@ -111,40 +113,94 @@
 	} else {
 		next = "Finish"
 	}
+
+	function removeTutorial() {
+		console.log("skipping tutorial...")
+		dispatch('skip', {
+			step: step
+		});
+	}
+
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
+	document.documentElement.style.setProperty('--secondaryColor', colors.secondary)
 </script>
 
-<div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y}px; left: {position.x}px;">
+<div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
+	<div class="action-btn" on:click={removeTutorial}>
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M7.64645 7.29944L8.00024 7.65323L8.35379 7.2992L14.9367 0.707346L15.2837 1.05436L8.70033 7.64669L8.34725 8.00024L8.70056 8.35355L15.2929 14.9459L14.9459 15.2929L8.35355 8.70056L8 8.34701L7.64645 8.70056L1.05412 15.2929L0.707107 14.9459L7.29944 8.35355L7.65299 8L7.29944 7.64645L0.707107 1.05412L1.05412 0.707107L7.64645 7.29944Z" fill="#979797" stroke="#979797"/>
+		</svg>
+	</div>
 	<p>{@html message}</p>
 	{#if step > 0 & step <= steps}
 		<p class="progress-indicator">{step}/{steps}</p>
 	{/if}
-	<button class="{highlight_btn}" class:activeNext on:mouseenter={() => activeNext = true} on:mouseleave={() => activeNext = false} on:click={incrementCount}>{next}</button>
+	<button class="{highlight_btn} progress-btn next-btn" on:click={incrementCount}>{next}</button>
 	{#if step > 0}
-		<button class="{plain_btn}" class:activePrev on:mouseenter={() => activePrev = true} on:mouseleave={() => activePrev = false} on:click={decrementCount}>Prev</button>
+		<button class="{plain_btn} progress-btn plain-btn" on:click={decrementCount}>Prev</button>
 	{/if}
-	<button class="{plain_btn}" class:activeSkip on:mouseenter={() => activeSkip = true} on:mouseleave={() => activeSkip = false} onclick="(e=>e.parentElement.parentElement.remove())(this)">Skip</button>
 </div>
-{#if step > 0 & step <= steps}
-	<div class="pointer {pointer}" style="top: {position.y}px; left: {position.x}px;"></div>
+{#if pointerPos}
+	<div class="pointer {pointerPos}" style="top: {position.y}px; left: {position.x}px;"></div>
+}
 {/if}
 
 <style type="text/css">
 	p {
 		margin: 8px 8px 32px 8px;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
+		font-size: 14px;
+		line-height: 20px;
 	}
 
 	p.progress-indicator {
 		color: #aaaaaa;
 	}
 
+	:global(.definition) {
+		font-style: italic;
+		color: var(--secondaryColor);
+	}
+
 	button {
-		margin: 0px 4px;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		border: none;
-		padding: 8px 16px;
-		float: right;
 		border-radius: 4px;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.action-btn {
+		border-radius: 4px;
+		padding: 12px;
+		cursor: pointer;
+		float: right;
+		background-color: transparent;
+	}
+
+	.action-btn:hover,
+	.action-btn:active,
+	.action-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.progress-btn {
+		margin: 0px 4px;
+		padding: 8px 16px;
+		cursor: pointer;
+		float: right;
+	}
+
+	.plain-btn:hover,
+	.plain-btn:active,
+	.plain-btn:focus {
+		background-color: #e0e0e0;
+	}
+
+	.next-btn:hover,
+	.next-btn:active,
+	.next-btn:focus {
+		background-color: var(--hoverColor);
 	}
 
     .progress-indicator {
@@ -153,23 +209,8 @@
     	margin: 0px;
     }
 
-	.activePrev  {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeSkip {
-		background-color: #e0e0e0;
-		cursor: pointer;
-	}
-
-	.activeNext {
-    	background-color: #ED8A68;
-    	cursor: pointer;
-    }
-
     .popup {
-    	position: fixed;
+    	position: absolute;
 		top: 50%;
 		left: 50%;
 		padding: 16px;

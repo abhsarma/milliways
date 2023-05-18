@@ -1,6 +1,8 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import * as d3 from 'd3';
+	import { range, extent, groups, zip, max, histogram } from 'd3-array';
+	import { scaleLinear, scaleBand } from 'd3-scale';
+	import { select, selectAll } from 'd3-selection';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
 	import { windowHeight, margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
@@ -12,25 +14,34 @@
 
 	export let data;
 	export let parameters;
+	export let analysis_doc;
 
 	// CSS Styles
 	export const parameter_name = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		text-transform: uppercase;
 		padding: 0px ${cell.padding/2 + "px"};
 		background-color: ${colors.background};
+		color: ${colors.gray90};
 		cursor: default;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		height: ${cell.height}px;
+		line-height: ${cell.height}px;
 		text-align: center;
 		width: 100%;
 		user-select: none;
 	`;
 
+	export const parameter_label = css`
+		line-height: ${cell.height}px;
+		margin: 0px
+	`
+
 	export const option_names = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		line-height: ${cell.width}px;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -49,44 +60,47 @@
 		fill: ${colors.active};
 	`;
 
-	export const bg_rect = css`
-		fill: #d6d6d6;
-	`;
-
 	let cellHeight, cellWidth;
 
 	const param_n_options = Object.fromEntries(Object.entries(parameters).map( d => [d[0], d[1].length] ));
 	const n_options = Object.values(param_n_options).reduce((a, b) => a + b, 0);
 	const cols = [...Object.keys(parameters)].length;
-	const x2 = d3.scaleBand()
-				.domain( d3.range(d3.max(Object.values(param_n_options))) )
-				.range( [0, d3.max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
+	const x2 = scaleBand()
+				.domain( range(max(Object.values(param_n_options))) )
+				.range( [0, max(Object.values(param_n_options)) * (cell.width + cell.padding)] );
 
 	$: { cellHeight = $gridCollapse ? 2 : cell.height }
 	$: { cellWidth = $gridCollapse ? 8 : cell.width }
-	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding);
-	$: h = cell.padding + data.length * cellHeight + margin.bottom;
-	$: y = d3.scaleBand()
-		.domain(d3.range(data.length))
-		.range([0, h - (margin.bottom + cell.padding) ])
+	$: w = (cell.width * n_options + cell.padding * (n_options - cols) + (cols + 1) * groupPadding) + 8;
+	$: h = cell.padding + data.length * cellHeight + 2*margin.bottom;
+	$: y = scaleBand()
+		.domain(range(data.length))
+		.range([margin.bottom, h - (margin.bottom + cell.padding) ])
 		.padding(0.1);
 
 	document.documentElement.style.setProperty('--bgColor', colors.background)
+	document.documentElement.style.setProperty('--textColor', colors.gray90)
 
 	let order = {};
 
   	Object.keys(parameters).forEach(function(d, i) {
   		let n = Object.values(parameters)[i].length;
-		order[d] = { name: d3.range(n).sort(function(a, b) { return a - b; }) }
+		order[d] = { name: range(n).sort(function(a, b) { return a - b; }) }
 	});
 
-	let bgRect;
+	let bgRect, scrollY = 0;
 
 	onMount(() => {
-		d3.selectAll(".option-headers").call(drag_options(order));
-		d3.selectAll(".parameter").call(drag_parameters(param_n_options, y));
-		d3.select("g.grouped-sort-divider").call(dragSortDivider());
+		selectAll(".option-headers").call(drag_options(order));
+		selectAll(".parameter").call(drag_parameters(param_n_options, y));
+		select("g.grouped-sort-divider").call(dragSortDivider());
 		bgRect = document.querySelector("#bg-rect");
+
+		const grid_body = document.querySelector(".grid-container");
+
+		grid_body.addEventListener("scroll", event => {
+			scrollY = grid_body.scrollTop;
+		}, { passive: true });
 	})
 
 	let mvWindow;
@@ -95,10 +109,14 @@
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
-		if (!mvWindow || mvWindow.closed) {
+		console.log(spec);
 
-			mvWindow = open(process.env.ANALYSIS_DOC,
-							process.env.ANALYSIS_DOC,
+		if (!mvWindow || mvWindow.closed) {
+			mvWindow = open(
+							analysis_doc,
+							analysis_doc,
+							// process.env.ANALYSIS_DOC,
+							// process.env.ANALYSIS_DOC,
 							`top=0,
 							 left=${screen.width}-960,
 							 width=960,
@@ -121,6 +139,7 @@
 			mvWindow.document.body.appendChild(script);
 		} 
 		else {
+			mvWindow.focus();
 			bc.postMessage(spec);
 		}
 	}
@@ -139,11 +158,14 @@
 					y="{cell.padding}" 
 					width="{(cell.width + cell.padding/2) * parameters[parameter].length}" 
 					height="{cell.height}">
-					<div class="parameter-name {parameter_name} {parameter}" style="cursor: move">{parameter}</div>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a class="tooltip-link" data-toggle="tooltip" title="{parameter}">
+						<div class="parameter-name {parameter_name} {parameter}"><p class='parameter-label {parameter_label}'>{parameter}</p></div>
+					</a>
 				</foreignObject>
 			</g>
 			<g class="parameter-col {parameter}" transform="translate({$parameter_scale(parameter)}, {margin.top})">
-				{#each d3.range(parameters[parameter].length - 1) as d, i}
+				{#each range(parameters[parameter].length - 1) as d, i}
 					<foreignObject 
 						class="option-join {d}" 
 						x="{ (x2(i) + x2(i+1))/2 }"
@@ -160,8 +182,11 @@
 							width="{cell.width + cell.padding}" 
 							height="{namingDim}" 
 							class="option-name {option}">
-								<OptionToggle {parameter} {option} on:hide/>
-								<div class="option-label {option_names} {option}">{option}</div>
+								<OptionToggle {parameters} {parameter} {option} on:hide/>
+								<!-- svelte-ignore a11y-missing-attribute -->
+								<a class="tooltip-link" data-toggle="tooltip" title="{option}">
+									<div class="option-label parameter-{parameter} {option_names} {option}">{option}</div>
+								</a>
 						</foreignObject>
 					</g>
 				{/each}
@@ -171,10 +196,9 @@
 	<svg class="grid-body" height={h} width={w}>
 		<rect 
 			x=0
-			y="-{y.bandwidth()+cell.padding}"
+			y=-{y.bandwidth()+cell.padding}
 			width=100%
 			height={y.bandwidth()+cell.padding}
-			class={bg_rect}
 			id="bg-rect"
 		/>
 		{#each Object.keys(parameters) as parameter}
@@ -184,24 +208,39 @@
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
 								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell {selected_option} universe-{j}"
+									x={(cell.width - cellWidth)/2}
+									y={y(j)}
+									width={cellWidth} 
+									height={y.bandwidth()}
+									class="{options_container} {parameter} {option} option-cell {selected_option} universe-{j}"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
+									on:mouseover={() => moveBgRect(y(j))}
+								/>
+							{:else if $exclude_options[parameter].includes(option)}
+								<!-- {console.log(parameter, option)} -->
+								<rect 
+									x={(cell.width - cellWidth)/2} 
+									y={y(j)}
+									width={cellWidth}
+									height={y.bandwidth()}
+									class="{options_container} {parameter} {option} option-cell exclude-rect universe-{j}"
+									row={j}
+									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
 								<rect 
-									x="{(cell.width - cellWidth)/2}" 
-									y="{y(j)}" 
-									width="{cellWidth}" 
-									height="{y.bandwidth()}"
-									class="{options_container} {option} option-cell"
+									x={(cell.width - cellWidth)/2} 
+									y={y(j)}
+									width={cellWidth}
+									height={y.bandwidth()}
+									class="{options_container} {parameter} {option} option-cell universe-{j}"
 									row={j}
 									on:click={openFile}
+									on:focus={() => moveBgRect(y(j))}
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{/if}
@@ -210,8 +249,11 @@
 				{/each}
 			</g>
 		{/each}
-		<SortByGroupDivider parameters={parameters} h={h}/>
+		<SortByGroupDivider bind:h={h} bind:y={scrollY}/>
 	</svg>
+	<!-- <svg class="grid-group-divider" height={windowHeight-gridNamesHeight} width={w}>
+		<SortByGroupDivider parameters={parameters} h={windowHeight-gridNamesHeight}/>
+	</svg> -->
 </div>
 
 <style>
@@ -219,20 +261,25 @@
 		z-index: 99;
 	}
 
+	foreignObject {
+		border-radius: 4px;
+	}
+
 	svg.grid-header {
 		background-color: var(--bgColor) !important;
 		display: flex;
-		/* display: inline-block; */
-		/* float: left; */
 		position: sticky;
 		top: 0;
-		box-shadow: 0px 4px 5px -2px #c0c0c0;
+		box-shadow: 0px 4px 5px -2px #cccccc;
+		z-index: 10;
 	}
 
 	svg.grid-body {
 		background-color: var(--bgColor) !important;
 		display: inline-block;
 		float: left;
+		position: relative;
+		z-index: 1;
 	}
 
 	svg, rect {
@@ -240,6 +287,20 @@
 	}
 
 	#bg-rect {
+		fill: #eaeaea;
 		transition: none;
+	}
+
+	div.parameter-name, .option-label {
+		cursor: move;
+	}
+
+	a.tooltip-link {
+		text-decoration: none;
+		color: var(--textColor) ;
+	}
+
+	.exclude-rect {
+		fill: #efefef !important;
 	}
 </style>
