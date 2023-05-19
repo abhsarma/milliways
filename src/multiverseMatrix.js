@@ -209,12 +209,6 @@ class multiverseMatrix {
 					})
 				return d
 			});
-
-			// vec.map((d, i) => {
-			// 	console.log(i, d);
-			// })
-
-			// console.log(vec)
 	
 			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
 	
@@ -257,6 +251,7 @@ class multiverseMatrix {
 		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
 		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
+		
 		this.outcomes[index].density = o_data_processed;
 		this.outcomes[index].estimate = e_data_processed;
 		this.estimates[index] = e_data_processed;

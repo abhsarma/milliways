@@ -5,13 +5,6 @@
 	import { select } from 'd3-selection';
 	import { scaleOrdinal, scaleBand } from 'd3-scale';
 	import { range } from 'd3-array';
-	import * as data_hr from '../static/data/hurricane-data.json'; // change 
-    import * as code_hr from '../static/data/hurricane-code.json';
-    import * as tableData_hr from '../static/data/hurricane-raw-data.json';
-
-	import * as data_sm from '../static/data/sm-data.json'; // change 
-    import * as code_sm from '../static/data/sm-code.json';
-    import * as tableData_sm from '../static/data/sm-raw-data.json';
 
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
@@ -26,6 +19,19 @@
 	import Demo from './components/Demo.svelte';
 	import Code from './components/Code.svelte';
 	import DataTable from './components/DataTable.svelte';
+
+	// datasets
+	// needs to change ==> we need a better way of importing data
+	import * as data_hr from '../static/data/hurricane-data.json'; 
+    import * as code_hr from '../static/data/hurricane-code.json';
+    import * as tableData_hr from '../static/data/hurricane-raw-data.json';
+
+	import * as data_sm from '../static/data/sm-data.json'; 
+    import * as code_sm from '../static/data/sm-code.json';
+    import * as tableData_sm from '../static/data/sm-raw-data.json';
+
+    import * as data_durante from '../static/data/durante-data.json'; 
+    import * as code_durante from '../static/data/durante-code.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
@@ -45,6 +51,11 @@
 		} else if (mode === 'task') {
 			data = data_sm;
 			code = code_sm;
+			tableData = tableData_sm;
+			analysis_doc = "analysis-doc.html"
+		} else if (mode === 'durante') {
+			data = data_durante;
+			code = code_durante;
 			tableData = tableData_sm;
 			analysis_doc = "analysis-doc.html"
 		}
