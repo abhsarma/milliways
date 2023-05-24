@@ -5,21 +5,21 @@
 	"scripts": {
 		"build": "rollup -c",
 		"dev": "rollup -c -w",
-    "test": "jest",
+    	"test": "jest",
 		"start": "sirv public --no-clear --single --port 3000",
 		"compile": "npm run build && (npm run start & sleep 3) && (inliner http://localhost:3000/index.html > template.html) && killall -9 node"
 	},
 	"exports": {
 		".": "./src/main.js"
 	},
-  "jest": {
-    "transform": {
-      "^.+\\.(js|jsx)$": "babel-jest"
-    },
-    "transformIgnorePatterns": [
-        "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
-    ]
-  },
+	"jest": {
+		"transform": {
+		"^.+\\.(js|jsx)$": "babel-jest"
+		},
+		"transformIgnorePatterns": [
+			"node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
+		]
+	},
 	"type": "module",
 	"devDependencies": {
     "@babel/core": "^7.21.0",

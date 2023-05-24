@@ -28,6 +28,47 @@ To watch for changes and continually rebuild the package (this is useful if you'
 npm run dev
 ```
 
+## Testing
+
+To test, make sure that `jest`, `babel-jest`, `@babel/core`, and `@babel/preset-env` are installed. This should already be done through the installation step. Next, create a `babel.config.cjs` file in the root of the directory. In there, put in the following code:
+```
+module.exports = {
+    presets: [
+        [
+            '@babel/preset-env',
+            {
+                targets: {
+                    node: 'current'
+                }
+            }
+        ]
+    ],
+};
+```
+Then, put the following in either a  `jest.config.json` file or in `package.json` under a `"jest"` key:
+```
+{
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+        "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
+    ]
+}
+```
+Now, in `package.json` and under `"scripts"`, create another key and value `"test": "jest"`. `package.json` should look something like this now:
+```
+{
+    ...
+    "scripts": {
+        ...
+        "test": "jest",
+        ...
+    },
+    ...
+}
+```
+At this point, setup for testing should be done. Now to run the tests, run the command `npm run test` or equivalently `npm test`. To create your own tests, create a file anywhere with the format `*.test.js`, and it will automatically be included in testing.
 
 ## Sharing
 
