@@ -17,7 +17,7 @@
 
     const optionName = css`
         font-size: 14px;
-        font-family: "Avenir Next";
+        font-family: "Av-Nx";
         font-weight: 700;
         cursor: default;
     `

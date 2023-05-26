@@ -99,6 +99,7 @@
 
 	p {
 		font-size: 11px;
+		font-family: 'Av-Nx';
 		padding: 0;
 		margin: 0;
 	}

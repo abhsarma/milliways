@@ -19,7 +19,7 @@
 
 	let pw;
 	if (containsImage) {
-		pw = '80%';
+		pw = '60%';
 	} else {
 		pw = '30%';
 	}
@@ -186,13 +186,13 @@
 	}
 
 	button {
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		border: none;
 		border-radius: 4px;
 	}	
 
 	p {
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		margin: 16px;
 		font-size: 14px;
 		line-height: 20px;

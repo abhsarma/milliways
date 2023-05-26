@@ -18,6 +18,7 @@
 <style>
 	.table-row {
 		font-size: 11px;
+		font-family: 'Av-Nx';
 		display: flex;
 		flex-direction: row;
 		border-bottom: 1px solid #efefef;

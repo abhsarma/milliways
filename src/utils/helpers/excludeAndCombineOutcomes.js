@@ -41,7 +41,7 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 	let o_data_processed = o_data
 	let e_data_processed = e_data
 	
-	let groups = combine.map(d => d[1].map(x => ([d[0], x])))
+	let group_by = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
 	
@@ -55,7 +55,7 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 	}
 
 	if (combine.length > 0) {
-		let groups = combine.map(d => d[1].map(x => ([d[0], x])))
+		let group_by = combine.map(d => d[1].map(x => ([d[0], x])))
 							.flat()
 							.map((d, i) => (Object.assign({}, {id: i}, {parameter: d[0]}, {group: d[1].flat()})));
 		
@@ -69,11 +69,11 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 			// idx should always have length == parameters.length
 			let idx = which_option_index(option_list, options)
 
-			// g is an array of length groups.length
+			// g is an array of length group_by.length
 			// each element in g is an array of length 2: 
 			// the first element is the index of the parameter whose options are being joined, 
-			// and the second element is the id from groups
-			let g = groups
+			// and the second element is the id from group_by
+			let g = group_by
 				.map(x => {
 					let match_options = options.map(d => x['group'].includes(d)) // identifies whether the option has been joined only based on the option name
 					let match_parameter = parameters.map(d => d == x.parameter) // identifies whether the option has been joined only based on the option name

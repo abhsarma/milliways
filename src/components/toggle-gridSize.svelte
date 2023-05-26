@@ -52,7 +52,7 @@
 	p {
 		display: inline-block;
 		line-height: 32px;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		font-size: 14px;
 		font-weight: 300;
 		align-items: center;

@@ -61,7 +61,7 @@
 	p {
 		margin: 0px;
 		line-height: 32px;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		font-size: 14px;
 		font-weight: 300;
 		vertical-align: middle;

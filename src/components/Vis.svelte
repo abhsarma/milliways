@@ -241,6 +241,10 @@
 </div>
 
 <style>
+	div.vis {
+		border-radius: 4px;
+	}
+	
 	svg.outcomeResults {
 		background-color: var(--bgColor);
 		float: left;
@@ -310,16 +314,12 @@
 		margin-left: 0;
 	}
 
-	svg {
-		border-radius: 4px;
-	}
-
 	select {
 		height: 36px;
 		border: none;
 		background-color: var(--bgColor);
 		text-align: center;
-		font-family: 'Avenir Next', sans-serif;
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
 	}
 </style>

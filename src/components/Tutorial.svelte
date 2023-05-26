@@ -6,17 +6,22 @@
 	import Popup from './Popup.svelte';
 	import { parameter_scale, option_scale } from '../utils/stores.js'
 	import { moveParams, moveOptions, calculateParamPosition } from '../utils/drag.js'
-	import mcdf from '../assets/images/mcdf.gif'
-	import pbox from '../assets/images/p-boxes.gif'
+	import mcdf_01 from '../assets/images/mcdf-01.png'
+	import mcdf_02 from '../assets/images/mcdf-02.png'
+	import mcdf_03 from '../assets/images/mcdf-min-03.gif'
+	import mcdf_04 from '../assets/images/mcdf-04.png'
+	import mcdf_05 from '../assets/images/mcdf-min-05.gif'
+	import pbox from '../assets/images/pboxes-min.gif'
 	import tree from '../assets/images/tree.png'
 	import groupsort from '../assets/images/grouped-sort.gif'
+	import * as _ from 'lodash'
 
 	export let parameters;
 	export let multiverse;
 	export let visible_tutorial;
 
 	export const popupBg = css`
-		position:absolute;
+		position: absolute;
 		top: 0;
 		left: 0;
 		min-height: 100%;
@@ -37,9 +42,14 @@
 
 	let positions;
 	let step = 0;
-	let N = 16;
+	let N = 21;
 	$: first_param = "";
 	$: first_option = "";
+
+	let p = Object.keys(parameters)[0]
+	let o = Object.values(parameters)[0].slice(1, Object.values(parameters)[0].length);
+
+	console.log(Object.fromEntries(new Map([[p, o]])))
 
 	// div positioning css variables
 	$: position = {x: window.innerWidth/2, y: window.innerHeight/2};
@@ -104,7 +114,7 @@
 
 	function updatePopup(event) {
 		step = Number(event.detail.step);
-		if (step > (N + 1)) {
+		if (step > N) {
 			removePopup(event)
 		}
 	}
@@ -123,6 +133,11 @@
 	}
 
 	onMount(() => {
+		// let x_obj = Object.fromEntries(new Map([[p, o]]))
+
+		// multiverse.setInteractions(Object.fromEntries(new Map([Object.entries(parameters)[0]])))
+		
+
 		first_param = Object.keys(parameters)[0];
 		first_option = parameters[first_param][0];
 
@@ -147,6 +162,9 @@
 	<div class={popupBg}></div>
 	{#if step == 0}
 		{setLayout()}
+		<!-- {multiverse.setInteractions(Object.fromEntries(new Map([Object.entries(parameters)[0]])))} -->
+
+		<!-- .map((_, i, a) => a.slice(i, i+2)).filter(d => d.length == 2) -->
 		<Popup 
 			message = "<h3>Take a quick tour of mvis?</h3>Walk through the interface elements and interactions to understand what you can do with mvis."
 			step = {step}
@@ -204,7 +222,7 @@
 	{:else if step == 4}
 		{setLayout("div.grid-container")}
 		<Popup 
-			message = "Each row in this grid represents a <span>universe</span>&mdash;a singular end-to-end analysis stemming from a particular combination of distinct analytical choices, which are highlighted in coral."
+			message = "Each row in this grid represents a <span>universe</span>&mdash;a singular end-to-end analysis stemming from a particular combination of distinct analytical choices, which are highlighted. We show every specification in the multiverse here."
 			step = {step}
 			position = {positions.universe0}
 			adjust = {{x:0,y:-0}}
@@ -217,8 +235,6 @@
 		/>
 	{:else if step == 5}
 		{setLayout("div.vis-container")}
-		{multiverse.setInteractions()}
-		<!-- For an outcome variable to be visible in the visualization, the analyst needs to export it when they prepare the multiverse. -->
 		<Popup 
 			message = "This is the <span class='definition'>outcome</span> panel. It shows the analysis outcomes (or estimates) from each universe in the multiverse."
 			step = {step}
@@ -262,7 +278,7 @@
 	{:else if step == 8}
 		{setLayout("div.vis-container")}
 		<Popup 
-			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf_01} width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
 			position = {positions.result0}
 			adjust = {{x:0,y:-0}}
@@ -274,6 +290,64 @@
 			containsImage = {true}
 		/>
 	{:else if step == 9}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf_02} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			step = {step}
+			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+	{:else if step == 10}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf_03} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			step = {step}
+			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+	{:else if step == 11}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf_04} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			step = {step}
+			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+	{:else if step == 12}
+		{setLayout("div.vis-container")}
+		<Popup 
+			message = "Each row shows the median (black point) and the mirrored Cumulative Density Function (mCDF) of that estimate.<br><br><img style='border-radius: 8px;' src={mcdf_05} width='480' alt='mirrored CDF (mCDF) calculation'/>"
+			step = {step}
+			position = {positions.result0}
+			adjust = {{x:0,y:-0}}
+			direction = "right"
+			pointer = "left"
+			on:next={updatePopup}
+			on:skip = {removePopup}
+			steps = {N}
+			containsImage = {true}
+		/>
+
+
+	{:else if step == 13}
 		{setLayout("div.grid-container")}
 		<Popup 
 			message = "You can interact with the multiverse by <span>excluding</span> an option or <span>joining</span> two (or more) options together, and inspect which parameters and options have the greatest influence on the outcome."
@@ -287,7 +361,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 10}
+	{:else if step == 14}
 		{setLayout("div.grid-container", `svg.exclude-icon`)}
 		<Popup 
 			message = "The <span class='definition'>exclude</span> button removes every universe which includes that option from the multiverse."
@@ -301,7 +375,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 11}
+	{:else if step == 15}
 		{setLayout("div.grid-container", `svg.link-icon`)}
 		<Popup 
 			message = "The <span class='definition'>join</span> button aggregates the estimates from the universes with those options. We show the result of this aggregation on the next page."
@@ -315,9 +389,9 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 12}
+	{:else if step == 16}
 		{setLayout("div.vis-container")}
-		{multiverse.setInteractions([['one_most_extreme_deaths', 'two_most_extreme_deaths']])}
+		{multiverse.setInteractions(Object.fromEntries(new Map([[p, o]])))}
 		<Popup 
 			message = "We use probability boxes (p-boxes) to show aggregated uncertainty across specifications.<br><br><img style='border-radius: 8px;' src={pbox} width='480' alt='mirrored CDF (mCDF) calculation'/>"
 			step = {step}
@@ -330,7 +404,7 @@
 			steps = {N}
 			containsImage = {true}
 		/>
-	{:else if step == 13}
+	{:else if step == 17}
 		{setLayout("div.toggle")}
 		{multiverse.setInteractions()}
 		<Popup 
@@ -345,7 +419,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 14}
+	{:else if step == 18}
 		{setLayout("div.grid-container", `g.grouped-sort-divider`)}
 		<Popup 
 			message = "This horizontal slider allows you to perform a <span class='definition'>sort based on group means</span>. Options of parameters to the right of the slider are sorted based on their group means, while those to the left are sorted within each group: <br><br><img style='border-radius: 8px;' src={groupsort} width='250' alt='how sorting based on group means work'/>"
@@ -359,7 +433,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 15}
+	{:else if step == 19}
 		{setLayout("div.code-container")}
 		<Popup 
 			message = "This panel shows the R code used to implement the analysis. This code was used to obtain the estimates shown on the outcome panel"
@@ -373,7 +447,7 @@
 			steps = {N}
 			containsImage = {false}
 		/>
-	{:else if step == 16}
+	{:else if step == 20}
 		{setLayout("div.grid-container")}
 		<Popup 
 			message = "If you click on any of the rows in this grid, it will bring up the corresponding <span  class='definition'>Exploratory Multiverse Analysis Report (EMARs)</span>.<br><br>EMARs are an interactive document which describe a end-to-end analysis of one universe in the multiverse at a time."

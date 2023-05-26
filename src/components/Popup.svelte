@@ -148,7 +148,7 @@
 <style type="text/css">
 	p {
 		margin: 8px 8px 32px 8px;
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		font-size: 14px;
 		line-height: 20px;
 	}
@@ -163,7 +163,7 @@
 	}
 
 	button {
-		font-family: 'Avenir Next';
+		font-family: 'Av-Nx';
 		border: none;
 		border-radius: 4px;
 		font-size: 14px;

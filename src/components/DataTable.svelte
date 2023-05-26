@@ -159,6 +159,7 @@
         margin: 0px 24px;
         display: inline-block;
         font-size: 12px;
+        font-family: 'Av-Nx';
     }
 
     .toggle-button {
@@ -188,7 +189,7 @@
 		font-size: 18px;
 		line-height: 32px;
 		margin: 4px 0px 0px 0px;
-		font-family: Avenir Next;
+		font-family: Av-Nx;
 		color: var(--textColor);
 		display: inline-block;
 		/* position: absolute;
