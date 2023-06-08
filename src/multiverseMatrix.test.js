@@ -1,9 +1,24 @@
-// TODO: check stores, vis events (sort, dropdown), slider
+// TODO: see if can test reactivity through some way
 
 import multiverseMatrix from './multiverseMatrix.js';
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
-
+import cdf from '@stdlib/stats-base-dists-normal-cdf'; // used for generating data
 import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
+
+//
+// Svelte store variables
+//
+
+let excludeOptions, excludeRows, joinOptions, optionScale;
+const unsubs = [
+    exclude_options.subscribe(val => excludeOptions=val),
+    exclude_rows.subscribe(val => excludeRows=val),
+    join_options.subscribe(val => joinOptions=val),
+    option_scale.subscribe(val => optionScale=val),
+]
+
+//
+// Helper functions
+//
 
 const CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
 function randString(len) {
@@ -113,7 +128,8 @@ function generateData() {
             universe['.parameter_assignment'][parameter] = [choice]
         }
 
-        for (let variable of allOutcomeVars) {
+        for (let i = 0; i < allOutcomeVars.length; i++) {
+            let variable = allOutcomeVars[i];
             let minx = Math.random()-1, maxx = Math.random()+3;
             let dif = maxx-minx;
             let mycdf = cdf.factory(dif/2 + minx, 0.3);
@@ -126,7 +142,7 @@ function generateData() {
             }
             universe.results.push({
                 "term": variable,
-                "estimate": 1,
+                "estimate": i, // done so that they are different, this is not particular to index
                 // "std.error": 2,
                 // "statistic": 3,
                 // "p.value": 4,
@@ -143,6 +159,10 @@ function generateData() {
     return [data, choices, parameters, combos, allOutcomeVars];
 }
 
+//
+// Testing setup and teardown
+//
+
 // Defined out here for ease of access in tests.
 let m, data, choices, parameters, combos, allOutcomeVars;
 
@@ -151,13 +171,20 @@ beforeAll(() => {
     [data, choices, parameters, combos, allOutcomeVars] = generateData();
 });
 
-// Resets `m` before each test.
+afterAll(() => {
+    // Avoids memory leaks.
+    for (let i = 0; i < unsubs.length; i++) unsubs[i]();
+})
+
 beforeEach(() => {
+    // Resets `m` before each test.
     m = new multiverseMatrix(data);
     m.initializeData();
 })
 
-// TODO: for all, handle invalid input (if error, check https://stackoverflow.com/questions/46042613/how-to-test-the-type-of-a-thrown-exception-in-jest)
+//
+//  Test cases
+//
 
 describe('when initialized', () => {
     describe('gridData', () => {
@@ -396,47 +423,141 @@ describe('updateGridData', () => {
 });
 
 describe('updateOutcomeData', () => {
-    it('test', () => {
+    /*
+        As a reminder, `m.outcomes` looks like this:
+        [
+            {
+                var: <variable>,
+                density: [
+                    [ [ <num>, <num>, <num> ], ...],
+                    ...
+                ], // without joins/excludes, the shape of density is (m.size, 101, 3)
+                id: <int>,
+                estimate: [<num>, ...],
+                mode: <num>
+            },
+            ...
+        ]
+    */
+    it('handles changing outcome variable', () => {
+        let prevVis = structuredClone(m.outcomes[0]);
 
+        // The code is written in such a way that does this outside of the update function
+        // Since this is manually changed, we won't check characteristics of this variable below
+        m.outcomes[0].var = allOutcomeVars[1];
+
+        m.updateOutcomeData(0, m.outcomes[0].var, [], []);
+        
+        //
+        // checks that `m.outcomes[0]` has changed
+        //
+
+        expect(prevVis.density).not.toEqual(m.outcomes[0].density);
+        expect(prevVis.id).toBe(m.outcomes[0].id);
+
+        // should be not equal given how data is generated
+        expect(prevVis.estimate).not.toEqual(m.outcomes[0].estimate);
+
+        expect(prevVis.mode).toBe(m.outcomes[0].mode); // ?: doesn't seem to change, at least.
+
+        //
+        // type check
+        //
+
+        expect(Array.isArray(m.outcomes[0].density)).toBe(true);
+        expect(Array.isArray(m.outcomes[0].density[0])).toBe(true);
+        expect(Array.isArray(m.outcomes[0].density[0][0])).toBe(true);
+        expect(m.outcomes[0].density[0][0].every(v => typeof v === 'number')).toBe(true);
+        expect(m.outcomes[0].estimate.every(v => typeof v === 'number')).toBe(true);
+        
     });
 });
 
 describe('updateHandler', () => {
+    it('handles ascending sorting properly', () => {
+        // setup
+        m.sortByIndex = 0;
+        m.sortAscending = true;
 
+        // hold previous Vis data
+        let prevVis = structuredClone(m.outcomes[0]);
+        
+        // No input should be fine; implies no join, no exclude.
+        m.updateHandler();
+
+        // NOTE: this is a special case as this is the default settings.
+        expect(m.outcomes[0]).toEqual(prevVis);
+    });
+    
+    it('handles descending sorting properly', () => {
+        // setup
+        m.sortByIndex = 0;
+        m.sortAscending = false;
+        
+        // No input should be fine; implies no join, no exclude.
+        m.updateHandler();
+
+        // hold previous Vis data
+        let prevVis = structuredClone(m.outcomes[0]);
+        
+        // No input should be fine; implies no join, no exclude.
+        m.updateHandler([],[]);
+        
+        // expect(m.outcomes[0].density).not.toEqual(prevVis.density);
+        // expect(m.outcomes[0].estimate).not.toEqual(prevVis.estimate);
+    });
 });
 
-// describe('setInteractions', () => {
-//     // look in function for explanation
-    
-//     let choice0 = choices[parameters[0]], choice1 = [parameters[1]]
+describe('setInteractions', () => {
+    describe('is able to alter store variables', () => {
+        it('exclude_options', () => {
+            let exclude = {};
+            for (let parameter of parameters)
+                exclude[parameter] = [];
+            let param = parameters[0];
+            let option = choices[param][0];
+            exclude[param] = [option];
 
-//     m.setInteractions([ [choice0[0], choice0[1]], [choice1[0], choice1[1]] ]);
-//     m.setInteractions([ [choice0[0], choice0[1]], [choice1[1], choice1[0]] ]);
-    
-//     m.setInteractions([ [choice0[0], choice0[2]] ]); // FAIL
-    
-//     m.setInteractions([ [choice0[0], choice0[1]], [choice0[1], choice0[2]] ]);
+            // change store variable
+            // m.setInteractions([], exclude)
+            exclude_options.update(_ => exclude);
+            expect(excludeOptions).toEqual(exclude);
 
-//     m.setInteractions([ [choice0[0], choice0[1]], [choice0[0], choice0[2]] ]);
-    
-//     m.setInteractions([], ['p_1','p_3','q_1']);
-    
-//     m.setInteractions(
-//         [
-//             [choice0[0], choice0[1]],
-//             [choice0[1], choice0[2]]
-//         ], 
-//         [choice0[2]]
-//     );
+            // change back store variable to empty
+            m.setInteractions();
+            for (let parameter of parameters)
+                expect(excludeOptions[parameter]).toEqual([]);
+        });
 
-//     // TODO: alter accordingly
-//     m.setInteractions([], [], { outcomeVar: "o_1", range: [4.123, 4.987] })
+        it('join_options', () => {
+            let param = parameters[0];
+            let option1 = choices[param][0];
+            let option2 = choices[param][1];
+            let join = [{
+                indices: [0,1],
+                options: [option1, option2],
+                parameter: param
+            }];
 
-//     m.setInteractions(excludeRows={ outcomeVar: "o_1", range: ["4.123", "4.987"] })
+            // change store variable
+            // m.setInteractions([], join.options);
+            join_options.update(_ => join);
+            expect(joinOptions).toEqual(join);
 
-//     m.setInteractions(excludeRows={ outcomeVar: "o_1", range: [0] })
+            m.setInteractions();
+            expect(joinOptions).toEqual([]);
+        });
 
-//     m.setInteractions(excludeRows={ outcomeVar: "o_2", range: [0,0.5] })
-    
-//     m.setInteractions(excludeRows={ outcomeVar: "o_3", range: [1,2] })
-// })
+        it('exclude_rows', () => {
+            m.setInteractions([],[], excludeRows={ outcomeVar:allOutcomeVars[0], range:[0,1] });
+            expect(excludeRows).toEqual([0, [0,1]]);
+
+            m.setInteractions();
+            expect(excludeRows).toEqual([]);
+        });
+    })
+});
+
+describe('store variable', () => {
+    // NOTE: reactivity cannot be tested. App.svelte must be running.
+});
