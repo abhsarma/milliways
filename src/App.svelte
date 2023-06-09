@@ -93,6 +93,7 @@
 		m = m;
 	}
 
+	
 	function hideOption(event) {
 		let parameter = event.detail.parameter
 		let option = event.detail.option
