@@ -2,6 +2,7 @@
 
 import multiverseMatrix from './multiverseMatrix.js';
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
+import { generateData } from './utils/data-gen.js';
 
 import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
 
@@ -127,11 +128,6 @@ function generateData() {
             universe.results.push({
                 "term": variable,
                 "estimate": 1,
-                // "std.error": 2,
-                // "statistic": 3,
-                // "p.value": 4,
-                // "conf.low": 5,
-                // "conf.high": 6,
                 "min": minx,
                 "max": maxx,
                 "cdf.x": cdfx,
