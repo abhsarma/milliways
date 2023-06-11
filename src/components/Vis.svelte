@@ -170,7 +170,7 @@
 			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="black" stroke-opacity="0.2"/>
+					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="{colors.gray70}" stroke-opacity="0.2"/>
 				</g>
 			{/each}
 		</g>
@@ -209,7 +209,7 @@
 			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
+					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="{colors.gray70}" stroke-opacity="0.2"/>
 				</g>
 			{/each}
 		</g>
@@ -217,18 +217,18 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={areaGeom(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={areaGeom(universe)} stroke="{colors.gray50}" fill="{colors.gray50}" stroke-width=1.5 opacity=0.8 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
 						d={lineGeom([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
-					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(0.5)}" r="0.5"></circle>
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(max(universe.map(d => d[2])))}" r="0.5"></circle>
 				{:else}
 					<path class="median" 
 						d={lineGeom([[Math.min(...data.estimate[i]), 0.5], [Math.max(...data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
-					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(0.5)}" r="0.5"></circle>
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(max(universe.map(d => d[2])))}" r="0.5"></circle>
 				{/if}
 			</g>
 		{/each}
@@ -241,10 +241,6 @@
 </div>
 
 <style>
-	div.vis {
-		border-radius: 4px;
-	}
-	
 	svg.outcomeResults {
 		background-color: var(--bgColor);
 		float: left;
@@ -321,5 +317,10 @@
 		text-align: center;
 		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
+	}
+
+	text {
+		font-family: 'Av-Nx', sans-serif;
+		font-size: 12px;
 	}
 </style>

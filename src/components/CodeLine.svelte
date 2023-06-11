@@ -49,7 +49,7 @@
 		let el = document.querySelector(`div.parameter-name.${parameter}`)
 
 		el.style.color = colors.white;
-		el.style.background = colors.active;
+		el.style.background = colors.secondary;
 		el.style.fontWeight = "600";
 		// highlight parameter on the grid
 	}

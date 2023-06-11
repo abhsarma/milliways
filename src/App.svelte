@@ -162,7 +162,6 @@
 	document.documentElement.style.setProperty('--white', colors.white)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--bgColor', colors.background)
-	document.documentElement.style.setProperty('--grayColor', colors.gray80)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 
 	function removeEventTriggers(event) {
@@ -177,7 +176,7 @@
 	<div class = "container-flex">
 		<div class="vertical-align">
 			<div class="page-header">
-				<h1>MILLIWAYS</h1>
+				<h1>Milliways</h1>
 			</div>
 
 			<ToggleSize/>
@@ -200,7 +199,7 @@
 	<!-- BUTTON TO ADD A NEW OUTCOME GRAPH -->
 	<div class="button-wrapper">
 		<button on:click={() => { m.initializeOutcomeData(); m.updateHandler($join_options, $exclude_options); m=m; }}>
-			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.active}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.gray80}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>
 	</div>
 
@@ -266,6 +265,10 @@
 		white-space: nowrap;
 	}
 
+	:global(body) {
+		background-color: #f6f6f6;
+	}
+
 	div.container-flex {
 		display: flex;
 	}
@@ -287,9 +290,8 @@
 
 	.multiverse-size {
 		position: relative;
-		padding: 12px 32px;
+		padding: 12px 0px;
 		height: 40px;
-		background-color: #ffffff;
 		border-radius: 4px;
 		display: inline-flex;
 	}
@@ -324,36 +326,36 @@
 		padding: 8px 0px;
 		height: 48px;
 		width: 480px;
-		margin: 0px 72px;
+		margin: 0px 64px 0px 96px;
 	}
 
 	h1 {
 		margin: 0px;
-		color: var(--activeColor) !important;
-		text-transform: uppercase;
+		color: #333333 !important;
 		font-family: 'Av-Nx';
 		font-size: 36px;
-		font-weight: 400;
+		font-weight: 700;
 	}
 
 	.button-wrapper {
 		display: inline-block;
 		vertical-align: middle;
+		margin-left: 16px;
 	}
 
 	.button-wrapper button {
 		/*position: sticky;*/
+		background-color: #ffffff;
+		border: 1px solid #eeeeee;
 		width: 48px;
 		height: 48px;
 		padding: 8px;
-		border:  none;
 		border-radius: 48px;
 		left: 8px; /* page padding */
 	}
 
 	svg.add-vis-icon {
 		/*position: sticky;*/
-		fill: var(--grayColor) !important;
 		cursor: pointer;
 	}
 
@@ -372,7 +374,7 @@
 		display: inline-block;
 		overflow-x: auto;
 		margin-left: 16px;
-		border-radius: 8px;
+		border-radius: 20px;
 		overflow-y: scroll;
 	}
 
@@ -380,7 +382,7 @@
 		display: inline-block;
 		position: relative;
 		margin-left: 16px;
-		border-radius: 8px;
+		border-radius: 20px;
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */
 	}
@@ -390,8 +392,8 @@
 		flex-direction: column;
 		position: absolute;
 		margin-left: 16px;
-		margin-right: 16px;
-		width: 640px;
+		padding-right: 32px;
+		width: 600px;
 	}
 	
 	.code-container {
@@ -401,7 +403,7 @@
 		background-color: var(--bgColor);
 		overflow-x: auto;
 		margin-bottom: 8px;
-		border-radius: 8px;
+		border-radius: 20px;
 
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */

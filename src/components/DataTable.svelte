@@ -198,7 +198,7 @@
 	
 	.table {
 		border: 1px solid #efefef;
-		border-radius: 8px;
+		border-radius: 20px;
 		overflow: auto;
 	}
 

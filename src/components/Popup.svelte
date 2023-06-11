@@ -62,7 +62,7 @@
 	`
 
 	const highlight_btn = css`
-		background-color: ${colors.active};
+		background-color: ${colors.secondary};
 		color: ${colors.white};
 	`
 

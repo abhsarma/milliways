@@ -287,7 +287,8 @@
 	}
 
 	#bg-rect {
-		fill: #eaeaea;
+		fill: #ffffff;
+		stroke: #cccccc;
 		transition: none;
 	}
 

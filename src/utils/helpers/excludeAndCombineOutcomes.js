@@ -40,7 +40,7 @@ function calculate_pbox(d1, d2, size) {
 		box1 = d1;
 		box2 = d2;
 	} else if (d2 > 0.5 & d1 <= 0.5) {
-		if (d1 <= mdd2) {
+		if (d1 <= dd2) {
 			box1 = d1;
 			box2 = 0.5;
 		} else {
