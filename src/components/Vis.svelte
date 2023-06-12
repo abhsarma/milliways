@@ -181,7 +181,6 @@
 		<!-- Histogram -->
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
 			{#each bins as d}
-				<!-- {console.log((d.x0+d.x1)/2, (d.x0+d.x1)/2, sx[0], sx[1], ((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]))}	 -->
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
@@ -257,6 +256,7 @@
 		position: absolute;
 		flex-direction: row;
 		align-content: center;
+		margin: 4px 0px 0px 4px;
 	}
 
 	.vis-dropdown {
@@ -265,9 +265,6 @@
 		z-index: 1;
 		flex:1;
 		border: 1px solid var(--bgColor);
-	}
-
-	.vis-dropdown {
 		padding: 0px;
 	}
 
@@ -287,18 +284,22 @@
 		cursor: pointer;
 	}
 
+	.close-button > svg {
+		border-radius: 4px;
+	}
+
 	.close-button:hover > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
 	.close-button:active > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
 	.close-button:focus > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 

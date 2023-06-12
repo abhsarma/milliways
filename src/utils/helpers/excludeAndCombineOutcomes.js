@@ -146,15 +146,11 @@ function excludeAndCombineOutcomes (g_data, o_data, option_list, exclude, combin
 				return Object.values(x).flat();
 			})).map((x, universe) => {
 				let mod = rollups(x.flat(), v => {
-					// console.log(v, universe)
 					return calculate_pbox(...[min(v, d => d[1]), max(v, d => d[1])], o_data_preprocessed.length);
 				}, d => d[0]);
 				return mod
 			})
 			.map(x => x.map(p => p.flat()));
-
-		// console.log(o_data_processed.map(d => d.filter(x => x[2] > 0.5)));
-
 
 		e_data_processed = groups(
 			e_data_processed.map((d, i) => ({group: grouping_vector[i], data: d})),

@@ -266,7 +266,7 @@
 	}
 
 	:global(body) {
-		background-color: #f6f6f6;
+		background-color: #f0f0f0;
 	}
 
 	div.container-flex {
@@ -280,7 +280,7 @@
 	div.highlight {
 		position: absolute;
 		animation: highlightElem 2s ease-in-out infinite;
-		border: 3px solid #E0797D;
+		border: 3px solid #ef4b72;
 		height: 12px;
 		width: 12px;
 		border-radius: 40px;

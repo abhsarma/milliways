@@ -213,7 +213,6 @@ class multiverseMatrix {
 			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
 	
 			let non_duplicates = duplicates_data.map((d, i) => {
-				// console.log(d, duplicates_data.indexOf(d), i)
 				return duplicates_data.indexOf(d) == i;
 			})
 	
@@ -297,7 +296,6 @@ class multiverseMatrix {
 			let outcomeData = this.outcomes.map(d => d.density);
 			let estimateData = this.outcomes.map(d => d.estimate);
 
-			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
 			this.gridData = g_data;
 

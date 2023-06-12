@@ -109,8 +109,6 @@
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
 
-		console.log(spec);
-
 		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(
 							analysis_doc,
@@ -219,7 +217,6 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else if $exclude_options[parameter].includes(option)}
-								<!-- {console.log(parameter, option)} -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
