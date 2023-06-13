@@ -1,7 +1,9 @@
 // TODO: see if can test reactivity through some way
 
 import multiverseMatrix from './multiverseMatrix.js';
-import cdf from '@stdlib/stats-base-dists-normal-cdf'; // used for generating data
+import cdf from '@stdlib/stats-base-dists-normal-cdf';
+import { generateData } from './utils/data-gen.js';
+
 import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
 
 //
@@ -141,12 +143,7 @@ function generateData() {
             }
             universe.results.push({
                 "term": variable,
-                "estimate": i, // done so that they are different, this is not particular to index
-                // "std.error": 2,
-                // "statistic": 3,
-                // "p.value": 4,
-                // "conf.low": 5,
-                // "conf.high": 6,
+                "estimate": 1,
                 "min": minx,
                 "max": maxx,
                 "cdf.x": cdfx,
