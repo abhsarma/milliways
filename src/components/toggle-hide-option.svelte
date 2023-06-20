@@ -13,10 +13,12 @@
 	$: selected = !($exclude_options[parameter].includes(option));
 
 	$: {
-		if (selected) {
-			select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "1");
-		} else {
-			select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "0.2");
+		if (typeof option !== 'object') {
+			if (selected) {
+				select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "1");
+			} else {
+				select(`div.option-label.parameter-${parameter}.${option}`).style("opacity", "0.2");
+			}
 		}
 	}
 

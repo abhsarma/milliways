@@ -52,7 +52,7 @@
 	toggleDataSet('train');
 
 	let m;
-	m = new multiverseMatrix(data.default);
+	m = new multiverseMatrix(data);
 	m.initializeData();
 
 	console.log("size of the multiverse: ", m.size)
