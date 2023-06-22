@@ -1,7 +1,4 @@
-// TODO: see if can test reactivity through some way
-
 import multiverseMatrix from './multiverseMatrix.js';
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
 import { generateData } from './utils/data-gen.js';
 
 import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
@@ -16,155 +13,23 @@ const unsubs = [
     exclude_rows.subscribe(val => excludeRows=val),
     join_options.subscribe(val => joinOptions=val),
     option_scale.subscribe(val => optionScale=val),
-]
-//
-// Helper functions
-//
-
-const CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
-function randString(len) {
-    let str = "";
-    for (let i = 0; i < len; i++) {
-        str = str.concat(CHARS[Math.floor(Math.random() * CHARS.length)]);
-    }
-    return str;
-}
-// found on stack overflow. gets all cartesian products (combinations) of any number of arrs
-const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
-
-function generateData() {
-    /*
-    Returns
-    -------
-    data
-        [
-            {
-                ".universe": <number> (index),
-
-                ".parameter-assignment":
-                {
-                    // in_jn is simply to show that these are arbitrary indexes
-                    // i.e. in this case, i0 has no relation with j0, i1, or j1
-                    param_0: [option_i0_j0],
-                    param_1: [option_i1_j1],
-                    ...
-                },
-
-                // same as inside ".parameter-assignment" but the values are
-                // not enclosed within an array
-                param_0: option_i0_j0,
-                param_1: option_i1_j1,
-                ...,
-
-                "results":
-                [
-                    {
-                        // other keys typically found in the data are not
-                        // generated as they are not used in multiverseMatrix
-                        "term"    : <variable>,
-                        "estimate": <number>,
-                        "min"     : <number>,
-                        "max"     : <number>,
-                        "cdf.x"   : Array<number>,
-                        "cdf.y"   : Array<number>
-                    },
-                    ...
-                ]
-            },
-            ...
-        ]
-    choices
-        {
-            param_0 : [ option_0_0, option_0_1, ... ],
-            param_1 : [ option_1_0, option_1_1, ... ],
-            ...
-        }
-    parameters
-        [ param_0, param_1, ... ]
-    combos
-        Cartesian product of the values of `choices`
-        [
-            [ option_0_0, option_1_0, ... ],
-            ...
-            [ option_0_i, option_1_j, ...],
-            ...
-        ]
-    allOutcomeVars
-        [ variable_0, variable_1, ...]
-    */
-    let choices = {};
-    let parameters = [];
-    let numParameters = Math.floor(Math.random() * 5) + 1;
-    for (let i = 0; i < numParameters; i++) {
-        let paramName = randString(5);
-        choices[paramName] = [];
-        parameters.push(paramName);
-
-        let numOptions = Math.floor(Math.random() * 3) + 3;
-        for (let j = 0; j < numOptions; j++)
-            choices[paramName].push(randString(5));
-    }
-
-    let combos;
-    if (numParameters === 1)
-        combos = choices[parameters[0]].map(option => [option]);
-    else
-        combos = cartesian(...Object.values(choices));
-
-    let allOutcomeVars = [];
-    let numVariables = Math.floor(Math.random() * 4) + 2;
-    for (let i = 0; i < numVariables; i++) allOutcomeVars.push(randString(5));
-
-    let data = [];
-    for (let i = 0; i < combos.length; i++) {
-        let universe = {
-            '.universe': i+1,
-            '.parameter_assignment': {},
-            'results': []
-        };
-        for (let j = 0; j < parameters.length; j++) {
-            let parameter = parameters[j];
-            let choice = combos[i][j]
-            universe[parameter] = choice;
-            universe['.parameter_assignment'][parameter] = [choice]
-        }
-
-        for (let i = 0; i < allOutcomeVars.length; i++) {
-            let variable = allOutcomeVars[i];
-            let minx = Math.random()-1, maxx = Math.random()+3;
-            let dif = maxx-minx;
-            let mycdf = cdf.factory(dif/2 + minx, 0.3);
-
-            let cdfx = [], cdfy = [];
-            for (let j = 0; j < 101; j++) {
-                let x = dif*j/100 + minx;
-                cdfx.push(x);
-                cdfy.push(Number(mycdf(x).toFixed(4)));
-            }
-            universe.results.push({
-                "term": variable,
-                "estimate": 1,
-                "min": minx,
-                "max": maxx,
-                "cdf.x": cdfx,
-                "cdf.y": cdfy
-            });
-        }
-        data.push(universe);
-    }
-    return [data, choices, parameters, combos, allOutcomeVars];
-}
+];
 
 //
 // Testing setup and teardown
 //
 
 // Defined out here for ease of access in tests.
-let m, data, choices, parameters, combos, allOutcomeVars;
+let m, data, options, parameters, combos, allOutcomeVars;
 
 beforeAll(() => {
+    // undefined means default behavior
+    let numParameters  = undefined;
+    let numOptions     = undefined;
+    let numOutcomeVars = Math.floor(Math.random() * 2) + 3;
+
     // Variables initialized here to ensure they actually run before testing.
-    [data, choices, parameters, combos, allOutcomeVars] = generateData();
+    [data, options, parameters, combos, allOutcomeVars] = generateData(numParameters, numOptions, numOutcomeVars);
 });
 
 afterAll(() => {
@@ -176,6 +41,12 @@ beforeEach(() => {
     // Resets `m` before each test.
     m = new multiverseMatrix(data);
     m.initializeData();
+
+    // Resets store variables
+    exclude_options.set([]);
+    exclude_rows.set([]);
+    join_options.set([]);
+    option_scale.set({});
 })
 
 //
@@ -228,6 +99,14 @@ describe('when initialized', () => {
     });
 });
 
+test('initializeOutcomeData creates a new outcome', () => {
+    m.initializeOutcomeData();
+    expect(m.outcomes.length).toBe(2);
+
+    // given an above test (specifically, when initialized > outcomes) works properly, this
+    // should as well, so it will not be repeated here.
+});
+
 describe('updateGridData', () => {
     it('does nothing with no input', () => {
         m.updateGridData();
@@ -237,21 +116,25 @@ describe('updateGridData', () => {
     it('excludes an option from a parameter', () => {
         let exclude = {};
         let param = parameters[0];
-        let option = choices[param][0];
+        let option = options[param][0];
         exclude[param] = [option];
         m.updateGridData([], exclude);
-        expect(m.gridData).not.toEqual(m.gridDataAll);
 
-        // Gets all values associated with the parameter `parameters[0]` in `this.gridData`.
-        let param_options = new Set(m.gridData.map(obj => obj[param][0]));
-        expect(option in param_options).toBe(false);
+        // Make sure updateGridData alters `m.gridData`
+        let paramOptions = new Set(m.gridData.map(obj => obj[param][0]));
+        expect(paramOptions.has(option)).toBe(false);
+
+        // Make sure updateGridData doesn't alter `m.gridDataAll`
+        paramOptions = new Set(m.gridDataAll.map(obj => obj[param][0]));
+        for (let option of options[param])
+            expect(paramOptions.has(option)).toBe(true);
     });
 
     it('undos exclusion when called with no input', () => {
         // This section should be shown to work given the previous test.
         let exclude = {};
         let param = parameters[0];
-        let option = choices[param][0];
+        let option = options[param][0];
         exclude[param] = [option];
         m.updateGridData([], exclude);
 
@@ -261,8 +144,8 @@ describe('updateGridData', () => {
     
     it('joins two options from a parameter', () => {
         let param = parameters[0];
-        let option1 = choices[param][0];
-        let option2 = choices[param][1];
+        let option1 = options[param][0];
+        let option2 = options[param][1];
         let join = [{
             indices: [0,1],
             options: [option1, option2],
@@ -272,8 +155,9 @@ describe('updateGridData', () => {
         
         for (let obj of m.gridData) {
             if (obj[param].length === 2) {
-                expect(obj[param]).toStrictEqual([option1, option2]);
+                expect(obj[param]).toEqual([option1, option2]);
             } else {
+                // Since other params were not joined, they should follow these expectations
                 expect(obj[param].length).toBe(1);
                 expect(obj[param][0]).not.toBe(option1);
                 expect(obj[param][0]).not.toBe(option2);
@@ -284,8 +168,8 @@ describe('updateGridData', () => {
     it('undos joining when called with no input', () => {
         // This section should be shown to work given the previous test.
         let param = parameters[0];
-        let option1 = choices[param][0];
-        let option2 = choices[param][1];
+        let option1 = options[param][0];
+        let option2 = options[param][1];
         let join = [{
             indices: [0,1],
             options: [option1, option2],
@@ -300,11 +184,11 @@ describe('updateGridData', () => {
     it('joins and excludes options in the same parameter (all different options)', () => {
         let join = [{
             indices: [0,1],
-            options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+            options: [options[parameters[0]][0], options[parameters[0]][1]],
             parameter: parameters[0]
         }];
         let exclude = {};
-        exclude[parameters[0]] = [choices[parameters[0]][2]];
+        exclude[parameters[0]] = [options[parameters[0]][2]];
         m.updateGridData(join, exclude);
         expect() // TODO
     });
@@ -312,11 +196,11 @@ describe('updateGridData', () => {
     it('joins and excludes options in the same parameter (excludes one of the joined options)', () => {
         let join = [{
             indices: [0,1],
-            options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+            options: [options[parameters[0]][0], options[parameters[0]][1]],
             parameter: parameters[0]
         }];
         let exclude = {};
-        exclude[parameters[0]] = [choices[parameters[0]][1]];
+        exclude[parameters[0]] = [options[parameters[0]][1]];
         m.updateGridData(join, exclude);
         expect() // TODO
     });
@@ -325,11 +209,11 @@ describe('updateGridData', () => {
         // This section should be shown to work given the previous test.
         let join = [{
             indices: [0,1],
-            options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+            options: [options[parameters[0]][0], options[parameters[0]][1]],
             parameter: parameters[0]
         }];
         let exclude = {};
-        exclude[parameters[0]] = [choices[parameters[0]][2]];
+        exclude[parameters[0]] = [options[parameters[0]][2]];
         m.updateGridData(join, exclude);
 
         m.updateGridData(); // An empty call should reset `gridData`.
@@ -353,7 +237,7 @@ describe('updateGridData', () => {
 
         expect(() => m.updateGridData([{
             indices: [0, 1],
-            options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+            options: [options[parameters[0]][0], options[parameters[0]][1]],
             parameter: 0 // Not correct type!
         }])).toThrow();
     });
@@ -362,7 +246,7 @@ describe('updateGridData', () => {
         // 'aaaa' is not a parameter!
         expect(() => m.updateGridData([{
             indices: [0, 1],
-            options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+            options: [options[parameters[0]][0], options[parameters[0]][1]],
             parameter: 'aaaa'
         }])).toThrow();
     });
@@ -374,7 +258,7 @@ describe('updateGridData', () => {
 
         // expect(() => m.updateGridData([{
         //     indices: ['a','b'], // Not correct types!
-        //     options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+        //     options: [options[parameters[0]][0], options[parameters[0]][1]],
         //     parameter: parameters[0]
         // }])).toThrow();
 
@@ -391,14 +275,14 @@ describe('updateGridData', () => {
         // [0, 2] are not the correct indices (should be [0, 1])!
         // expect(() => m.updateGridData([{
         //     indices: [0, 2],
-        //     options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+        //     options: [options[parameters[0]][0], options[parameters[0]][1]],
         //     parameter: parameters[0]
         // }])).toThrow();
 
         // 'indices' has too many values (should be 2)!
         // expect(() => m.updateGridData([{
         //     indices: [0, 1, 2],
-        //     options: [choices[parameters[0]][0], choices[parameters[0]][1]],
+        //     options: [options[parameters[0]][0], options[parameters[0]][1]],
         //     parameter: parameters[0]
         // }])).toThrow();
 
@@ -412,7 +296,7 @@ describe('updateGridData', () => {
         // 'options' has too many values (should be 2)!
         // expect(() => m.updateGridData([{
         //     indices: [0, 1],
-        //     options: [choices[parameters[0]][0], choices[parameters[0]][1], choices[parameters[0]][2]],
+        //     options: [options[parameters[0]][0], options[parameters[0]][1], options[parameters[0]][2]],
         //     parameter: parameters[0]
         // }])).toThrow();
     });
@@ -435,7 +319,7 @@ describe('updateOutcomeData', () => {
             ...
         ]
     */
-    it('handles changing outcome variable', () => {
+    it('changes outcome data properly after changing outcome variable', () => {
         let prevVis = structuredClone(m.outcomes[0]);
 
         // The code is written in such a way that does this outside of the update function
@@ -448,11 +332,21 @@ describe('updateOutcomeData', () => {
         // checks that `m.outcomes[0]` has changed
         //
 
-        expect(prevVis.density).not.toEqual(m.outcomes[0].density);
         expect(prevVis.id).toBe(m.outcomes[0].id);
 
-        // should be not equal given how data is generated
-        expect(prevVis.estimate).not.toEqual(m.outcomes[0].estimate); // TODO: check what equals, not not equal
+        // `.estimate` is sorted in `updateHandler`, so these should be equal at this point
+        expect(m.outcomes[0].estimate).toEqual(m.estimates[0]);
+
+        let estimate = [];
+        for (let d of data) {
+            for (let r of d.results) {
+                if (r.term === m.outcomes[0].var) {
+                    estimate.push(r.estimate);
+                    break;
+                }
+            }
+        }
+        expect(m.outcomes[0].estimate).toEqual(estimate);
 
         expect(prevVis.mode).toBe(m.outcomes[0].mode);
         
@@ -467,6 +361,52 @@ describe('updateOutcomeData', () => {
         expect(m.outcomes[0].estimate.every(v => typeof v === 'number')).toBe(true);
         
     });
+
+    it('changes the estimates of 2 outcomes properly with a change in outcomes variable', () => {
+        // Note: Only estimates are checked here
+
+        // creates second outcome
+        m.initializeOutcomeData();
+
+        // In practice, only one variable is changed at a time, so that will be emulated here.
+
+        // First change
+
+        m.outcomes[0].var = allOutcomeVars[1];
+        m.updateOutcomeData(0, m.outcomes[0].var, [], []);
+
+        let estimate0 = [];
+        let estimate1 = [];
+        for (let d of data) {
+            for (let r of d.results) {
+                if (r.term === m.outcomes[0].var)
+                    estimate0.push(r.estimate);
+                if (r.term === m.outcomes[1].var)
+                    estimate1.push(r.estimate);
+            }
+        }
+
+        expect(m.outcomes[0].estimate).toEqual(estimate0);
+        expect(m.outcomes[1].estimate).toEqual(estimate1);
+
+        // Second change
+
+        m.outcomes[1].var = allOutcomeVars[2];
+        m.updateOutcomeData(1, m.outcomes[1].var, [], []);
+
+        estimate1 = [];
+        for (let d of data) {
+            for (let r of d.results) {
+                if (r.term === m.outcomes[1].var) {
+                    estimate1.push(r.estimate);
+                    break;
+                }
+            }
+        }
+
+        expect(m.outcomes[0].estimate).toEqual(estimate0);
+        expect(m.outcomes[1].estimate).toEqual(estimate1);
+    });
 });
 
 describe('updateHandler', () => {
@@ -475,45 +415,122 @@ describe('updateHandler', () => {
         m.sortByIndex = 0;
         m.sortAscending = true;
 
-        // hold previous Vis data
-        let prevVis = structuredClone(m.outcomes[0]);
+        let prevGridData = structuredClone(m.gridData);
+
+        // manually sorts estimates
+        let sortedEstimate = m.outcomes[0].estimate.map((v, i) => [v, i]);
+        sortedEstimate.sort((a,b) => a[0]-b[0]);
         
         // No input should be fine; implies no join, no exclude.
         m.updateHandler();
-
-        // NOTE: this is a special case as this is the default settings.
-        expect(m.outcomes[0]).toEqual(prevVis);
+        
+        expect(m.outcomes[0].estimate).toEqual(sortedEstimate.map(v => v[0]));
+        expect(m.gridData).toEqual(sortedEstimate.map(v => prevGridData[v[1]]));
     });
     
-    it.only('handles descending sorting properly', () => {
+    it('handles descending sorting properly', () => {
         // setup
         m.sortByIndex = 0;
         m.sortAscending = false;
 
-        // hold previous Vis data
-        let prevVis = structuredClone(m.outcomes[0]);
+        let prevGridData = structuredClone(m.gridData);
+
+        // manually sorts estimates
+        let sortedEstimate = m.outcomes[0].estimate.map((v, i) => [v, i]);
+        sortedEstimate.sort((a,b) => b[0]-a[0]);
         
         // No input should be fine; implies no join, no exclude.
-        m.updateHandler([],[]);
+        m.updateHandler();
         
-        // TODO: Check actual sorting behavior (check estimates are in order)
+        expect(m.outcomes[0].estimate).toEqual(sortedEstimate.map(v => v[0]));
+        expect(m.gridData).toEqual(sortedEstimate.map(v => prevGridData[v[1]]));
+    });
+
+    it('handles no sort properly', () => {
+        // setup
+        m.sortByIndex = -1;
+        // m.sortAscending shouldn't matter
+
+        // manually creates estimate/gridData data
+        let gridData = [];
+        let estimate = [];
+        for (let d of data) {
+            let gridDatum = structuredClone(d);
+            delete gridDatum['.universe'];
+            delete gridDatum['results'];
+
+            // turns `param: option` to  `param: [option]` like in `m.gridData`
+            Object.keys(gridDatum).forEach(key => gridDatum[key] = [gridDatum[key]]);
+
+            gridData.push(gridDatum);
+
+            for (let r of d.results) {
+                if (r.term === m.outcomes[0].var) {
+                    estimate.push(r.estimate);
+                    break;
+                }
+            }
+        }
+
+        // No input should be fine; implies no join, no exclude.
+        m.updateHandler();
+
+        // `m.estimates` is not sorted, so these should be equal
+        expect(m.outcomes[0].estimate).toEqual(m.estimates[0]);
+
+        expect(m.outcomes[0].estimate).toEqual(estimate);
+        expect(m.gridData).toEqual(gridData);
+    });
+
+    it('excludes rows as specified', () => {
+        // Reminder:
+        // idx refers to which Vis, [low, high] is the range of values to keep
+        // [low, high] is inclusive of both low and high
+        let idx = 0;
+        let low = 0, high = 1;
+        let toExclude = [idx, [low, high]];
+
+        // manually exclude rows
+        let mask = m.outcomes[idx].estimate.map(v => low<=v && v<=high);
+        let estimate = m.outcomes[idx].estimate.filter((_,i) => mask[i]);
+        let density = m.outcomes[idx].density.filter((_,i) => mask[i]);
+        let gridData = m.gridData.filter((_,i) => mask[i]);
+
+        // sort to match (as default behavior is ascending sort)
+        let sortIdxs = estimate.map((v,i) => [v,i]);
+        sortIdxs.sort((a,b) => a[0] - b[0]);
+        sortIdxs = sortIdxs.map(v => v[1]);
+        estimate = estimate.map((_,i) => estimate[sortIdxs[i]]);
+        density = density.map((_,i) => density[sortIdxs[i]]);
+        gridData = gridData.map((_,i) => gridData[sortIdxs[i]]);
+
+        m.updateHandler([], [], toExclude);
+
+        expect(m.outcomes[0].estimate).toEqual(estimate);
+        expect(m.outcomes[0].density).toEqual(density);
+        expect(m.gridData).toEqual(gridData);
     });
 });
 
 describe('setInteractions', () => {
     describe('is able to alter store variables', () => {
         it('exclude_options', () => {
-            let exclude = {};
-            for (let parameter of parameters)
-                exclude[parameter] = [];
+            // example parameter and option
             let param = parameters[0];
-            let option = choices[param][0];
-            exclude[param] = [option];
+            let option = options[param][0];
+
+            // This is what is passed into setInteractions
+            let toExclude = [option];
+
+            // This is what the store variable should be after setInteractions
+            let excludeStore = {};
+            for (let parameter of parameters)
+                excludeStore[parameter] = [];
+            excludeStore[param] = [option];
 
             // change store variable
-            // m.setInteractions([], exclude)
-            exclude_options.update(_ => exclude);
-            expect(excludeOptions).toEqual(exclude);
+            m.setInteractions([], toExclude);
+            expect(excludeOptions).toEqual(excludeStore);
 
             // change back store variable to empty
             m.setInteractions();
@@ -522,34 +539,38 @@ describe('setInteractions', () => {
         });
 
         it('join_options', () => {
+            // example parameter and options
             let param = parameters[0];
-            let option1 = choices[param][0];
-            let option2 = choices[param][1];
-            let join = [{
+            let option1 = options[param][0];
+            let option2 = options[param][1];
+
+            // This is what is passed into setInteractions
+            let toJoin = {};
+            toJoin[param] = [option1, option2];
+
+            // This is what the store variable should be after setInteractions
+            let joinStore = [{
                 indices: [0,1],
                 options: [option1, option2],
                 parameter: param
             }];
 
             // change store variable
-            // m.setInteractions([], join.options);
-            join_options.update(_ => join);
-            expect(joinOptions).toEqual(join);
+            m.setInteractions(toJoin);
+            expect(joinOptions).toEqual(joinStore);
 
             m.setInteractions();
             expect(joinOptions).toEqual([]);
         });
 
-        it('exclude_rows', () => {
-            m.setInteractions([],[], excludeRows={ outcomeVar:allOutcomeVars[0], range:[0,1] });
-            expect(excludeRows).toEqual([0, [0,1]]);
+        // it('exclude_rows', () => {
+        //     m.setInteractions([],[], excludeRows={ outcomeVar:allOutcomeVars[0], range:[0,1] });
+        //     expect(excludeRows).toEqual([0, [0,1]]);
 
-            m.setInteractions();
-            // expect(excludeRows).toEqual([]);
-        });
-    })
-});
+        //     m.setInteractions();
+        //     expect(excludeRows).toEqual([]);
+        // });
+    });
 
-describe('store variable', () => {
-    // NOTE: reactivity cannot be tested. App.svelte must be running.
+    // TODO: Add error checking?
 });

@@ -1,8 +1,4 @@
-import multiverseMatrix from './multiverseMatrix.js';
-import cdf from '@stdlib/stats-base-dists-normal-cdf';
 import { normal } from 'jstat'
-
-import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
 
 const CHARS = "qwertyuiopasdfghjklzxcvbnm";
 
