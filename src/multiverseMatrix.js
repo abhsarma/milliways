@@ -46,8 +46,7 @@ class multiverseMatrix {
 
 	_parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
-		let param_names = Object.keys(this.data[0]).filter(x => !(x == ".universe" || x == "results"));
-		//Object.keys(this.data[0]['.parameter_assignment']);
+		let param_names = Object.keys(this.data[0]).filter(x => !(x == ".universe" || x == "results" || x == ".parameter_assignment"));
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -322,7 +321,7 @@ class multiverseMatrix {
 		}
 	}
 
-	setInteractions(joinOptions=[], excludeOptions=[], excludeRows={}, sliderPosition=Object.keys(this.parameters).length) {
+	setInteractions(joinOptions={}, excludeOptions=[], excludeRows={}, sliderPosition=Object.keys(this.parameters).length) {
 		/*
 			Allows you to functionally call interactions join options, exclude options and exclude rows
 			
@@ -406,9 +405,11 @@ class multiverseMatrix {
 
 		// -- joinOptions --
 
-		// Checks joinOptions follows array[array[string]]
-		if (!Array.isArray(joinOptions) || !joinOptions.every(arr => Array.isArray(arr) && arr.every(val => typeof val === 'string'))) {
-			throw new Error('Argument joinOptions should be of the form: array[array[string]]')
+		// Checks joinOptions follows {parameter: array[string], ...}
+		if (!isPureObject(joinOptions) ||
+			!Object.values(joinOptions).every(arr => Array.isArray(arr) && arr.every(val => typeof val === 'string'))
+		) {
+			throw new Error('Argument joinOptions should be of the form: {parameter: array[string], ...}')
 		}
 
 		// -- excludeOptions --

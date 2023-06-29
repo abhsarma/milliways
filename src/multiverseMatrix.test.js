@@ -1,18 +1,56 @@
 import multiverseMatrix from './multiverseMatrix.js';
 import { generateData } from './utils/data-gen.js';
 
-import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'
+import { exclude_options, exclude_rows, join_options, option_scale, parameter_scale } from './utils/stores.js'
+
+//
+// Mocks
+//
+
+// structuredClone does not work under the jsdom environment.
+global.structuredClone = jest.fn(val => {
+    return JSON.parse(JSON.stringify(val));
+});
+
+// Same with BroadcastChannel.
+class channelMock {}
+channelMock.prototype.onmessage = function () {}
+channelMock.prototype.postMessage = function (data) {
+    this.onmessage({ data });
+}
+global.BroadcastChannel = channelMock;
+
+// parameter_scale is set in App.svelte. Here, its behavior is being imitated. 
+parameter_scale.set({
+    range(){
+        return [0,1];
+    },
+    domain() {
+        return [0,1];
+    }
+});
+
+// jsdom does not provide querySelector.
+let mockElement = {
+    setAttribute(x, y) {
+        return;
+    }
+};
+document.querySelector = function() {
+    return mockElement;
+};
 
 //
 // Svelte store variables
 //
 
-let excludeOptions, excludeRows, joinOptions, optionScale;
+let excludeOptions, excludeRows, joinOptions, optionScale, parameterScale;
 const unsubs = [
     exclude_options.subscribe(val => excludeOptions=val),
     exclude_rows.subscribe(val => excludeRows=val),
     join_options.subscribe(val => joinOptions=val),
     option_scale.subscribe(val => optionScale=val),
+    parameter_scale.subscribe(val => parameterScale=val)
 ];
 
 //
@@ -182,27 +220,52 @@ describe('updateGridData', () => {
     });
 
     it('joins and excludes options in the same parameter (all different options)', () => {
+        let param = parameters[0]
         let join = [{
             indices: [0,1],
-            options: [options[parameters[0]][0], options[parameters[0]][1]],
+            options: [options[param][0], options[param][1]],
             parameter: parameters[0]
         }];
         let exclude = {};
-        exclude[parameters[0]] = [options[parameters[0]][2]];
+        exclude[param] = [options[param][2]];
         m.updateGridData(join, exclude);
-        expect() // TODO
+        
+        // check exclude
+        let paramOptions = new Set(m.gridData.map(obj => obj[param][0]));
+        expect(paramOptions.has(options[param][2])).toBe(false);
+
+        // check join
+        for (let obj of m.gridData) {
+            if (obj[param].length === 2) {
+                expect(obj[param]).toEqual([options[param][0], options[param][1]]);
+            } else {
+                // Since other params were not joined, they should follow these expectations
+                expect(obj[param].length).toBe(1);
+                expect(obj[param][0]).not.toBe(options[param][0]);
+                expect(obj[param][0]).not.toBe(options[param][1]);
+            }
+        }
+
     });
 
     it('joins and excludes options in the same parameter (excludes one of the joined options)', () => {
+        // This has the same behavior as just join.
+
+        let param = parameters[0];
         let join = [{
             indices: [0,1],
-            options: [options[parameters[0]][0], options[parameters[0]][1]],
+            options: [options[param][0], options[param][1]],
             parameter: parameters[0]
         }];
         let exclude = {};
-        exclude[parameters[0]] = [options[parameters[0]][1]];
+        exclude[parameters[0]] = [options[param][1]];
+
+        m.updateGridData(join);
+        let joinGridData = structuredClone(m.gridData);
+
         m.updateGridData(join, exclude);
-        expect() // TODO
+
+        expect(joinGridData).toEqual(m.gridData);
     });
 
     it('undos joining and exclusion when called with no input', () => {
@@ -529,7 +592,7 @@ describe('setInteractions', () => {
             excludeStore[param] = [option];
 
             // change store variable
-            m.setInteractions([], toExclude);
+            m.setInteractions({}, toExclude);
             expect(excludeOptions).toEqual(excludeStore);
 
             // change back store variable to empty
