@@ -1,9 +1,9 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import { range, extent, groups, zip, max, histogram } from 'd3-array';
+	import { range, extent, max, histogram } from 'd3-array';
 	import { scaleLinear, scaleBand } from 'd3-scale';
 	import { area, line } from 'd3-shape';
-	import { select, selectAll } from 'd3-selection';
+	import { select } from 'd3-selection';
 	import { brushX } from 'd3-brush';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { windowHeight, margin, cell, text, gridNamesHeight, scrollbarWidth, outcomeVisWidth, namingDim } from '../utils/dimensions.js'
@@ -216,7 +216,8 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={areaGeom(universe)} stroke="{colors.gray50}" fill="{colors.gray50}" stroke-width=1.5 opacity=0.8 />
+					5e2c8 <path class="cdf" d={areaGeom(universe)} stroke="{colors.density}" fill="{colors.density}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={areaGeom(universe)} stroke="#EBDCC5" fill="#EBDCC5" stroke-width=1.5 opacity=1 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
@@ -245,6 +246,8 @@
 		float: left;
 		display: inline-block;
 		scrollbar-width: none;  /* Firefox */
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
 	}
 
 	svg.outcomeResults, g.universe {

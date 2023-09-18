@@ -14,7 +14,7 @@
 	export const highlight = css`
 		opacity: 0.8;
 		cursor: pointer;
-		background-color: ${colors.inactive};
+		background-color: ${colors.density};
 	`;
 
 
@@ -47,7 +47,7 @@
 		let el = document.querySelector(`div.parameter-name.${parameter}`)
 
 		el.style.color = colors.white;
-		el.style.background = colors.secondary;
+		el.style.background = colors.hover;
 		el.style.fontWeight = "600";
 		// highlight parameter on the grid
 	}
@@ -72,11 +72,11 @@
 					function() {
 						if (show) {
 							paramOptionHtml.style.display = 'none';
-							this.style.backgroundColor = colors.inactive;
+							this.style.backgroundColor = colors.density;
 							this.style.color = colors.text;
 						} else {
 							paramOptionHtml.style.display = 'block';
-							this.style.backgroundColor = colors.active;
+							this.style.backgroundColor = colors.hover;
 							this.style.color = colors.white;
 						}
 						show = !show;
@@ -89,7 +89,7 @@
 				});
 
 				x.addEventListener('mouseout', function() { 
-					this.style.backgroundColor = colors.inactive 
+					this.style.backgroundColor = colors.density 
 					this.style.color = colors.text;
 				});
 			})

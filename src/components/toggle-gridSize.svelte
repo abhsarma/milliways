@@ -1,5 +1,5 @@
 <script>
-	import { text, header, cell, iconSize } from '../utils/dimensions.js'
+	import { colors } from '../utils/colorPallete.js';
 	import { gridCollapse } from '../utils/stores.js';
 
 	let active = false;
@@ -18,6 +18,8 @@
 			gridCollapse.set(0);
 		}
 	}
+
+	document.documentElement.style.setProperty('--zoomColor', colors.zoom)
 </script>
 
 <div class="toggle">
@@ -87,7 +89,7 @@
 
 
 	.toggle-button.active {
-		background-color: #89E5E5;
+		background-color: var(--zoomColor);
 	}
 
 	.state-indicator {

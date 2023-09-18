@@ -1,6 +1,5 @@
 <script>
-	import { css, cx } from '@emotion/css'
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { select } from 'd3-selection';
 	import { scaleOrdinal, scaleBand } from 'd3-scale';
@@ -32,35 +31,35 @@
 
     import * as data_durante from '../static/data/durante-data.json'; 
     import * as code_durante from '../static/data/durante-code.json';
+	import * as tableData_durante from '../static/data/durante.json';
 
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
 	let showInterfaceTutorial = false;
 	let showDemo = false;
 	let showMenu = false;
-	let showMaximizedTable = false;
 
-	let data = data_hr, code = code_hr, tableData = tableData_hr, analysis_doc = "analysis-hurricane.html";
-	// let data = data_sm, code = code_sm, tableData = tableData_sm;
+	let data, code, tableData, analysis_doc;
 	function toggleDataSet(mode) {
-		if (mode === 'train') {
+		if (mode === 'hurricane') {
 			data = data_hr;
 			code = code_hr;
 			tableData = tableData_hr;
 			analysis_doc = "analysis-hurricane.html"
-		} else if (mode === 'task') {
+		} else if (mode === 'social_media') {
 			data = data_sm;
 			code = code_sm;
 			tableData = tableData_sm;
-			analysis_doc = "analysis-doc.html"
+			analysis_doc = "analysis-hurricane.html"
 		} else if (mode === 'durante') {
 			data = data_durante;
 			code = code_durante;
-			tableData = tableData_sm;
-			analysis_doc = "analysis-doc.html"
+			tableData = tableData_durante;
+			analysis_doc = "analysis-hurricane.html"
 		}
 	}
-	toggleDataSet('train');
+
+	toggleDataSet('social_media');
 
 	let m;
 	m = new multiverseMatrix(data.default);

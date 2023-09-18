@@ -1,7 +1,7 @@
 <script>
-	import { css, cx } from '@emotion/css'
+	import { css } from '@emotion/css'
 	import { createEventDispatcher } from 'svelte';
-	import { text, iconSize, header, namingDim, cell } from '../utils/dimensions.js'
+	import { iconSize } from '../utils/dimensions.js'
 	import { join_options, option_scale } from '../utils/stores.js';
 	import { arrayEqual, any, indexOfAll } from '../utils/helpers/arrayMethods.js'
 	import { colors } from '../utils/colorPallete.js';
@@ -48,7 +48,7 @@
 	`
 
 	export const unlink = css`
-		fill: ${colors.gray70};
+		fill: ${colors.gray50};
 	`
 
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)

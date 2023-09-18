@@ -1,5 +1,6 @@
 <script>
 	import { css, cx } from '@emotion/css'
+	import { colors } from '../utils/colorPallete.js';
 	import { text, header, cell, iconSize } from '../utils/dimensions.js'
 	import { gridCollapse } from '../utils/stores.js';
 
@@ -18,10 +19,13 @@
 	function showDemo() {
 		demo = true; // nothing for now
 	}
+
+
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 <div class="help-dropdown">
-	<div class="help-button" class:active={menu} on:click={showMenu}>
+	<div class="help-button" class:selected={menu} on:click={showMenu}>
 		<p class="help help-header">Help</p>
 	</div>
 	{#if menu}
@@ -42,15 +46,19 @@
 	.help-button {
 		height: 40px;
 		width: 64px;
+		border-radius: 4px;
 		text-align: center;
 		cursor: pointer;
+	}
+
+	.selected {
+		background-color: #dddddd;
 	}
 
 	.help-button:hover, 
 	.help-button:active,
 	.help-button:focus {
-		background-color: #efefef;
-		border-radius: 4px;
+		background-color: #dddddd;
 	}
 
 	.active {
