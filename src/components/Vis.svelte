@@ -1,9 +1,9 @@
 <script>
 	import { css, cx } from '@emotion/css'
-	import { range, extent, groups, zip, max, histogram } from 'd3-array';
+	import { range, extent, max, histogram } from 'd3-array';
 	import { scaleLinear, scaleBand } from 'd3-scale';
 	import { area, line } from 'd3-shape';
-	import { select, selectAll } from 'd3-selection';
+	import { select } from 'd3-selection';
 	import { brushX } from 'd3-brush';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { windowHeight, margin, cell, text, gridNamesHeight, scrollbarWidth, outcomeVisWidth, namingDim } from '../utils/dimensions.js'
@@ -170,7 +170,7 @@
 			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="black" stroke-opacity="0.2"/>
+					<line class="grid" y1="0" y2="{gridNamesHeight - visButtonHeight}" stroke="{colors.gray70}" stroke-opacity="0.2"/>
 				</g>
 			{/each}
 		</g>
@@ -181,7 +181,6 @@
 		<!-- Histogram -->
 		<g class="histogram-{i}" transform="translate(0, {axisAdjust})"> 
 			{#each bins as d}
-				<!-- {console.log((d.x0+d.x1)/2, (d.x0+d.x1)/2, sx[0], sx[1], ((d.x0+d.x1)/2 > sx[0]) && ((d.x0+d.x1)/2 < sx[1]))}	 -->
 				<rect 
 					class="d3-histogram" 
 					x="{xscale(d.x0)}" 
@@ -209,7 +208,7 @@
 			<!-- grid lines -->
 			{#each xscale.ticks(5) as tick}
 				<g class="tick" transform="translate({xscale(tick)}, 0)">
-					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="black" stroke-opacity="0.2"/>
+					<line class="grid" y1="0" y2="{h - (margin.bottom + cell.padding)}" stroke="{colors.gray70}" stroke-opacity="0.2"/>
 				</g>
 			{/each}
 		</g>
@@ -217,18 +216,19 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
-					<path class="cdf" d={areaGeom(universe)} stroke="{colors.vis}" fill="{colors.vis}" stroke-width=1.5 opacity=0.8 />
+					5e2c8 <path class="cdf" d={areaGeom(universe)} stroke="{colors.density}" fill="{colors.density}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={areaGeom(universe)} stroke="#EBDCC5" fill="#EBDCC5" stroke-width=1.5 opacity=1 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
 					<path class="median" 
 						d={lineGeom([[Math.min(data.estimate[i]), 0.5], [Math.max(data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
-					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(0.5)}" r="0.5"></circle>
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(data.estimate[i])}" cy="{yscale(max(universe.map(d => d[2])))}" r="0.5"></circle>
 				{:else}
 					<path class="median" 
 						d={lineGeom([[Math.min(...data.estimate[i]), 0.5], [Math.max(...data.estimate[i]), 0.5]])}
 						stroke="{colors.median}" stroke-width=2 />
-					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(0.5)}" r="0.5"></circle>
+					<circle fill="{colors.median}" stroke="{colors.median}" cx="{xscale(mean(...data.estimate[i]))}" cy="{yscale(max(universe.map(d => d[2])))}" r="0.5"></circle>
 				{/if}
 			</g>
 		{/each}
@@ -241,15 +241,13 @@
 </div>
 
 <style>
-	div.vis {
-		border-radius: 4px;
-	}
-	
 	svg.outcomeResults {
 		background-color: var(--bgColor);
 		float: left;
 		display: inline-block;
 		scrollbar-width: none;  /* Firefox */
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
 	}
 
 	svg.outcomeResults, g.universe {
@@ -261,6 +259,7 @@
 		position: absolute;
 		flex-direction: row;
 		align-content: center;
+		margin: 4px 0px 0px 4px;
 	}
 
 	.vis-dropdown {
@@ -269,9 +268,6 @@
 		z-index: 1;
 		flex:1;
 		border: 1px solid var(--bgColor);
-	}
-
-	.vis-dropdown {
 		padding: 0px;
 	}
 
@@ -291,18 +287,22 @@
 		cursor: pointer;
 	}
 
+	.close-button > svg {
+		border-radius: 4px;
+	}
+
 	.close-button:hover > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
 	.close-button:active > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
 	.close-button:focus > svg {
-		background-color: var(--grayColor);
+		background-color: var(--hoverColor);
 		fill: white;
 	}
 
@@ -321,5 +321,10 @@
 		text-align: center;
 		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
+	}
+
+	text {
+		font-family: 'Av-Nx', sans-serif;
+		font-size: 12px;
 	}
 </style>

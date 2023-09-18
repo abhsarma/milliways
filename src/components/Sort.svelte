@@ -24,6 +24,7 @@
 
 	`
 	document.documentElement.style.setProperty('--grayColor', colors.gray70)
+	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 </script>
 
 {#if index == i}
@@ -50,15 +51,18 @@
 
 <style>
 	.sort-button:hover > svg {
-		background-color: #efefef;
+		background-color: var(--hoverColor);
+		fill: #ffffff;
 	}
 
 	.sort-button:active > svg {
-		background-color: #efefef;
+		background-color: var(--hoverColor);
+		fill: #ffffff;
 	}
 
 	.sort-button:focus > svg {
-		background-color: #efefef;
+		background-color: var(--hoverColor);
+		fill: #ffffff;
 	}
 
 	svg {

@@ -1,5 +1,5 @@
 <script>
-	import { text, header, cell, iconSize } from '../utils/dimensions.js'
+	import { colors } from '../utils/colorPallete.js';
 	import { gridCollapse } from '../utils/stores.js';
 
 	let active = false;
@@ -18,6 +18,8 @@
 			gridCollapse.set(0);
 		}
 	}
+
+	document.documentElement.style.setProperty('--zoomColor', colors.zoom)
 </script>
 
 <div class="toggle">
@@ -40,7 +42,6 @@
 		position: relative;
 		padding: 8px 32px;
 		height: 48px;
-		background-color: #ffffff;
 		border-radius: 4px;
 		display: inline-flex;
 	}
@@ -71,7 +72,7 @@
 		width: 40px;
 		background-color: #fafafa;
 		border-radius: 22px;
-		border: 1px solid #979797;
+		border: 1px solid #666666;
 		display: inline-block;
 		padding: 4px;
 		margin-top: 8px;
@@ -88,12 +89,12 @@
 
 
 	.toggle-button.active {
-		background-color: #BCF8BC;
+		background-color: var(--zoomColor);
 	}
 
 	.state-indicator {
 		border-radius: 12px;
-		background-color: #a0a0a0;
+		background-color: #666666;
 		display: inline-block;
 		/* Firefox */
 	    -moz-transition: all 0.4s ease-in-out;

@@ -1,17 +1,9 @@
 <script>
-	import { css, cx } from '@emotion/css'
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { select } from 'd3-selection';
 	import { scaleOrdinal, scaleBand } from 'd3-scale';
 	import { range } from 'd3-array';
-	import * as data_hr from '../static/data/hurricane-data.json'; // change 
-    import * as code_hr from '../static/data/hurricane-code.json';
-    import * as tableData_hr from '../static/data/hurricane-raw-data.json';
-
-	import * as data_sm from '../static/data/sm-data.json'; // change 
-    import * as code_sm from '../static/data/sm-code.json';
-    import * as tableData_sm from '../static/data/sm-raw-data.json';
 
 	import multiverseMatrix from './multiverseMatrix.js';
 	import { windowHeight, header, margin, cell, groupPadding, nameContainer, gridNamesHeight } from './utils/dimensions.js'
@@ -27,29 +19,47 @@
 	import Code from './components/Code.svelte';
 	import DataTable from './components/DataTable.svelte';
 
+	// datasets
+	// needs to change ==> we need a better way of importing data
+	import * as data_hr from '../static/data/hurricane-data.json'; 
+    import * as code_hr from '../static/data/hurricane-code.json';
+    import * as tableData_hr from '../static/data/hurricane-raw-data.json';
+
+	import * as data_sm from '../static/data/sm-data.json'; 
+    import * as code_sm from '../static/data/sm-code.json';
+    import * as tableData_sm from '../static/data/sm-raw-data.json';
+
+    import * as data_durante from '../static/data/durante-data.json'; 
+    import * as code_durante from '../static/data/durante-code.json';
+	import * as tableData_durante from '../static/data/durante.json';
+
 	let currBrushIdx = 0; // index of current Vis that brush is used on
 
 	let showInterfaceTutorial = false;
 	let showDemo = false;
 	let showMenu = false;
-	let showMaximizedTable = false;
 
-	let data = data_hr, code = code_hr, tableData = tableData_hr, analysis_doc = "analysis-hurricane.html";
-	// let data = data_sm, code = code_sm, tableData = tableData_sm;
+	let data, code, tableData, analysis_doc;
 	function toggleDataSet(mode) {
-		if (mode === 'train') {
+		if (mode === 'hurricane') {
 			data = data_hr;
 			code = code_hr;
 			tableData = tableData_hr;
 			analysis_doc = "analysis-hurricane.html"
-		} else if (mode === 'task') {
+		} else if (mode === 'social_media') {
 			data = data_sm;
 			code = code_sm;
 			tableData = tableData_sm;
-			analysis_doc = "analysis-doc.html"
+			analysis_doc = "analysis-hurricane.html"
+		} else if (mode === 'durante') {
+			data = data_durante;
+			code = code_durante;
+			tableData = tableData_durante;
+			analysis_doc = "analysis-hurricane.html"
 		}
 	}
-	toggleDataSet('train');
+
+	toggleDataSet('social_media');
 
 	let m;
 	m = new multiverseMatrix(data.default);
@@ -82,6 +92,7 @@
 		m = m;
 	}
 
+	
 	function hideOption(event) {
 		let parameter = event.detail.parameter
 		let option = event.detail.option
@@ -150,7 +161,6 @@
 	document.documentElement.style.setProperty('--white', colors.white)
 	document.documentElement.style.setProperty('--activeColor', colors.active)
 	document.documentElement.style.setProperty('--bgColor', colors.background)
-	document.documentElement.style.setProperty('--grayColor', colors.gray80)
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
 
 	function removeEventTriggers(event) {
@@ -165,7 +175,7 @@
 	<div class = "container-flex">
 		<div class="vertical-align">
 			<div class="page-header">
-				<h1>MILLIWAYS</h1>
+				<h1>Milliways</h1>
 			</div>
 
 			<ToggleSize/>
@@ -188,7 +198,7 @@
 	<!-- BUTTON TO ADD A NEW OUTCOME GRAPH -->
 	<div class="button-wrapper">
 		<button on:click={() => { m.initializeOutcomeData(); m.updateHandler($join_options, $exclude_options); m=m; }}>
-			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.active}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.gray80}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>
 	</div>
 
@@ -254,6 +264,10 @@
 		white-space: nowrap;
 	}
 
+	:global(body) {
+		background-color: #f0f0f0;
+	}
+
 	div.container-flex {
 		display: flex;
 	}
@@ -265,7 +279,7 @@
 	div.highlight {
 		position: absolute;
 		animation: highlightElem 2s ease-in-out infinite;
-		border: 3px solid #E0797D;
+		border: 3px solid #ef4b72;
 		height: 12px;
 		width: 12px;
 		border-radius: 40px;
@@ -275,9 +289,8 @@
 
 	.multiverse-size {
 		position: relative;
-		padding: 12px 32px;
+		padding: 12px 0px;
 		height: 40px;
-		background-color: #ffffff;
 		border-radius: 4px;
 		display: inline-flex;
 	}
@@ -312,36 +325,36 @@
 		padding: 8px 0px;
 		height: 48px;
 		width: 480px;
-		margin: 0px 72px;
+		margin: 0px 64px 0px 96px;
 	}
 
 	h1 {
 		margin: 0px;
-		color: var(--activeColor) !important;
-		text-transform: uppercase;
+		color: #333333 !important;
 		font-family: 'Av-Nx';
 		font-size: 36px;
-		font-weight: 400;
+		font-weight: 700;
 	}
 
 	.button-wrapper {
 		display: inline-block;
 		vertical-align: middle;
+		margin-left: 16px;
 	}
 
 	.button-wrapper button {
 		/*position: sticky;*/
+		background-color: #ffffff;
+		border: 1px solid #eeeeee;
 		width: 48px;
 		height: 48px;
 		padding: 8px;
-		border:  none;
 		border-radius: 48px;
 		left: 8px; /* page padding */
 	}
 
 	svg.add-vis-icon {
 		/*position: sticky;*/
-		fill: var(--grayColor) !important;
 		cursor: pointer;
 	}
 
@@ -360,7 +373,7 @@
 		display: inline-block;
 		overflow-x: auto;
 		margin-left: 16px;
-		border-radius: 8px;
+		border-radius: 20px;
 		overflow-y: scroll;
 	}
 
@@ -368,7 +381,7 @@
 		display: inline-block;
 		position: relative;
 		margin-left: 16px;
-		border-radius: 8px;
+		border-radius: 20px;
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */
 	}
@@ -378,8 +391,8 @@
 		flex-direction: column;
 		position: absolute;
 		margin-left: 16px;
-		margin-right: 16px;
-		width: 640px;
+		padding-right: 32px;
+		width: 600px;
 	}
 	
 	.code-container {
@@ -389,7 +402,7 @@
 		background-color: var(--bgColor);
 		overflow-x: auto;
 		margin-bottom: 8px;
-		border-radius: 8px;
+		border-radius: 20px;
 
 		overflow-y: scroll;
 		-ms-overflow-style: none;  /* IE and Edge */

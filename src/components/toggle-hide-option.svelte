@@ -41,7 +41,7 @@
 	}
 
 	export const iconStyle = css`
-		fill: ${colors.gray70};
+		fill: ${colors.gray50};
 		cursor: pointer;
 		height: ${iconSize}px;
 		width: ${iconSize}px;

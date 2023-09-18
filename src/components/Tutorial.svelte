@@ -49,8 +49,6 @@
 	let p = Object.keys(parameters)[0]
 	let o = Object.values(parameters)[0].slice(1, Object.values(parameters)[0].length);
 
-	console.log(Object.fromEntries(new Map([[p, o]])))
-
 	// div positioning css variables
 	$: position = {x: window.innerWidth/2, y: window.innerHeight/2};
 
@@ -166,7 +164,7 @@
 
 		<!-- .map((_, i, a) => a.slice(i, i+2)).filter(d => d.length == 2) -->
 		<Popup 
-			message = "<h3>Take a quick tour of mvis?</h3>Walk through the interface elements and interactions to understand what you can do with mvis."
+			message = "<h3>Take a quick tour of <b>Milliways</b>?</h3>Walk through the interface elements and interactions to understand what you can do with Milliways."
 			step = {step}
 			position = {position}
 			adjust = {{x:0,y:0}}

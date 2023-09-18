@@ -6,13 +6,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -34,13 +27,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -62,13 +48,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -90,13 +69,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -118,13 +90,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -146,13 +111,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -174,13 +132,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -202,13 +153,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -230,13 +174,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -258,13 +195,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -286,13 +216,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -314,13 +237,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -342,13 +258,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -370,13 +279,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -398,13 +300,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -426,13 +321,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -454,13 +342,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -482,13 +363,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -510,13 +384,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -538,13 +405,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -566,13 +426,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -594,13 +447,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -622,13 +468,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -650,13 +489,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -678,13 +510,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -706,13 +531,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -734,13 +552,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -762,13 +573,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -790,13 +594,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -818,13 +615,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -846,13 +636,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -874,13 +657,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -902,13 +678,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -930,13 +699,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -958,13 +720,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -986,13 +741,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1014,13 +762,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1042,13 +783,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1070,13 +804,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1098,13 +825,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1126,13 +846,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1154,13 +867,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1182,13 +888,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1210,13 +909,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1238,13 +930,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1266,13 +951,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1294,13 +972,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1322,13 +993,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["no_exclusion"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1350,13 +1014,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1378,13 +1035,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1406,13 +1056,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1434,13 +1077,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1462,13 +1098,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1490,13 +1119,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1518,13 +1140,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1546,13 +1161,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1574,13 +1182,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1602,13 +1203,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1630,13 +1224,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1658,13 +1245,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1686,13 +1266,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1714,13 +1287,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1742,13 +1308,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1770,13 +1329,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1798,13 +1350,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1826,13 +1371,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1854,13 +1392,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1882,13 +1413,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1910,13 +1434,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1938,13 +1455,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1966,13 +1476,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -1994,13 +1497,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2022,13 +1518,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2050,13 +1539,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2078,13 +1560,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2106,13 +1581,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2134,13 +1602,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2162,13 +1623,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2190,13 +1644,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2218,13 +1665,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2246,13 +1686,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2274,13 +1707,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2302,13 +1728,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2330,13 +1749,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2358,13 +1770,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2386,13 +1791,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2414,13 +1812,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2442,13 +1833,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2470,13 +1854,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2498,13 +1875,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2526,13 +1896,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2554,13 +1917,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2582,13 +1938,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2610,13 +1959,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2638,13 +1980,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2666,13 +2001,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["one-half_interquartile_range"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2694,13 +2022,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2722,13 +2043,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2750,13 +2064,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2778,13 +2085,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2806,13 +2106,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2834,13 +2127,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2862,13 +2148,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2890,13 +2169,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2918,13 +2190,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2946,13 +2211,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -2974,13 +2232,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3002,13 +2253,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3030,13 +2274,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3058,13 +2295,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3086,13 +2316,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3114,13 +2337,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3142,13 +2358,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3170,13 +2379,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3198,13 +2400,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3226,13 +2421,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3254,13 +2442,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3282,13 +2463,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3310,13 +2484,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3338,13 +2505,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3366,13 +2526,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3394,13 +2547,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3422,13 +2568,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3450,13 +2589,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3478,13 +2610,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3506,13 +2631,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3534,13 +2652,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3562,13 +2673,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3590,13 +2694,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3618,13 +2715,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3646,13 +2736,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3674,13 +2757,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3702,13 +2778,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3730,13 +2799,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3758,13 +2820,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3786,13 +2841,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3814,13 +2862,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3842,13 +2883,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3870,13 +2904,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3898,13 +2925,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3926,13 +2946,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3954,13 +2967,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -3982,13 +2988,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4010,13 +3009,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["two-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4038,13 +3030,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4066,13 +3051,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4094,13 +3072,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4122,13 +3093,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4150,13 +3114,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4178,13 +3135,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4206,13 +3156,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4234,13 +3177,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4262,13 +3198,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4290,13 +3219,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4318,13 +3240,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4346,13 +3261,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4374,13 +3282,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4402,13 +3303,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4430,13 +3324,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4458,13 +3345,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I2"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4486,13 +3366,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4514,13 +3387,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4542,13 +3408,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4570,13 +3429,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4598,13 +3450,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4626,13 +3471,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4654,13 +3492,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4682,13 +3513,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I3"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4710,13 +3534,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4738,13 +3555,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4766,13 +3576,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4794,13 +3597,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4822,13 +3618,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4850,13 +3639,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4878,13 +3660,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4906,13 +3681,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I4"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4934,13 +3702,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4962,13 +3723,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -4990,13 +3744,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5018,13 +3765,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5046,13 +3786,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5074,13 +3807,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5102,13 +3828,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5130,13 +3849,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["I1_I2_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5158,13 +3870,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5186,13 +3891,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5214,13 +3912,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5242,13 +3933,6 @@
     "age_covariate": "not_included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["not_included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5270,13 +3954,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5298,13 +3975,6 @@
     "age_covariate": "included",
     "activity_covariate": "not_included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["not_included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5326,13 +3996,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "not_included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["not_included"]
-    },
     "results": [
       {
         "term": "social_media_usage",
@@ -5354,13 +4017,6 @@
     "age_covariate": "included",
     "activity_covariate": "included",
     "sibling_covariate": "included",
-    ".parameter_assignment": {
-      "outlier_exclusion": ["three-half_sd_from_mean"],
-      "SM_predictor": ["all_composite"],
-      "age_covariate": ["included"],
-      "activity_covariate": ["included"],
-      "sibling_covariate": ["included"]
-    },
     "results": [
       {
         "term": "social_media_usage",

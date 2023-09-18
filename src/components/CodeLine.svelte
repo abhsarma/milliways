@@ -14,7 +14,7 @@
 	export const highlight = css`
 		opacity: 0.8;
 		cursor: pointer;
-		background-color: ${colors.inactive};
+		background-color: ${colors.density};
 	`;
 
 
@@ -43,13 +43,11 @@
 		console.log("contains parameter, but regex failed to detect it")
 	}
 
-	// console.log(parameter, segments, pre_branch, branch, post_branch, (parameter && segments));
-
 	function highlightParam (event) {
 		let el = document.querySelector(`div.parameter-name.${parameter}`)
 
 		el.style.color = colors.white;
-		el.style.background = colors.active;
+		el.style.background = colors.hover;
 		el.style.fontWeight = "600";
 		// highlight parameter on the grid
 	}
@@ -74,11 +72,11 @@
 					function() {
 						if (show) {
 							paramOptionHtml.style.display = 'none';
-							this.style.backgroundColor = colors.inactive;
+							this.style.backgroundColor = colors.density;
 							this.style.color = colors.text;
 						} else {
 							paramOptionHtml.style.display = 'block';
-							this.style.backgroundColor = colors.active;
+							this.style.backgroundColor = colors.hover;
 							this.style.color = colors.white;
 						}
 						show = !show;
@@ -91,37 +89,10 @@
 				});
 
 				x.addEventListener('mouseout', function() { 
-					this.style.backgroundColor = colors.inactive 
+					this.style.backgroundColor = colors.density 
 					this.style.color = colors.text;
 				});
 			})
-
-			// console.log(els, document.querySelector(`.code-line-${parameter}`));
-
-			// document.querySelector(`.code-line-${parameter}`).addEventListener(
-			// 	'click',
-			// 	function() {
-			// 		if (show) {
-			// 			paramOptionHtml.style.display = 'none';
-			// 			this.style.backgroundColor = colors.inactive;
-			// 			this.style.color = colors.text;
-			// 		} else {
-			// 			paramOptionHtml.style.display = 'block';
-			// 			this.style.backgroundColor = colors.active;
-			// 			this.style.color = colors.white;
-			// 		}
-			// 		show = !show;
-			// 	}
-			// );
-
-			// document.querySelector(`.code-line-${parameter}`).addEventListener('mouseover', function() { 
-			// 	this.style.backgroundColor = colors.hover 
-			// 	this.style.color = colors.white;
-			// });
-			// document.querySelector(`.code-line-${parameter}`).addEventListener('mouseout', function() { 
-			// 	this.style.backgroundColor = colors.inactive 
-			// 	this.style.color = colors.text;
-			// });
 		}
 	})
 	document.documentElement.style.setProperty('--hoverColor', colors.hover)
@@ -140,7 +111,6 @@
 			/>
 		</div>
 	{:else if (parameter && !segments)}
-		<!-- {console.log("contains parameter, but regex failed to detect it")} -->
 		<pre class="code-line"><span>{pre_branch}</span></pre>
 	{:else}
 		<pre class="code-line"><span>{pre_branch}</span></pre>

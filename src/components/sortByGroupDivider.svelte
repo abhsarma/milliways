@@ -7,9 +7,9 @@
 
 	$: ch = h > (windowHeight - gridNamesHeight) ? windowHeight - gridNamesHeight : h
 
-	const dividerWidth = 3
+	const dividerWidth = 1.5
 
-	$: boundaries = $parameter_scale.range().map( d => (d - (groupPadding/2)) );
+	$: boundaries = $parameter_scale.range().map( d => (d - (groupPadding/2 - 4)) );
 </script>
 
 <g class="grouped-sort-divider {boundaries.length - 1}" 
@@ -27,6 +27,6 @@
 </g>
 
 <style type="text/css">
-	.st0{fill:#666666;}
-	.st1{fill:#FFFFFF;}
+	.st0{fill:#fafafa; stroke:#666666}
+	.st1{fill:#666666;}
 </style>

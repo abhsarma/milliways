@@ -10,7 +10,6 @@ export const whichDiff = (x, y) => {
 export const mean = (...x) => x.reduce((a, b) => a + b) / x.length;
 
 export const any = (...x) => {
-		// console.log(x, x.every((x)=> typeof x === 'boolean'))
 		if (x.every((x)=> typeof x === 'boolean')) {
 			return x.some((x)=> (x == true))
 		} else x //throw "expected array of booleans"

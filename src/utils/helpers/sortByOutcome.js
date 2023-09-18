@@ -12,7 +12,6 @@ import { mean } from './arrayMethods.js'
  * @return {object} Object containg sorted gridData, outcomeData, and estimateData 
  */
  function sortByOutcome(gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
- 	// console.log(gridData, outcomeData, estimateData)
 	//  CHECK AS THE Outcome Data IS INITIALLY AN EMPTY ARRAY
 	if (!outcomeData.length){
 		return {gridData, outcomeData, estimateData}

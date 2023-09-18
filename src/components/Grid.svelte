@@ -1,15 +1,15 @@
 <script>
-	import { css, cx } from '@emotion/css'
-	import { range, extent, groups, zip, max, histogram } from 'd3-array';
-	import { scaleLinear, scaleBand } from 'd3-scale';
+	import { css } from '@emotion/css'
+	import { range, max } from 'd3-array';
+	import { scaleBand } from 'd3-scale';
 	import { select, selectAll } from 'd3-selection';
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 	import { colors } from '../utils/colorPallete.js';
-	import { windowHeight, margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
+	import { margin, cell, groupPadding, gridNamesHeight, header, iconSize, namingDim, nameContainer } from '../utils/dimensions.js'
 	import SortByGroupDivider from './sortByGroupDivider.svelte';
 	import OptionToggle from './toggle-hide-option.svelte'
 	import OptionJoin from './toggle-join-option.svelte'
-	import { gridCollapse, exclude_options, join_options, parameter_scale, option_scale } from '../utils/stores.js'
+	import { gridCollapse, exclude_options, parameter_scale, option_scale } from '../utils/stores.js'
 	import { drag_options, drag_parameters, dragSortDivider } from '../utils/drag.js';
 
 	export let data;
@@ -108,8 +108,6 @@
 	function openFile() {
 		let spec = structuredClone(data[this.getAttribute("row")]);
 		Object.keys(spec).forEach(param => spec[param] = spec[param][0]);
-
-		console.log(spec);
 
 		if (!mvWindow || mvWindow.closed) {
 			mvWindow = open(
@@ -219,7 +217,6 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else if $exclude_options[parameter].includes(option)}
-								<!-- {console.log(parameter, option)} -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
@@ -280,6 +277,8 @@
 		float: left;
 		position: relative;
 		z-index: 1;
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
 	}
 
 	svg, rect {
@@ -287,7 +286,8 @@
 	}
 
 	#bg-rect {
-		fill: #eaeaea;
+		fill: #ffffff;
+		stroke: #cccccc;
 		transition: none;
 	}
 

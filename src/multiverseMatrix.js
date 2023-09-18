@@ -41,7 +41,7 @@ class multiverseMatrix {
 
 	_parameters = () => {
 		// get the parameters from the first row as this is a rectangular dataset
-		let param_names = Object.keys(this.data[0]['.parameter_assignment']);
+		let param_names = Object.keys(this.data[0]).filter(x => !(x == ".universe" || x == "results"));
 
 		let dat = this.data.map(d => Object.assign( {}, ...param_names.map((i) => ({[i]: d[i]})) ));
 
@@ -209,17 +209,10 @@ class multiverseMatrix {
 					})
 				return d
 			});
-
-			// vec.map((d, i) => {
-			// 	console.log(i, d);
-			// })
-
-			// console.log(vec)
 	
 			let duplicates_data = vec.map(d => JSON.stringify(Object.values(d).flat()));
 	
 			let non_duplicates = duplicates_data.map((d, i) => {
-				// console.log(d, duplicates_data.indexOf(d), i)
 				return duplicates_data.indexOf(d) == i;
 			})
 	
@@ -257,6 +250,7 @@ class multiverseMatrix {
 		let option_list = Object.entries(this.parameters).map(d => d[1]);
 
 		const {o_data_processed, e_data_processed} = excludeAndCombineOutcomes(g_data, o_data, option_list, exclude, combine, e_data);
+		
 		this.outcomes[index].density = o_data_processed;
 		this.outcomes[index].estimate = e_data_processed;
 		this.estimates[index] = e_data_processed;
@@ -302,7 +296,6 @@ class multiverseMatrix {
 			let outcomeData = this.outcomes.map(d => d.density);
 			let estimateData = this.outcomes.map(d => d.estimate);
 
-			// console.log("Calling sort by groups with:", sortByGroupParams)
 			const {g_data, o_data, e_data} = sortByGroup(sortByGroupParams, this.gridData, outcomeData, estimateData, this.sortAscending,this.sortByIndex);
 			this.gridData = g_data;
 
