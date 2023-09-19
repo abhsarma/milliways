@@ -126,6 +126,7 @@
 </script>
 
 <div class="{infoPopup} {shift} {shadow} popup" style="top: {position.y + adjust.y}px; left: {position.x + adjust.x}px;">
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="action-btn" on:click={removeTutorial}>
 		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M7.64645 7.29944L8.00024 7.65323L8.35379 7.2992L14.9367 0.707346L15.2837 1.05436L8.70033 7.64669L8.34725 8.00024L8.70056 8.35355L15.2929 14.9459L14.9459 15.2929L8.35355 8.70056L8 8.34701L7.64645 8.70056L1.05412 15.2929L0.707107 14.9459L7.29944 8.35355L7.65299 8L7.29944 7.64645L0.707107 1.05412L1.05412 0.707107L7.64645 7.29944Z" fill="#979797" stroke="#979797"/>

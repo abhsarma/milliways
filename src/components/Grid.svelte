@@ -205,6 +205,7 @@
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2}
 									y={y(j)}
@@ -217,6 +218,7 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else if $exclude_options[parameter].includes(option)}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
@@ -229,6 +231,7 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
@@ -260,6 +263,10 @@
 
 	foreignObject {
 		border-radius: 4px;
+	}
+
+	div.grid {
+		border: 1px solid #efefef;
 	}
 
 	svg.grid-header {

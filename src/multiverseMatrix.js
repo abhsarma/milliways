@@ -1,9 +1,8 @@
-import { range, extent, groups, zip, max, histogram } from 'd3-array';
+import { extent, groups, zip, max, histogram } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 
 //helpers
 import combineJoinOptions from './utils/helpers/combineJoinOptions'
-import sortByOutcome from './utils/helpers/sortByOutcome.js';
 import sortByGroup from './utils/helpers/sortByGroups.js';
 import excludeAndCombineOutcomes from './utils/helpers/excludeAndCombineOutcomes.js';
 import { exclude_options, exclude_rows, join_options, option_scale } from './utils/stores.js'

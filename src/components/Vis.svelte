@@ -309,6 +309,7 @@
 	.vis {
 		display: inline-block;
 		margin-left: 3px;
+		border: 1px solid #efefef;
 	}
 	.vis:first-child {
 		margin-left: 0;

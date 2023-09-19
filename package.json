@@ -2,10 +2,12 @@
 	"name": "multiverse-vis",
 	"version": "1.0.0",
 	"private": true,
+	"homepage": "https://abhsarma.github.io/milliways/",
 	"scripts": {
 		"build": "rollup -c",
 		"dev": "rollup -c -w",
 		"start": "sirv public --no-clear --single --port 3000",
+		"deploy": "gh-pages -d public", 
 		"compile": "npm run build && (npm run start & sleep 3) && (inliner http://localhost:3000/index.html > template.html) && killall -9 node"
 	},
 	"exports": {
@@ -40,6 +42,7 @@
 		"d3-scale": ">=4.0.2",
 		"d3-selection": ">=3.0.0",
 		"d3-shape": ">=3.2.0",
+		"gh-pages": "^6.0.0",
 		"inliner": ">=1.13.1",
 		"lodash": ">=4.17.21",
 		"shelljs": "^0.8.5",

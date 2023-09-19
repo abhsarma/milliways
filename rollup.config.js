@@ -42,9 +42,9 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 
-	onwarn: function (warning, warn) {
-		if (warning.code === 'CIRCULAR_DEPENDENCY') return;
-		warn(warning);
+	onwarn: (warning, handler) => {
+		if (warning.code.startsWith('a11y-')) return
+		handler(warning)
 	},
 
 	plugins: [
