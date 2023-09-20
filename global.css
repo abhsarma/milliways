@@ -9,21 +9,21 @@ html, body {
     font-family: 'Av-Nx';
     font-style: normal;
     font-weight: 500;
-    src: url('/fonts/avenir-next/AvenirNextCyr-Medium.ttf') format('truetype');
+    src: url('./fonts/avenir-next/AvenirNextCyr-Medium.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Av-Nx';
     font-style: normal;
     font-weight: 400;
-    src: url('/fonts/avenir-next/AvenirNextCyr-Regular.ttf') format('truetype');
+    src: url('./fonts/avenir-next/AvenirNextCyr-Regular.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Av-Nx';
     font-style: normal;
     font-weight: 700;
-    src: url('/fonts/avenir-next/AvenirNextCyr-Demi.ttf') format('truetype');
+    src: url('./fonts/avenir-next/AvenirNextCyr-Demi.ttf') format('truetype');
 }
 
 a {
