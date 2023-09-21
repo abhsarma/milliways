@@ -54,7 +54,7 @@
 	p {
 		display: inline-block;
 		line-height: 32px;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
 		font-weight: 300;
 		align-items: center;

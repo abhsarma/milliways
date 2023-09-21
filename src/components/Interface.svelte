@@ -32,7 +32,7 @@
 	export let emar;
 
 	let m;
-	m = new multiverseMatrix(data.default);
+	m = new multiverseMatrix(data);
 	m.initializeData();
 
 	console.log("size of the multiverse: ", m.size)
@@ -215,7 +215,7 @@
 			<!-- CREATES THE DATA PANEL FOR PROVIDING OVERVIEW OF THE DATA -->
 			<div class="table-container">
 				<DataTable
-					tableData={tableData.default}
+					tableData={tableData}
 					cellWidth=150
 					h={windowHeight/2}
 				/>
@@ -302,7 +302,7 @@
 	h1 {
 		margin: 0px;
 		color: #333333 !important;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 36px;
 		font-weight: 700;
 	}

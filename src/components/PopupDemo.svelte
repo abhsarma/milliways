@@ -189,13 +189,13 @@
 	}
 
 	button {
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		border: none;
 		border-radius: 4px;
 	}	
 
 	p {
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		margin: 16px;
 		font-size: 14px;
 		line-height: 20px;

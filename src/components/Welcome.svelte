@@ -1,9 +1,22 @@
 <script>
-	import logo from "../assets/images/logo.jpg";
+	import logo from "../assets/images/logo.png";
 	import { onMount } from 'svelte';
     import { createEventDispatcher } from 'svelte';
 
-    let data, code, results;
+    // datasets
+	import * as data_hr from '../../static/data/hurricane-data.json'; 
+    import * as code_hr from '../../static/data/hurricane-code.json';
+    import * as tableData_hr from '../../static/data/hurricane-raw-data.json';
+
+	import * as data_sm from '../../static/data/sm-data.json'; 
+    import * as code_sm from '../../static/data/sm-code.json';
+    import * as tableData_sm from '../../static/data/sm-raw-data.json';
+
+    import * as data_durante from '../../static/data/durante-data.json'; 
+    import * as code_durante from '../../static/data/durante-code.json';
+	import * as tableData_durante from '../../static/data/durante.json';
+
+    let data, code, results, emar;
 
     function handleFile(event) {
         let files = this.files; /* now you can work with the file list */
@@ -15,23 +28,18 @@
             text = JSON.parse(e.target.result);
             if (event.target.id == 'input-data') {
                 data = text;
-                document.getElementById("input-data-name").textContent += file.name
+                document.getElementById("input-data-name").textContent = file.name
             }
             if (event.target.id == 'input-code') {
                 code = text;
-                document.getElementById("input-code-name").textContent += file.name
+                document.getElementById("input-code-name").textContent = file.name
             }
             if (event.target.id == 'input-results') {
                 results = text;
-                document.getElementById("input-results-name").textContent += file.name
+                document.getElementById("input-results-name").textContent = file.name
             }
         };
         reader.readAsText(file);
-    }
-
-    function uploadFiles() {
-        // if data, code and results are all defined
-        console.log(data, code, results)
     }
 
 	onMount(() => {
@@ -59,8 +67,29 @@
     const dispatch = createEventDispatcher();
 
 	function loadAnalysis(analysis) {
+        if (analysis === 'hurricane') {
+			results = data_hr.default;
+			code = code_hr;
+			data = tableData_hr.default;
+			emar = "analysis-hurricane.html"
+		} else if (analysis === 'social_media') {
+			results = data_sm.default;
+			code = code_sm;
+			data = tableData_sm.default;
+			emar = "analysis-social_media.html"
+		} else if (analysis === 'durante') {
+			results = data_durante.default;
+			code = code_durante;
+			data = tableData_durante.default;
+			emar = "analysis-durante.html"
+		}
+
 		dispatch('loadAnalysis', {
-			mode: analysis
+			mode: analysis,
+            data: data,
+            code: code,
+            results: results,
+            emar: emar
 		});
 	}
 </script>
@@ -96,7 +125,7 @@
                 </button>
                 <span class="input-file-name" id="input-results-name"></span>
 			</div>
-            <button class="nav-btn upload-new-data" on:click={uploadFiles}>Upload files</button>
+            <button class="nav-btn upload-new-data" on:click={() => loadAnalysis("user")}>Upload files</button>
 		</div>
 		<div class="separator"></div>
 		<div class="upload-container">
@@ -222,9 +251,9 @@
 		height: 40px;
     }
 
-	button:active,
-	button:focus,
-	button:hover {
+	button.nav-btn:active,
+	button.nav-btn:focus,
+	button.nav-btn:hover {
 		text-decoration: none;
         color: #298ee7;
 		border: 2px solid #298ee7;

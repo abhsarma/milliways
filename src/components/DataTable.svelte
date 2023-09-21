@@ -159,7 +159,7 @@
         margin: 0px 24px;
         display: inline-block;
         font-size: 12px;
-        font-family: 'Av-Nx';
+        font-family: 'Av-Nx', sans-serif;
     }
 
     .toggle-button {

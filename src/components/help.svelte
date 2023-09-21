@@ -67,7 +67,7 @@
 	p {
 		margin: 0px;
 		line-height: 32px;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
 		font-weight: 300;
 		vertical-align: middle;

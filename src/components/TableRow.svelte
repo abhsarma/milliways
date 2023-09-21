@@ -18,7 +18,7 @@
 <style>
 	.table-row {
 		font-size: 11px;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		display: flex;
 		flex-direction: row;
 		border-bottom: 1px solid #efefef;
