@@ -1,5 +1,6 @@
 <script>
 	import logo from "../assets/images/logo.png";
+    import addIcon from "../assets/icons/add.svg";
 	import { onMount } from 'svelte';
     import { createEventDispatcher } from 'svelte';
 
@@ -105,7 +106,8 @@
 			<div class="input-container">
 				<input type="file" id="input-data" class="input" style="display:none" accept="application/JSON"/>
                 <button class="input-button" id="button-data" type="button">
-                    data
+                    <img class="add-icon" alt="add icon" src={addIcon}/>
+                    <span class="button-label">data</span>
                 </button>
                 <div class="file-name">
                     <span class="input-file-name" id="input-data-name"></span>
@@ -114,14 +116,16 @@
 			<div class="input-container">
 				<input type="file" id="input-code" class="input" style="display:none" accept="application/JSON"/>
                 <button class="input-button" id="button-code" type="button">
-                    code
+                    <img class="add-icon" alt="add icon" src={addIcon}/>
+                    <span class="button-label">code</span>
                 </button>
                 <span class="input-file-name" id="input-code-name"></span>
 			</div>
 			<div class="input-container">
 				<input type="file" id="input-results" class="input" style="display:none" accept="application/JSON"/>
                 <button class="input-button" id="button-results" type="button">
-                    results
+                    <img class="add-icon" alt="add icon" src={addIcon}/>
+                    <span class="button-label">results</span>
                 </button>
                 <span class="input-file-name" id="input-results-name"></span>
 			</div>
@@ -222,12 +226,17 @@
 		font-size: 14px;
 		border-radius: 4px;
 		cursor: pointer;
+        display: flex;
+        align-items: center;
 	}
 
-    .input-button:before {
-        content: url('../icons/add.svg');
+    .add-icon {
         width: 24px;
         float: left;
+    }
+
+    .button-label {
+        margin-left: 8px;
     }
 	
 	button.nav-btn {
