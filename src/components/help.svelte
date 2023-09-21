@@ -25,12 +25,15 @@
 </script>
 
 <div class="help-dropdown">
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="help-button" class:selected={menu} on:click={showMenu}>
 		<p class="help help-header">Help</p>
 	</div>
 	{#if menu}
 		<div class="help-dropdown-menu" >
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<p class="help-option" on:click={showInterfaceTutorial}>Quick Tour</p>
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<p class="help-option" on:click={showDemo}>Demo</p>
 		</div>
 	{/if}
@@ -61,15 +64,10 @@
 		background-color: #dddddd;
 	}
 
-	.active {
-		background-color: #efefef;
-		border-radius: 4px 4px 0px 0px !important;
-	}
-
 	p {
 		margin: 0px;
 		line-height: 32px;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
 		font-weight: 300;
 		vertical-align: middle;

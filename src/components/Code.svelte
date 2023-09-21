@@ -63,5 +63,6 @@
 
 	div.code {
 		padding: 16px;
+		border: 1px solid #efefef;
 	}
 </style>

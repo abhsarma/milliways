@@ -129,7 +129,7 @@
 	p {
 		text-align: center;
 		vertical-align: middle;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-weight: 500;
 	}
 
@@ -163,11 +163,11 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-        font-family: 'Av-Nx';
+        font-family: 'Av-Nx', sans-serif;
     }
 
     i {
-        font-family: 'Av-Nx';
+        font-family: 'Av-Nx', sans-serif;
     }
     
     .active_svg {

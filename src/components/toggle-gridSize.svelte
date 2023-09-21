@@ -29,6 +29,7 @@
 	<svg width="{a}" height="{a}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path d="M0 13V11H11V0H13V11H24V13H13V24H11V13H0Z" fill="#4f4f4f"/>
 	</svg>
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="toggle-button" class:active={active} on:click="{handleClick}" style="height: {r}px">
 		<div class="state-indicator" class:active={active} style="width: {r}px; height: {r}px"></div>
 	</div>
@@ -53,7 +54,7 @@
 	p {
 		display: inline-block;
 		line-height: 32px;
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		font-size: 14px;
 		font-weight: 300;
 		align-items: center;

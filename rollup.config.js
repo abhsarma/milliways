@@ -42,11 +42,6 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 
-	onwarn: function (warning, warn) {
-		if (warning.code === 'CIRCULAR_DEPENDENCY') return;
-		warn(warning);
-	},
-
 	plugins: [
 		svelte({
 			compilerOptions: {

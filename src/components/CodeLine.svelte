@@ -103,6 +103,7 @@
 		when the following block of code is indetted
 		and new-lines are used. -->
 	{#if (parameter && segments)}
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<pre class="code-line"><span>{pre_branch}</span><span class='{highlight} code-line-{parameter}' on:mouseover={highlightParam} on:mouseout={removeHighlight}>{branch}</span><span>{post_branch}</span></pre>
 		<div bind:this={paramOptionHtml} class="param-option-wrapper">
 			<ParamOptions

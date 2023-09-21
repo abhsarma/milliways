@@ -19,7 +19,7 @@
 	// CSS Styles
 	export const parameter_name = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		text-transform: uppercase;
 		padding: 0px ${cell.padding/2 + "px"};
 		background-color: ${colors.background};
@@ -41,7 +41,7 @@
 
 	export const option_names = css`
 		font-size: ${header.size + "px"};
-		font-family: 'Av-Nx';
+		font-family: 'Av-Nx', sans-serif;
 		line-height: ${cell.width}px;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -205,6 +205,7 @@
 					<g class="option-value {parameter} {option} option-{i}" transform="translate({$option_scale[parameter](i)}, 0)">
 						{#each data as universe, j}
 							{#if universe[parameter].includes(option)}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2}
 									y={y(j)}
@@ -217,6 +218,7 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else if $exclude_options[parameter].includes(option)}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
@@ -229,6 +231,7 @@
 									on:mouseover={() => moveBgRect(y(j))}
 								/>
 							{:else}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<rect 
 									x={(cell.width - cellWidth)/2} 
 									y={y(j)}
@@ -260,6 +263,10 @@
 
 	foreignObject {
 		border-radius: 4px;
+	}
+
+	div.grid {
+		border: 1px solid #efefef;
 	}
 
 	svg.grid-header {
