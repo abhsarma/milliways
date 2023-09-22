@@ -1,0 +1,12 @@
+{
+  "code": ["df <- hurricane_data %>%", "  filter(branch(death_outliers)) %>%", "  filter(branch(damage_outliers))", "df <- df %>% mutate(", "  femininity = branch(femininity_calculation),", "  damage = branch(damage_transform)", ")", "fit <- lm(log(death + 1) ~ branch(main_interaction) + branch(control_year), data = df)", "masfem_levels <- summarise(group_by(df, female), mean = mean(femininity))$mean", "new_hurricane_data <- data_grid(df, femininity = masfem_levels, damage = c(2000, 4000), nesting(post, year)) %>% mutate(damage = branch(damage_transform))", "model.coef <- broom::tidy(fit, conf.int = TRUE) %>% filter(term == \"femininity\")", "expectation <- new_hurricane_data %>%", "  broom::augment(fit, newdata = ., se_fit = TRUE) %>%", "  mutate(.fitted = exp(.fitted) - 1) %>%", "  mutate(.id = row_number(), femininity = as.numeric(factor(femininity)) - 1) %>%", "  group_by(femininity) %>%", "  summarise(.fitted = mean(.fitted), .se = mean(.se.fit), .groups = \"drop_last\") %>%", "  pivot_wider(names_from = femininity, values_from = c(.fitted, .se)) %>%", "  mutate(mean_deaths = .fitted_1 - .fitted_0, .se = sqrt(.se_1^2 + .se_0^2)) %>%", "  select(mean_deaths, .se)", "deg_freedom.model <- df.residual(fit)"],
+  "parameters": {
+    "death_outliers": ["\"no_exclusion\" ~ TRUE", "\"one_most_extreme_deaths\" ~ name != \"Katrina\"", "\"two_most_extreme_deaths\" ~ !(name %in% c(\"Katrina\", \"Audrey\"))"],
+    "damage_outliers": ["\"no_exclusion\" ~ TRUE", "\"one_most_extreme_damage\" ~ !(name %in% c(\"Sandy\"))", "\"two_most_extreme_damage\" ~ !(name %in% c(\"Sandy\", \"Andrew\"))", "\"three_most_extreme_damage\" ~ !(name %in% c(\"Sandy\", \"Andrew\", \"Donna\"))"],
+    "femininity_calculation": ["\"masfem\" ~ masfem", "\"female\" ~ female"],
+    "damage_transform": ["\"no_transform\" ~ identity(damage)", "\"log_transform\" ~ log(damage)"],
+    "main_interaction": ["\"main\" ~ femininity + damage", "\"with_damage\" ~ femininity * damage"],
+    "control_year": ["\"none\" ~ NULL", "\"year_x_damage\" ~ year:damage", "\"post1979_x_damage\" ~ post:damage"],
+    "damage_transform.1": ["\"no_transform\" ~ identity(damage)", "\"log_transform\" ~ log(damage)"]
+  }
+}

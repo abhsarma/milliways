@@ -2,23 +2,20 @@
 	import Welcome from "./components/Welcome.svelte";
 	import Interface from "./components/Interface.svelte";
 
-	let results, code, tableData, emar;
-	let init = true;
+	// datasets (for the milliways-r pkg)
+	import * as results from '../static/data/results.json'; 
+    import * as code from '../static/data/code.json';
+    import * as tableData from '../static/data/tabledata.json';
 
-	function toggleDataSet(event) {
-		results = event.detail.results;
-		code = event.detail.code;
-		tableData = event.detail.data;
-		emar = event.detail.emar;
-		
-		init = false
-	}
+	let emar = 'analysis-doc.html';
+
+	console.log("welcome should be hidden")
 </script>
 
 <main>
-	{#if init}
+	<!-- {#if init}
    		<Welcome on:loadAnalysis={toggleDataSet}/>
-	{:else}
-		<Interface data={results} code={code} tableData={tableData} emar={emar}/>
-	{/if}
+	{:else} -->
+	<Interface data={results.default} code={code} tableData={tableData.default} emar={emar}/>
+	<!-- {/if} -->
 </main>
