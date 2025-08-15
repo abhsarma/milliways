@@ -142,6 +142,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="main" on:click={removeEventTriggers}>
 	<div class = "container-flex">
 		<div class="vertical-align">
@@ -168,6 +169,7 @@
 
 	<!-- BUTTON TO ADD A NEW OUTCOME GRAPH -->
 	<div class="button-wrapper">
+		<!-- svelte-ignore a11y_consider_explicit_label -->
 		<button on:click={() => { m.initializeOutcomeData(); m.updateHandler($join_options, $exclude_options); m=m; }}>
 			<svg class="add-vis-icon" xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="{colors.gray80}"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
 		</button>

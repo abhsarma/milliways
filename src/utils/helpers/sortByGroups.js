@@ -19,6 +19,7 @@ import { mean, is2dArray } from './arrayMethods.js'
  */
 function sortByGroup(sortByGroupParams, gridData, outcomeData, estimateData, ascending = false, outcomeIndex = 0) {
 	var groups = [...sortByGroupParams]
+	console.log(estimateData);
 	if (groups.length == 0) {
 		// base (non-recursive) case
 		// when there are no groups: groups == []

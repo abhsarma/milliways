@@ -85,7 +85,6 @@
 </div>
 
 <style>
-
 	.table-header {
 		display: flex;
 		position: sticky;
@@ -94,7 +93,6 @@
 		flex-direction: column;
 		background-color: #ffffff;
 		border-top: 1px solid #efefef;
-
 		height: fit-content;
 		width: fit-content;
 	}

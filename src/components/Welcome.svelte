@@ -9,7 +9,7 @@
     import * as code_hr from '../../static/data/hurricane-code.json';
     import * as tableData_hr from '../../static/data/hurricane-raw-data.json';
 
-	import * as data_sm from '../../static/data/sm-data.json'; 
+	import * as data_sm from '../../static/data/sm-results.json'; 
     import * as code_sm from '../../static/data/sm-code.json';
     import * as tableData_sm from '../../static/data/sm-raw-data.json';
 
@@ -17,7 +17,11 @@
     import * as code_durante from '../../static/data/durante-code.json';
 	import * as tableData_durante from '../../static/data/durante.json';
 
-    let data, code, results, emar;
+    import * as data_soccer from '../../static/data/soccer-results.json'; 
+    import * as code_soccer from '../../static/data/soccer-code.json';
+    import * as tableData_soccer from '../../static/data/soccer.json';
+
+    let data, code, results, emar = '';
 
     function handleFile(event) {
         let files = this.files; /* now you can work with the file list */
@@ -45,21 +49,6 @@
 
 	onMount(() => {
         const inputs = document.querySelectorAll(".input");
-        const buttons = document.querySelectorAll(".input-button");
-
-		buttons.forEach(element => {
-            element.addEventListener("click", (e) => {
-                    if (e.target.id == "button-data") {
-                        inputs[0].click();
-                    } else if (e.target.id == "button-code") {
-                        inputs[1].click();
-                    } else if (e.target.id == "button-results") {
-                        inputs[2].click();
-                    }
-                },
-                false);
-        });
-
         inputs.forEach(element => {
             element.addEventListener("change", handleFile, false)
         });
@@ -83,6 +72,11 @@
 			code = code_durante;
 			data = tableData_durante.default;
 			emar = "analysis-durante.html"
+		} else if (analysis === 'soccer_redcards') {
+			results = data_soccer.default;
+			code = code_soccer;
+			data = tableData_soccer.default;
+			emar = "analysis-durante.html"
 		}
 
 		dispatch('loadAnalysis', {
@@ -104,29 +98,29 @@
 		<div class="upload-container">
 			<p>Upload your own multiverse analysis...</p>
 			<div class="input-container">
-				<input type="file" id="input-data" class="input" style="display:none" accept="application/JSON"/>
-                <button class="input-button" id="button-data" type="button">
+                <label for="input-data" class="custom-upload">
                     <img class="add-icon" alt="add icon" src={addIcon}/>
                     <span class="button-label">data</span>
-                </button>
+                </label>
+				<input type="file" id="input-data" class="input" accept="application/JSON"/>
                 <div class="file-name">
                     <span class="input-file-name" id="input-data-name"></span>
                 </div>
 			</div>
 			<div class="input-container">
-				<input type="file" id="input-code" class="input" style="display:none" accept="application/JSON"/>
-                <button class="input-button" id="button-code" type="button">
+                <label for="input-code" class="custom-upload">
                     <img class="add-icon" alt="add icon" src={addIcon}/>
                     <span class="button-label">code</span>
-                </button>
+                </label>
+				<input type="file" id="input-code" class="input" accept="application/JSON"/>
                 <span class="input-file-name" id="input-code-name"></span>
 			</div>
 			<div class="input-container">
-				<input type="file" id="input-results" class="input" style="display:none" accept="application/JSON"/>
-                <button class="input-button" id="button-results" type="button">
+                <label for="input-results" class="custom-upload">
                     <img class="add-icon" alt="add icon" src={addIcon}/>
                     <span class="button-label">results</span>
-                </button>
+                </label>
+				<input type="file" id="input-results" class="input" accept="application/JSON"/>
                 <span class="input-file-name" id="input-results-name"></span>
 			</div>
             <button class="nav-btn upload-new-data" on:click={() => loadAnalysis("user")}>Upload files</button>
@@ -142,6 +136,9 @@
             </div>
             <div class="input-container">
                 <button class="nav-btn load" on:click={() => loadAnalysis("social_media")}>Social media dataset</button>
+            </div>
+            <div class="input-container">
+                <button class="nav-btn load" on:click={() => loadAnalysis("soccer_redcards")}>Soccer redcards dataset</button>
             </div>
 		</div>
 	</div>    
@@ -188,7 +185,7 @@
 		font-size: 14px;
         font-family: 'Av-Nx', sans-serif;
 		color: #666666;
-        line-height: 31px;
+        line-height: 40px;
 	}
 
 	.row {
@@ -209,6 +206,10 @@
 		background-color: #979797;
 	}
 
+    input[type="file"] {
+        display: none;
+    }
+
 	.input-container {
 		margin: 16px auto;
         height: 40px;
@@ -216,7 +217,7 @@
         display: flex;
 	}
 
-	.input-button {
+	.custom-upload {
         min-width: 80px;
 		height: 40px;
 		background-color: #f6f6f6;

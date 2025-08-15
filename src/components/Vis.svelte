@@ -216,7 +216,7 @@
 		{#each data.density as universe, i}
 			<g class="universe universe-{i}" transform="translate(0, {y(i)})">
 				{#if !$gridCollapse}
-					5e2c8 <path class="cdf" d={areaGeom(universe)} stroke="{colors.density}" fill="{colors.density}" stroke-width=1.5 opacity=0.8 />
+					<path class="cdf" d={areaGeom(universe)} stroke="{colors.density}" fill="{colors.density}" stroke-width=1.5 opacity=0.8 />
 					<path class="cdf" d={areaGeom(universe)} stroke="#EBDCC5" fill="#EBDCC5" stroke-width=1.5 opacity=1 />
 				{/if}
 				{#if (data.estimate[i].length === undefined)}
@@ -251,7 +251,7 @@
 	}
 
 	svg.outcomeResults, g.universe {
-		transition: all .5s linear;;
+		transition: all .5s linear;
 	}
 
 	.vis-button-group {

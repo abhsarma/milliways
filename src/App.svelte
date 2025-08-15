@@ -2,8 +2,8 @@
 	import Welcome from "./components/Welcome.svelte";
 	import Interface from "./components/Interface.svelte";
 
-	let results, code, tableData, emar;
 	let init = true;
+	let results, code, tableData, emar;
 
 	function toggleDataSet(event) {
 		results = event.detail.results;
